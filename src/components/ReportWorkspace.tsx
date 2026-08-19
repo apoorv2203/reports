@@ -1,13 +1,17 @@
 import { useMemo, useState } from 'react';
 import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, LayoutDashboard, MessageSquare, MoreHorizontal, Pencil, Plus, Save, Send, Share2, Sparkles, Table2, X } from 'lucide-react';
-import type { ReportTemplate, TemplateSection } from '@/data/reportTemplates';
+import type { LibraryReport, ReportParameter, ReportTemplate, TemplateSection } from '@/data/reportTemplates';
+import { PublishReportDialog } from './PublishReportDialog';
+import { ReportParameterRunner } from './ReportParameterRunner';
 
-export function ReportWorkspace({ template, onBack, onBrowseReports }: { template: ReportTemplate; onBack: () => void; onBrowseReports: () => void }) {
+export function ReportWorkspace({ template, report, onBack, onBrowseReports }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void }) {
   const [sections, setSections] = useState<TemplateSection[]>(template.sections);
-  const [title, setTitle] = useState(template.sections[0]?.title ?? 'Untitled report');
+  const [title, setTitle] = useState(report?.title ?? template.sections[0]?.title ?? 'Untitled report');
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<{ prompt: string; result: string }[]>([]);
   const [saved, setSaved] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [publishedParameters, setPublishedParameters] = useState<ReportParameter[] | null>(null);
 
   const emptySections = useMemo(() => sections.filter((s) => s.kind === 'empty'), [sections]);
 
@@ -56,18 +60,18 @@ export function ReportWorkspace({ template, onBack, onBrowseReports }: { templat
           <span className="text-[13px] text-white/65">My reports</span>
           <span className="text-white/40">/</span>
           <span className="text-[13px] font-semibold text-white">{title}</span>
-          <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800">Draft</span>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-200 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10 hover:text-white"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
           <button onClick={() => setSaved(true)} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10">{saved ? <Check className="h-3.5 w-3.5 text-mint-300" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
-          <button className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[12px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-3.5 w-3.5" /> Publish</button>
+          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[12px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-3.5 w-3.5" /> {publishedParameters ? 'Edit publish settings' : 'Publish'}</button>
           <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[280px_minmax(420px,1fr)_230px]">
-        <aside className="flex min-h-0 flex-col border-r border-[#e5e5e7] bg-[#f5f5f7] p-4">
+      <div className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[280px_minmax(420px,1fr)_230px]">
+        <aside className="hidden min-h-0 flex-col border-r xl:flex border-[#e5e5e7] bg-[#f5f5f7] p-4">
           <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>
           <div className="mt-4 flex-1 overflow-y-auto">
             {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
@@ -89,24 +93,26 @@ export function ReportWorkspace({ template, onBack, onBrowseReports }: { templat
 
         <main className="min-h-0 overflow-y-auto bg-white px-8 py-7">
           <div className="mx-auto max-w-2xl">
-            <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">Report preview</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
+            <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
+            {report && <ReportParameterRunner parameters={report.parameters} reportTitle={report.title} />}
             <div className="flex flex-col gap-4">{sections.map((section, index) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} number={index + 1} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
             <button onClick={() => setSections((current) => [...current, { id: `${Date.now()}`, title: 'Empty section', kind: 'empty' }])} className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-[14px] border border-dashed border-[#d2d2d7] py-3 text-[12px] font-semibold text-ink-500 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700"><Plus className="h-4 w-4" /> Add section</button>
           </div>
         </main>
 
-        <aside className="flex min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e5e5e7] bg-[#f5f5f7] p-4">
+        <aside className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l xl:flex border-[#e5e5e7] bg-[#f5f5f7] p-4">
           <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
           <ActionButton icon={<ArrowDownToLine className="h-4 w-4" />} label="Export" />
           <ActionButton icon={<Share2 className="h-4 w-4" />} label="Share" />
           <ActionButton icon={<LayoutDashboard className="h-4 w-4" />} label="Schedule" />
           <ActionButton icon={<FileText className="h-4 w-4" />} label="Save to favourites" />
-          <button className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-[12px] bg-mint-400 px-3 py-2.5 text-[13px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-4 w-4" /> Publish to catalogue</button>
+          <button onClick={() => setShowPublishDialog(true)} className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-[12px] bg-mint-400 px-3 py-2.5 text-[13px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-4 w-4" /> {publishedParameters ? 'Edit publish settings' : 'Publish to catalogue'}</button>
           <div className="my-2 h-px bg-[#e5e5e7]" />
           <div className="text-[12px] font-bold uppercase tracking-wide text-ink-500">Layout</div>
           <div className="rounded-[14px] border border-[#e5e5e7] bg-white p-3"><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
         </aside>
       </div>
+      {showPublishDialog && <PublishReportDialog onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} />}
     </div>
   );
 }

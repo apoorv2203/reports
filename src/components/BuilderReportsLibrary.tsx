@@ -19,10 +19,10 @@ type LibraryTab = 'mine' | 'catalogue';
 
 export function BuilderReportsLibrary({
   onBack,
-  onOpenTemplate,
+  onOpenReport,
 }: {
   onBack: () => void;
-  onOpenTemplate: (template: ReportTemplate) => void;
+  onOpenReport: (template: ReportTemplate, report: LibraryReport) => void;
 }) {
   const [tab, setTab] = useState<LibraryTab>('catalogue');
   const [search, setSearch] = useState('');
@@ -41,7 +41,7 @@ export function BuilderReportsLibrary({
   }, [category, reports, search, tab]);
 
   function openReport(report: LibraryReport) {
-    onOpenTemplate(reportTemplates.find((template) => template.id === report.templateId) ?? reportTemplates[0]);
+    onOpenReport(reportTemplates.find((template) => template.id === report.templateId) ?? reportTemplates[0], report);
   }
 
   function toggleFavourite(id: string) {
