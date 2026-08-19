@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(94, 234, 176, 0.7);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #a8f0d6;
+  color: #132a3a;
+}
+
+/* ---- Report builder form controls ---- */
+.input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e5e5e7;
+  background: #fff;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #1d1d1f;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus {
+  outline: none;
+  border-color: #5eeab0;
+  box-shadow: 0 0 0 3px rgba(94, 234, 176, 0.25);
+}
+.input::placeholder { color: #a1a1a6; }
+
+.filter-select, .filter-input {
+  border-radius: 10px;
+  border: 1px solid #ececec;
+  background: #f7f8f9;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: #132a3a;
+}
+.filter-select:focus, .filter-input:focus {
+  outline: none;
+  border-color: #5eeab0;
+}
+.filter-input { background: #fff; }
+
+/* ---- Modal entrance ---- */
+@keyframes rb-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rb-slide-up {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.rb-overlay { animation: rb-fade-in 0.18s ease-out; }
+.rb-panel { animation: rb-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1); }

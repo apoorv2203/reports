@@ -1,0 +1,131 @@
+import { useMemo, useState } from 'react';
+import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, Check, ChevronDown, FileText, LayoutDashboard, MessageSquare, MoreHorizontal, Pencil, Plus, Save, Send, Share2, Sparkles, Table2, X } from 'lucide-react';
+import type { ReportTemplate, TemplateSection } from '@/data/reportTemplates';
+
+export function ReportWorkspace({ template, onBack }: { template: ReportTemplate; onBack: () => void }) {
+  const [sections, setSections] = useState<TemplateSection[]>(template.sections);
+  const [title, setTitle] = useState(template.sections[0]?.title ?? 'Untitled report');
+  const [prompt, setPrompt] = useState('');
+  const [messages, setMessages] = useState<{ prompt: string; result: string }[]>([]);
+  const [saved, setSaved] = useState(false);
+
+  const emptySections = useMemo(() => sections.filter((s) => s.kind === 'empty'), [sections]);
+
+  function applyPrompt(value: string) {
+    const text = value.trim();
+    if (!text) return;
+    const titleMatch = text.match(/(?:title|section 1)[^\"]*[\"]([^\"]+)[\"]/i);
+    const chartMatch = text.match(/chart[^\d]*(\d+)/i);
+    const tableMatch = text.match(/table[^\d]*(\d+)/i);
+    let result = 'I added that to the report shell.';
+    let nextSections = [...sections];
+    if (titleMatch?.[1]) {
+      setTitle(titleMatch[1]);
+      nextSections = nextSections.map((section, index) => index === 0 ? { ...section, title: titleMatch[1]! } : section);
+      result = 'Section 1 title updated';
+    } else if (chartMatch?.[1]) {
+      const target = Math.max(1, Number(chartMatch[1]) - 1);
+      nextSections = nextSections.map((section, index) => index === target ? { ...section, kind: 'chart', body: 'Approval rate by product' } : section);
+      result = `Chart added to section ${chartMatch[1]}`;
+    } else if (tableMatch?.[1]) {
+      const target = Math.max(1, Number(tableMatch[1]) - 1);
+      nextSections = nextSections.map((section, index) => index === target ? { ...section, kind: 'table', body: 'Product performance detail' } : section);
+      result = `Table added to section ${tableMatch[1]}`;
+    } else if (/kpi|metric|number/i.test(text)) {
+      const target = nextSections.findIndex((section, index) => index > 0 && section.kind === 'empty');
+      if (target >= 0) nextSections[target] = { ...nextSections[target], kind: 'kpi', body: 'Outstanding balance · Loans · Year-over-year' };
+      result = target >= 0 ? `KPI block added to section ${target + 1}` : 'KPI block added';
+    } else if (/add|create|include/i.test(text) && emptySections.length > 0) {
+      const target = nextSections.findIndex((section) => section.kind === 'empty');
+      nextSections[target] = { ...nextSections[target], kind: 'table', body: 'New report detail' };
+      result = `New content added to section ${target + 1}`;
+    }
+    setSections(nextSections);
+    setMessages((current) => [...current, { prompt: text, result }]);
+    setPrompt('');
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#e5e5e7] bg-navy-900 px-5 text-white">
+        <div className="flex items-center gap-3">
+          <button onClick={onBack} className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><ArrowLeft className="h-4 w-4" /></button>
+          <span className="h-5 w-px bg-white/20" />
+          <span className="font-display text-[16px] font-bold">ReportIQ</span>
+          <span className="text-white/40">/</span>
+          <span className="text-[13px] text-white/65">My reports</span>
+          <span className="text-white/40">/</span>
+          <span className="text-[13px] font-semibold text-white">{title}</span>
+          <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800">Draft</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setSaved(true)} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10">{saved ? <Check className="h-3.5 w-3.5 text-mint-300" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
+          <button className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[12px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-3.5 w-3.5" /> Publish</button>
+          <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
+        </div>
+      </header>
+
+      <div className="grid min-h-0 flex-1 grid-cols-[280px_minmax(420px,1fr)_230px]">
+        <aside className="flex min-h-0 flex-col border-r border-[#e5e5e7] bg-[#f5f5f7] p-4">
+          <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>
+          <div className="mt-4 flex-1 overflow-y-auto">
+            {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
+            <div className="flex flex-col gap-3">
+              {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-[#1d1d1f] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-[#174f91]"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
+            </div>
+            <div className="mt-6 border-t border-[#e5e5e7] pt-4">
+              <div className="text-[12px] font-bold text-ink-500">Try next</div>
+              <div className="mt-2 flex flex-col gap-2">
+                {['Add a KPI block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-[12px] border border-[#d2d2d7] bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 rounded-[14px] border border-[#d2d2d7] bg-white p-2">
+            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
+            <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
+          </div>
+        </aside>
+
+        <main className="min-h-0 overflow-y-auto bg-white px-8 py-7">
+          <div className="mx-auto max-w-2xl">
+            <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">Report preview</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
+            <div className="flex flex-col gap-4">{sections.map((section, index) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} number={index + 1} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
+            <button onClick={() => setSections((current) => [...current, { id: `${Date.now()}`, title: 'Empty section', kind: 'empty' }])} className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-[14px] border border-dashed border-[#d2d2d7] py-3 text-[12px] font-semibold text-ink-500 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700"><Plus className="h-4 w-4" /> Add section</button>
+          </div>
+        </main>
+
+        <aside className="flex min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e5e5e7] bg-[#f5f5f7] p-4">
+          <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
+          <ActionButton icon={<ArrowDownToLine className="h-4 w-4" />} label="Export" />
+          <ActionButton icon={<Share2 className="h-4 w-4" />} label="Share" />
+          <ActionButton icon={<LayoutDashboard className="h-4 w-4" />} label="Schedule" />
+          <ActionButton icon={<FileText className="h-4 w-4" />} label="Save to favourites" />
+          <button className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-[12px] bg-mint-400 px-3 py-2.5 text-[13px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-4 w-4" /> Publish to catalogue</button>
+          <div className="my-2 h-px bg-[#e5e5e7]" />
+          <div className="text-[12px] font-bold uppercase tracking-wide text-ink-500">Layout</div>
+          <div className="rounded-[14px] border border-[#e5e5e7] bg-white p-3"><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+function ReportSectionCard({ section, number, onEdit }: { section: TemplateSection; number: number; onEdit: (value: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const Icon = section.kind === 'chart' ? BarChart3 : section.kind === 'table' ? Table2 : section.kind === 'kpi' ? Sparkles : FileText;
+  return <section className={`relative rounded-[16px] border p-5 ${section.kind === 'empty' ? 'border-dashed border-[#d2d2d7] bg-[#fafafa]' : 'border-[#e5e5e7] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
+    <span className="absolute -left-3 -top-3 flex h-7 w-7 items-center justify-center rounded-full bg-mint-400 text-[12px] font-bold text-navy-900">{number}</span>
+    <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-ink-500"><Icon className="h-4 w-4 text-mint-600" /> {section.kind === 'empty' ? 'Empty section' : section.kind}</div><button onClick={() => setEditing(!editing)} className="text-ink-300 hover:text-ink-900"><Pencil className="h-3.5 w-3.5" /></button></div>
+    {editing ? <input autoFocus defaultValue={section.title} onBlur={(e) => { onEdit(e.target.value); setEditing(false); }} onKeyDown={(e) => { if (e.key === 'Enter') { onEdit(e.currentTarget.value); setEditing(false); } }} className="input mt-3" /> : <h3 className="mt-3 font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">{section.title}</h3>}
+    {section.kind === 'title' && <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This summary gives your team a clear view of what changed and where attention is needed.</p>}
+    {section.kind === 'kpi' && <div className="mt-4 grid grid-cols-3 gap-3"><Metric label="Outstanding" value="97.9 Cr" /><Metric label="Loans" value="1,284" /><Metric label="YoY" value="+7.2%" danger /></div>}
+    {section.kind === 'chart' && <MiniChart />}
+    {section.kind === 'table' && <MiniTable />}
+    {section.kind === 'empty' && <div className="mt-5 flex min-h-[72px] items-center justify-center text-center text-[13px] text-ink-500">Empty — try “add a chart in section {number}”</div>}
+  </section>;
+}
+
+function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) { return <div className="rounded-[12px] bg-[#f5f5f7] px-3 py-2.5"><div className="text-[11px] text-ink-500">{label}</div><div className={`mt-1 font-display text-[18px] font-bold ${danger ? 'text-red-600' : 'text-ink-900'}`}>{value}</div></div>; }
+function MiniChart() { return <div className="mt-4 flex h-32 items-end justify-around gap-4 rounded-[12px] bg-[#f5f5f7] px-6 pb-3 pt-4">{[78, 54, 66, 34, 48, 88].map((height, index) => <div key={index} className="flex h-full flex-1 items-end"><div className={`w-full rounded-t-md ${index < 2 ? 'bg-red-400/80' : 'bg-mint-400'}`} style={{ height: `${height}%` }} /></div>)}</div>; }
+function MiniTable() { return <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e5e5e7]"><div className="grid grid-cols-3 bg-navy-900 px-3 py-2 text-[11px] font-bold text-white"><span>Segment</span><span>Accounts</span><span className="text-right">Balance</span></div>{['Retail', 'Corporate', 'SME'].map((row, index) => <div key={row} className="grid grid-cols-3 border-t border-[#e5e5e7] px-3 py-2 text-[12px] text-ink-700"><span>{row}</span><span>{[782, 341, 161][index]}</span><span className="text-right font-semibold">{['43.2 Cr', '31.8 Cr', '22.9 Cr'][index]}</span></div>)}</div>; }
+function ActionButton({ icon, label }: { icon: React.ReactNode; label: string }) { return <button className="flex items-center gap-2 rounded-[12px] border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:-translate-y-0.5 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">{icon}{label}<ChevronDown className="ml-auto h-4 w-4 text-ink-300" /></button>; }
