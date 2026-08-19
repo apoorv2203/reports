@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, FileText, LayoutDashboard, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, BarChart3, BookOpen, FileText, LayoutDashboard, Search, Sparkles } from 'lucide-react';
 import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
 
 const kindIcon = {
@@ -12,9 +12,11 @@ const kindIcon = {
 export function ReportTemplatePicker({
   onSelect,
   onClose,
+  onBrowseReports,
 }: {
   onSelect: (template: ReportTemplate) => void;
   onClose: () => void;
+  onBrowseReports: () => void;
 }) {
   return (
     <div className="rb-overlay fixed inset-0 z-50 overflow-y-auto bg-[#f5f5f7]" role="dialog" aria-modal="true">
@@ -24,9 +26,14 @@ export function ReportTemplatePicker({
           <span className="h-5 w-px bg-[#d2d2d7]" />
           <span className="text-[13px] text-ink-500">Choose a starting point</span>
         </div>
-        <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-[#f5f5f7] hover:text-ink-900">
-          Cancel
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={onBrowseReports} className="inline-flex items-center gap-2 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-bold text-ink-700 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
+            <BookOpen className="h-4 w-4" /> Browse reports
+          </button>
+          <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-[#f5f5f7] hover:text-ink-900">
+            Cancel
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-8 py-10">

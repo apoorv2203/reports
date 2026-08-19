@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, Check, ChevronDown, FileText, LayoutDashboard, MessageSquare, MoreHorizontal, Pencil, Plus, Save, Send, Share2, Sparkles, Table2, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, LayoutDashboard, MessageSquare, MoreHorizontal, Pencil, Plus, Save, Send, Share2, Sparkles, Table2, X } from 'lucide-react';
 import type { ReportTemplate, TemplateSection } from '@/data/reportTemplates';
 
-export function ReportWorkspace({ template, onBack }: { template: ReportTemplate; onBack: () => void }) {
+export function ReportWorkspace({ template, onBack, onBrowseReports }: { template: ReportTemplate; onBack: () => void; onBrowseReports: () => void }) {
   const [sections, setSections] = useState<TemplateSection[]>(template.sections);
   const [title, setTitle] = useState(template.sections[0]?.title ?? 'Untitled report');
   const [prompt, setPrompt] = useState('');
@@ -59,6 +59,7 @@ export function ReportWorkspace({ template, onBack }: { template: ReportTemplate
           <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800">Draft</span>
         </div>
         <div className="flex items-center gap-2">
+          <button onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10 hover:text-white"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
           <button onClick={() => setSaved(true)} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10">{saved ? <Check className="h-3.5 w-3.5 text-mint-300" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
           <button className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[12px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-3.5 w-3.5" /> Publish</button>
           <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
@@ -81,7 +82,7 @@ export function ReportWorkspace({ template, onBack }: { template: ReportTemplate
             </div>
           </div>
           <div className="mt-3 rounded-[14px] border border-[#d2d2d7] bg-white p-2">
-            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
+            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
             <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
           </div>
         </aside>

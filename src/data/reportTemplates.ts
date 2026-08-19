@@ -80,6 +80,28 @@ export const catalogueReports = [
   { id: 'lending-pipeline', title: 'Lending pipeline', category: 'Performance', description: 'A live view of applications, approvals, and outstanding lending decisions.', cadence: 'Live', format: 'HTML', owner: 'Lending team' },
 ];
 
+export type LibraryReport = {
+  id: string;
+  title: string;
+  category: 'Sales' | 'Delinquency' | 'Compliance' | 'Operations';
+  description: string;
+  cadence: string;
+  publisher: string;
+  ownedByYou: boolean;
+  published: boolean;
+  favourite: boolean;
+  templateId: TemplateKind;
+};
+
+export const libraryReports: LibraryReport[] = [
+  { id: 'delinquency-branch', title: 'Monthly delinquency by branch', category: 'Delinquency', description: 'Delinquent loans by branch and risk level, compared year over year.', cadence: 'Runs monthly', publisher: 'A. Rao', ownedByYou: false, published: true, favourite: false, templateId: 'branch' },
+  { id: 'approval-leaderboard', title: 'Product approval leaderboard', category: 'Sales', description: 'Top products by approval rate across all regions.', cadence: 'On demand', publisher: 'G. Desai', ownedByYou: true, published: true, favourite: true, templateId: 'portfolio' },
+  { id: 'quarterly-audit', title: 'Quarterly audit summary', category: 'Compliance', description: 'Corporate segment audit trail, with written-off accounts excluded.', cadence: 'Runs quarterly', publisher: 'S. Iyer', ownedByYou: false, published: true, favourite: false, templateId: 'operations' },
+  { id: 'branch-pipeline', title: 'Branch lending pipeline', category: 'Sales', description: 'Applications, approvals, and pending lending decisions grouped by branch.', cadence: 'Updates daily', publisher: 'N. Kapoor', ownedByYou: true, published: false, favourite: false, templateId: 'branch' },
+  { id: 'exceptions-register', title: 'Operational exceptions register', category: 'Operations', description: 'Open exceptions by owner, priority, and service-level status.', cadence: 'Live', publisher: 'Operations team', ownedByYou: false, published: true, favourite: true, templateId: 'operations' },
+  { id: 'risk-movement', title: 'Portfolio risk movement', category: 'Delinquency', description: 'Month-over-month migration across risk bands and lending segments.', cadence: 'Runs monthly', publisher: 'Credit risk', ownedByYou: false, published: true, favourite: false, templateId: 'portfolio' },
+];
+
 export const myReports = [
   { id: 'approval-rate', title: 'Top products by approval rate', description: 'Monthly product approval performance with anomaly flags.', updated: 'Updated today · 09:42', status: 'Published', type: 'Table' },
   { id: 'branch-q2', title: 'Q2 branch review', description: 'Branch KPIs and performance movement across the network.', updated: 'Updated yesterday · 16:10', status: 'Draft', type: 'Dashboard' },
