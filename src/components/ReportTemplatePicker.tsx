@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Search } from 'lucide-react';
 import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
 
 export function ReportTemplatePicker({
@@ -51,14 +51,6 @@ export function ReportTemplatePicker({
           ))}
         </div>
 
-        <div className="mt-9 flex items-center gap-3 rounded-[16px] border border-mint-200 bg-mint-50 px-5 py-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-mint-400 text-navy-900"><Sparkles className="h-4 w-4" /></div>
-          <div className="flex-1">
-            <div className="text-[13px] font-bold text-ink-900">Not sure where to start?</div>
-            <div className="text-[12px] text-ink-500">Start from blank and describe the report you need in the conversation.</div>
-          </div>
-          <button onClick={() => onSelect(reportTemplates.find((t) => t.id === 'blank')!)} className="text-[12px] font-bold text-mint-700 hover:text-mint-600">Start blank <ArrowRight className="ml-1 inline h-3.5 w-3.5" /></button>
-        </div>
       </main>
     </div>
   );
