@@ -80,6 +80,72 @@ export const catalogueReports = [
   { id: 'lending-pipeline', title: 'Lending pipeline', category: 'Performance', description: 'A live view of applications, approvals, and outstanding lending decisions.', cadence: 'Live', format: 'HTML', owner: 'Lending team' },
 ];
 
+export type ParameterInputType = 'date' | 'date-range' | 'single-select' | 'multi-select' | 'number' | 'text';
+
+export type ReportParameter = {
+  id: string;
+  table: string;
+  column: string;
+  label: string;
+  type: ParameterInputType;
+  required: boolean;
+  defaultValue?: string | string[];
+  options?: string[];
+};
+
+export type SchemaTable = {
+  name: string;
+  label: string;
+  columns: Array<{ name: string; label: string; suggestedType: ParameterInputType; options?: string[] }>;
+};
+
+export const mockSchema: SchemaTable[] = [
+  { name: 'loans', label: 'Loans', columns: [
+    { name: 'disbursed_at', label: 'Disbursement period', suggestedType: 'date-range' },
+    { name: 'risk_level', label: 'Risk level', suggestedType: 'multi-select', options: ['Low', 'Medium', 'High', 'Critical'] },
+    { name: 'product', label: 'Loan product', suggestedType: 'single-select', options: ['Home loan', 'Personal loan', 'Business loan', 'Vehicle loan'] },
+    { name: 'minimum_balance', label: 'Minimum outstanding balance', suggestedType: 'number' },
+  ]},
+  { name: 'branches', label: 'Branches', columns: [
+    { name: 'region', label: 'Region', suggestedType: 'multi-select', options: ['North', 'South', 'East', 'West', 'Central'] },
+    { name: 'branch_name', label: 'Branch', suggestedType: 'single-select', options: ['Andheri', 'Bandra', 'Indiranagar', 'Salt Lake', 'Connaught Place'] },
+  ]},
+  { name: 'audits', label: 'Audit records', columns: [
+    { name: 'audit_date', label: 'Audit date', suggestedType: 'date-range' },
+    { name: 'status', label: 'Audit status', suggestedType: 'single-select', options: ['Open', 'In review', 'Resolved'] },
+    { name: 'owner', label: 'Owner contains', suggestedType: 'text' },
+  ]},
+];
+
+export const defaultReportParameters: ReportParameter[] = [
+  { id: 'period', table: 'loans', column: 'disbursed_at', label: 'Reporting period', type: 'date-range', required: true, defaultValue: ['2026-07-01', '2026-07-31'] },
+  { id: 'region', table: 'branches', column: 'region', label: 'Regions', type: 'multi-select', required: false, defaultValue: ['North', 'West'], options: ['North', 'South', 'East', 'West', 'Central'] },
+  { id: 'risk', table: 'loans', column: 'risk_level', label: 'Risk level', type: 'single-select', required: false, defaultValue: 'High', options: ['Low', 'Medium', 'High', 'Critical'] },
+];
+
+export type LibraryReport = {
+  id: string;
+  title: string;
+  category: 'Sales' | 'Delinquency' | 'Compliance' | 'Operations';
+  description: string;
+  cadence: string;
+  publisher: string;
+  ownedByYou: boolean;
+  published: boolean;
+  favourite: boolean;
+  templateId: TemplateKind;
+  parameters: ReportParameter[];
+};
+
+export const libraryReports: LibraryReport[] = [
+  { id: 'delinquency-branch', title: 'Monthly delinquency by branch', category: 'Delinquency', description: 'Delinquent loans by branch and risk level, compared year over year.', cadence: 'Runs monthly', publisher: 'A. Rao', ownedByYou: false, published: true, favourite: false, templateId: 'branch', parameters: defaultReportParameters },
+  { id: 'approval-leaderboard', title: 'Product approval leaderboard', category: 'Sales', description: 'Top products by approval rate across all regions.', cadence: 'On demand', publisher: 'G. Desai', ownedByYou: true, published: true, favourite: true, templateId: 'portfolio', parameters: defaultReportParameters },
+  { id: 'quarterly-audit', title: 'Quarterly audit summary', category: 'Compliance', description: 'Corporate segment audit trail, with written-off accounts excluded.', cadence: 'Runs quarterly', publisher: 'S. Iyer', ownedByYou: false, published: true, favourite: false, templateId: 'operations', parameters: defaultReportParameters },
+  { id: 'branch-pipeline', title: 'Branch lending pipeline', category: 'Sales', description: 'Applications, approvals, and pending lending decisions grouped by branch.', cadence: 'Updates daily', publisher: 'N. Kapoor', ownedByYou: true, published: false, favourite: false, templateId: 'branch', parameters: defaultReportParameters },
+  { id: 'exceptions-register', title: 'Operational exceptions register', category: 'Operations', description: 'Open exceptions by owner, priority, and service-level status.', cadence: 'Live', publisher: 'Operations team', ownedByYou: false, published: true, favourite: true, templateId: 'operations', parameters: defaultReportParameters },
+  { id: 'risk-movement', title: 'Portfolio risk movement', category: 'Delinquency', description: 'Month-over-month migration across risk bands and lending segments.', cadence: 'Runs monthly', publisher: 'Credit risk', ownedByYou: false, published: true, favourite: false, templateId: 'portfolio', parameters: defaultReportParameters },
+];
+
 export const myReports = [
   { id: 'approval-rate', title: 'Top products by approval rate', description: 'Monthly product approval performance with anomaly flags.', updated: 'Updated today · 09:42', status: 'Published', type: 'Table' },
   { id: 'branch-q2', title: 'Q2 branch review', description: 'Branch KPIs and performance movement across the network.', updated: 'Updated yesterday · 16:10', status: 'Draft', type: 'Dashboard' },
