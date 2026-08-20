@@ -1,13 +1,5 @@
-import { ArrowRight, BarChart3, BookOpen, FileText, LayoutDashboard, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Search, Sparkles } from 'lucide-react';
 import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
-
-const kindIcon = {
-  title: FileText,
-  kpi: Sparkles,
-  chart: BarChart3,
-  table: FileText,
-  empty: LayoutDashboard,
-};
 
 export function ReportTemplatePicker({
   onSelect,
@@ -74,22 +66,15 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-[16px] border border-[#e5e5e7] bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
-      <div className="relative h-40 border-b border-[#e5e5e7] bg-[#f5f5f7] p-3">
-        <div className="flex h-full flex-col gap-2 rounded-[10px] border border-[#e5e5e7] bg-white p-2.5 shadow-soft">
-          <div className="h-5 w-2/3 rounded bg-[#1d1d1f]" />
-          {template.sections.slice(1, 4).map((section, index) => {
-            const Icon = kindIcon[section.kind];
-            return (
-              <div key={section.id} className="flex flex-1 items-center gap-2 rounded-md border border-dashed border-[#d2d2d7] px-2">
-                <Icon className={`h-3 w-3 ${section.kind === 'empty' ? 'text-ink-300' : 'text-mint-600'}`} />
-                <span className="truncate text-[8px] font-semibold text-ink-500">{section.title}</span>
-                {index === 0 && <span className="ml-auto flex gap-0.5"><i className="h-3 w-1 rounded-sm bg-mint-400" /><i className="h-4 w-1 rounded-sm bg-mint-500" /><i className="h-2 w-1 rounded-sm bg-mint-300" /></span>}
-              </div>
-            );
-          })}
-        </div>
-        <span className="absolute left-5 top-5 rounded-full bg-[#d9eaff] px-2 py-1 text-[10px] font-bold text-[#174f91]">{template.category}</span>
+    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-[#e5e5e7] bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-[#e5e5e7] bg-[#f5f5f7]">
+        <img
+          src={template.preview || "/placeholder.svg"}
+          alt={`${template.name} template preview`}
+          className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]"
+          loading="lazy"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900 shadow-soft backdrop-blur-sm">{template.category}</span>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-ink-900">{template.name}</h3>

@@ -12,6 +12,7 @@ export type ReportTemplate = {
   name: string;
   category: string;
   description: string;
+  preview: string;
   updated: string;
   sections: TemplateSection[];
 };
@@ -22,6 +23,7 @@ export const reportTemplates: ReportTemplate[] = [
     name: 'Branch summary',
     category: 'Most used',
     description: 'A clean branch performance review with KPIs, trends, and room for a detailed table.',
+    preview: '/templates/branch-summary.png',
     updated: 'Used 28 times this month',
     sections: [
       { id: '1', title: 'Q2 branch review', kind: 'title' },
@@ -35,6 +37,7 @@ export const reportTemplates: ReportTemplate[] = [
     name: 'Portfolio overview',
     category: 'Most used',
     description: 'Summarise portfolio health, outstanding balances, and year-over-year movement.',
+    preview: '/templates/portfolio-overview.png',
     updated: 'Used 19 times this month',
     sections: [
       { id: '1', title: 'Portfolio overview', kind: 'title' },
@@ -48,6 +51,7 @@ export const reportTemplates: ReportTemplate[] = [
     name: 'Operations pulse',
     category: 'Team favourite',
     description: 'Track operational volumes, service levels, and the work that needs attention.',
+    preview: '/templates/operations-pulse.png',
     updated: 'Used 12 times this month',
     sections: [
       { id: '1', title: 'Operations pulse', kind: 'title' },
@@ -61,6 +65,7 @@ export const reportTemplates: ReportTemplate[] = [
     name: 'Start from blank',
     category: 'Custom',
     description: 'A blank four-section shell. Tell ReportIQ what to add in each section.',
+    preview: '/templates/blank-shell.png',
     updated: 'Build something from scratch',
     sections: [
       { id: '1', title: 'Untitled section', kind: 'title' },
