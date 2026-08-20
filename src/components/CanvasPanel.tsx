@@ -6,7 +6,6 @@ import {
   ArrowUp,
   ArrowUpDown,
   ChevronDown,
-  ChevronUp,
   Database,
   FileText,
   Layers3,
@@ -50,7 +49,7 @@ const resultDetails = [
   },
 ];
 
-export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) {
+export function CanvasPanel() {
   const [tab, setTab] = useState<'table' | 'chart'>('table');
   const [contextView, setContextView] = useState<'summary' | 'glance'>('glance');
   const [expandedDetail, setExpandedDetail] = useState<string | null>(null);
@@ -79,40 +78,7 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
   return (
     <section className="flex h-full flex-col overflow-hidden bg-white">
       <div className="flex flex-1 flex-col overflow-hidden p-6">
-        <div className="flex items-center justify-between">
-          <div className="inline-flex rounded-[12px] border border-[#e5e5e7] bg-[#f5f5f7] p-1">
-            <button
-              onClick={() => setTab('table')}
-              className={`rounded-[9px] px-3.5 py-1.5 text-[13px] font-semibold transition ${
-                tab === 'table'
-                  ? 'bg-[#1d1d1f] text-white shadow-soft'
-                  : 'text-ink-500 hover:text-ink-900'
-              }`}
-            >
-              Table
-            </button>
-            <button
-              onClick={() => setTab('chart')}
-              className={`rounded-[9px] px-3.5 py-1.5 text-[13px] font-semibold transition ${
-                tab === 'chart'
-                  ? 'bg-[#1d1d1f] text-white shadow-soft'
-                  : 'text-ink-500 hover:text-ink-900'
-              }`}
-            >
-              Chart
-            </button>
-          </div>
-
-          <button
-            onClick={onBuildAReport}
-            className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-4 py-2 text-[13px] font-semibold text-navy-900 transition hover:-translate-y-0.5 hover:bg-mint-300 hover:shadow-soft"
-          >
-            Build a report
-            <ChevronUp className="h-3.5 w-3.5 rotate-90" />
-          </button>
-        </div>
-
-        <section className="mt-5 overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
+        <section className="overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
           <div className="flex flex-col gap-3 border-b border-mint-100 bg-mint-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900"><FileText className="h-4 w-4" /></span>
@@ -182,7 +148,33 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
           )}
         </section>
 
-        <div className="mt-4 flex-1 overflow-auto rounded-2xl border border-surface-200 shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
+        <div className="mt-4 flex items-center justify-between">
+          <h2 className="text-[13px] font-semibold text-ink-700">Results</h2>
+          <div className="inline-flex rounded-lg bg-surface-100 p-0.5">
+            <button
+              onClick={() => setTab('table')}
+              className={`rounded-md px-3 py-1 text-[12px] font-semibold transition ${
+                tab === 'table'
+                  ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.08)]'
+                  : 'text-ink-500 hover:text-navy-900'
+              }`}
+            >
+              Table
+            </button>
+            <button
+              onClick={() => setTab('chart')}
+              className={`rounded-md px-3 py-1 text-[12px] font-semibold transition ${
+                tab === 'chart'
+                  ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.08)]'
+                  : 'text-ink-500 hover:text-navy-900'
+              }`}
+            >
+              Chart
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-2.5 flex-1 overflow-auto rounded-2xl border border-surface-200 bg-white shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
           {tab === 'table' ? (
             <ReportTable rows={sortedRows} sort={sort} onSort={handleSort} />
           ) : (
@@ -206,7 +198,7 @@ function ReportTable({
   return (
     <table className="w-full border-collapse text-[13px]">
       <thead>
-        <tr className="bg-navy-900 text-white">
+        <tr className="border-b border-surface-200 bg-surface-50">
           <SortableHeader
             label="Product"
             sortKey="product"
@@ -224,17 +216,15 @@ function ReportTable({
         </tr>
       </thead>
       <tbody>
-        {rows.map((row, index) => (
+        {rows.map((row) => (
           <tr
             key={row.product}
-            className={`transition-colors hover:bg-mint-50 ${
-              index % 2 === 1 ? 'bg-surface-50' : 'bg-white'
-            }`}
+            className="border-b border-surface-100 transition-colors last:border-0 hover:bg-surface-50"
           >
-            <td className="px-4 py-3 font-medium text-ink-900">{row.product}</td>
-            <td className="px-4 py-3 text-right font-semibold">
+            <td className="px-5 py-3.5 font-semibold text-navy-900">{row.product}</td>
+            <td className="px-5 py-3.5 text-right">
               <span
-                className={`inline-flex items-center justify-end gap-1.5 ${
+                className={`inline-flex items-center justify-end gap-1.5 font-semibold tabular-nums ${
                   row.flagged ? 'text-red-600' : 'text-ink-900'
                 }`}
               >
@@ -265,16 +255,16 @@ function SortableHeader({
   const active = sort.key === sortKey;
   const Icon = active ? (sort.direction === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown;
   return (
-    <th className={`px-4 py-2.5 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+    <th className={`px-5 py-3 ${align === 'right' ? 'text-right' : 'text-left'}`}>
       <button
         onClick={() => onSort(sortKey)}
-        className={`inline-flex items-center gap-1.5 font-semibold transition hover:text-mint-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint-300 ${
-          align === 'right' ? 'flex-row-reverse' : ''
-        }`}
+        className={`inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint-300 ${
+          active ? 'text-navy-900' : 'text-ink-500 hover:text-navy-900'
+        } ${align === 'right' ? 'flex-row-reverse' : ''}`}
         aria-label={`Sort by ${label}`}
       >
         {label}
-        <Icon className={`h-3.5 w-3.5 ${active ? 'text-mint-300' : 'text-white/55'}`} />
+        <Icon className={`h-3.5 w-3.5 ${active ? 'text-mint-600' : 'text-ink-300'}`} />
       </button>
     </th>
   );

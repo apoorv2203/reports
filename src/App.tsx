@@ -24,9 +24,9 @@ function App() {
           <div className="hidden min-h-0 border-r border-surface-200 sm:block">
             <ChatPanel />
           </div>
-          <CanvasPanel onBuildAReport={() => setView({ kind: 'builder' })} />
+          <CanvasPanel />
           <div className="hidden min-h-0 border-l border-surface-200 xl:block">
-            <ActionsPanel />
+            <ActionsPanel onConvertToReport={() => setView({ kind: 'builder' })} />
           </div>
         </div>
       )}

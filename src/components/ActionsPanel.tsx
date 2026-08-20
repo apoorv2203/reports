@@ -6,9 +6,10 @@ import {
   Heart,
   ChevronDown,
   ShieldCheck,
+  FileOutput,
 } from 'lucide-react';
 
-export function ActionsPanel() {
+export function ActionsPanel({ onConvertToReport }: { onConvertToReport: () => void }) {
   const [exportOpen, setExportOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -18,6 +19,14 @@ export function ActionsPanel() {
         <h2 className="font-display text-sm font-bold text-navy-900">Actions</h2>
         <p className="mt-1 text-[11px] leading-4 text-ink-500">Export, share or save this result</p>
       </div>
+
+      <button
+        onClick={onConvertToReport}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black"
+      >
+        <FileOutput className="h-4 w-4" />
+        Convert to report
+      </button>
 
       <div className="flex flex-col gap-2">
         {/* Export dropdown */}
