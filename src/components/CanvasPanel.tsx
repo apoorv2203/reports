@@ -4,17 +4,54 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
+  ChevronDown,
   ChevronUp,
+  Database,
   FileText,
+  Layers3,
+  ListFilter,
+  TableProperties,
 } from 'lucide-react';
 import { reportRows, type ProductRow } from '@/data/reportData';
 
 type SortKey = 'product' | 'rate';
 type SortDirection = 'asc' | 'desc';
 
+const resultDetails = [
+  {
+    label: 'Sources',
+    summary: 'Lending production data joined with product reference data',
+    count: '2 tables',
+    icon: Database,
+    items: ['Lending applications', 'Product catalogue'],
+  },
+  {
+    label: 'Columns',
+    summary: 'Product name, application outcome and calculated approval rate',
+    count: '3 of 18',
+    icon: TableProperties,
+    items: ['Product', 'Application outcome', 'Approval rate'],
+  },
+  {
+    label: 'Filters',
+    summary: 'Applications received during August 2026',
+    count: '1 rule',
+    icon: ListFilter,
+    items: ['Application date: 1–31 August 2026'],
+  },
+  {
+    label: 'Grouped by',
+    summary: 'Product, ranked by approval rate from highest to lowest',
+    count: '1 level',
+    icon: Layers3,
+    items: ['Product', 'Top 5 results', 'Highest approval rate first'],
+  },
+];
+
 export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) {
   const [tab, setTab] = useState<'table' | 'chart'>('table');
   const [contextView, setContextView] = useState<'summary' | 'glance'>('summary');
+  const [expandedDetail, setExpandedDetail] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'rate',
     direction: 'desc',
@@ -91,19 +128,51 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
             </div>
           </div>
           {contextView === 'summary' ? (
-            <div className="px-4 py-4">
-              <p className="max-w-3xl text-[13px] leading-6 text-ink-700">
-                This result ranks the five best-performing products by approval rate for August 2026. It uses lending production data, calculates the share of approved applications for each product, and orders the results from highest to lowest so you can quickly identify which products are converting most successfully.
-              </p>
-              <p className="mt-2 text-[12px] leading-5 text-ink-500">
-                Each row represents one product. The approval rate is the number of approved applications divided by all applications received for that product during the selected period.
-              </p>
+            <div className="grid gap-4 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+              <div>
+                <p className="max-w-3xl text-[13px] leading-6 text-ink-700">
+                  This result ranks the five best-performing products by approval rate for August 2026. It combines lending application records with the product catalogue, then calculates the share of approved applications for every product.
+                </p>
+                <p className="mt-2 text-[12px] leading-5 text-ink-500">
+                  Each row represents one product. Results are ordered from the highest approval rate to the lowest, making it easy to compare conversion performance and identify the strongest products.
+                </p>
+              </div>
+              <div className="rounded-xl border border-mint-200 bg-mint-50 px-3.5 py-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-mint-700">How to read it</p>
+                <p className="mt-1.5 text-[12px] font-medium leading-5 text-navy-900">Approval rate is approved applications divided by all applications received for that product.</p>
+              </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-2.5 px-4 py-3 text-[12px] sm:flex-row sm:flex-wrap sm:gap-x-6">
-              <ExplRow label="Based on" chips={['Lending production data', 'August 2026']} />
-              <ExplRow label="Showing" chips={['Product', 'Approval rate']} />
-              <ExplRow label="Ordered by" chips={['Highest approval rate first', 'Top 5']} />
+            <div className="grid divide-y divide-surface-200 md:grid-cols-2 md:divide-x md:divide-y-0">
+              {resultDetails.map((detail, index) => {
+                const Icon = detail.icon;
+                const isExpanded = expandedDetail === detail.label;
+                return (
+                  <div key={detail.label} className={index > 1 ? 'border-t border-surface-200 md:border-t' : index === 1 ? 'md:border-l' : ''}>
+                    <button
+                      type="button"
+                      onClick={() => setExpandedDetail(isExpanded ? null : detail.label)}
+                      aria-expanded={isExpanded}
+                      className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-mint-50/60"
+                    >
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-mint-100 text-mint-700"><Icon className="h-4 w-4" /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="text-[12px] font-semibold text-ink-900">{detail.label}</span>
+                          <span className="shrink-0 text-[10px] font-semibold text-ink-300">{detail.count}</span>
+                        </span>
+                        <span className="mt-1 block text-[11px] leading-4 text-ink-500">{detail.summary}</span>
+                      </span>
+                      <ChevronDown className={`mt-1 h-3.5 w-3.5 shrink-0 text-ink-300 transition ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isExpanded && (
+                      <div className="flex flex-wrap gap-1.5 bg-surface-50 px-4 pb-3.5 pt-2">
+                        {detail.items.map((item) => <span key={item} className="rounded-full border border-surface-200 bg-white px-2.5 py-1 text-[11px] font-medium text-navy-900">{item}</span>)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </section>
@@ -117,22 +186,6 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
         </div>
       </div>
     </section>
-  );
-}
-
-function ExplRow({ label, chips }: { label: string; chips: string[] }) {
-  return (
-    <div className="flex flex-wrap items-center gap-1.5">
-      <span className="mr-0.5 shrink-0 text-[11px] font-semibold text-ink-500">{label}</span>
-      {chips.map((chip) => (
-        <span
-          key={chip}
-          className="rounded-full border border-surface-200 bg-surface-50 px-2.5 py-1 text-[11px] font-medium text-navy-900"
-        >
-          {chip}
-        </span>
-      ))}
-    </div>
   );
 }
 
