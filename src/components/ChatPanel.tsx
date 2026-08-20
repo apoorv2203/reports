@@ -6,7 +6,6 @@ import {
   Layers3,
   ListFilter,
   MessageCircle,
-  Pencil,
   Send,
   TableProperties,
 } from 'lucide-react';
@@ -42,19 +41,12 @@ const runDetails = [
   },
 ];
 
-type ComposerMode = 'run' | 'change' | null;
 type ContextView = 'summary' | 'glance';
 
 export function ChatPanel() {
-  const [composerMode, setComposerMode] = useState<ComposerMode>(null);
   const [contextView, setContextView] = useState<ContextView>('summary');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-
-  function openComposer(mode: Exclude<ComposerMode, null>) {
-    setComposerMode(mode);
-    setMessage('');
-  }
 
   return (
     <aside className="flex h-full min-h-0 flex-col bg-surface-50">
@@ -140,51 +132,34 @@ export function ChatPanel() {
       </div>
 
       <div className="border-t border-surface-200 bg-white p-4">
-        {composerMode === null ? (
-          <div className="flex gap-2">
+        <button className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 py-2.5 text-[13px] font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-navy-800">
+          <Check className="h-4 w-4" strokeWidth={2.5} />
+          Run it
+        </button>
+
+        <div className="rounded-2xl border border-surface-200 bg-white p-2 transition focus-within:border-mint-300 focus-within:shadow-[0_8px_24px_rgba(19,42,58,0.08)]">
+          <textarea
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+              if (event.key === 'Enter' && !event.shiftKey) event.preventDefault();
+            }}
+            rows={2}
+            placeholder="Ask to change something, e.g. include only Q2 data…"
+            className="w-full resize-none rounded-xl bg-transparent px-2 py-1.5 text-[13px] leading-5 text-ink-900 outline-none placeholder:text-ink-300"
+          />
+          <div className="flex items-center justify-between px-1 pt-1.5">
+            <span className="text-[10px] text-ink-300">Shift + Enter for a new line</span>
             <button
-              onClick={() => openComposer('run')}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 py-2.5 text-[13px] font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-navy-800"
+              disabled={message.trim().length === 0}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-mint-400 text-navy-900 transition hover:bg-mint-300 disabled:cursor-not-allowed disabled:bg-surface-200 disabled:text-ink-300"
+              aria-label="Send message"
             >
-              <Check className="h-4 w-4" strokeWidth={2.5} />
-              Run it
-            </button>
-            <button
-              onClick={() => openComposer('change')}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-surface-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-navy-900 transition hover:-translate-y-0.5 hover:border-mint-300 hover:bg-mint-50"
-            >
-              <Pencil className="h-4 w-4" />
-              Change something
+              <Send className="h-4 w-4" />
             </button>
           </div>
-        ) : (
-          <div className="rounded-2xl border border-mint-300 bg-white p-2 shadow-[0_8px_24px_rgba(19,42,58,0.08)]">
-            <div className="flex items-center justify-between px-2 pb-1.5">
-              <span className="text-[11px] font-semibold text-mint-700">
-                {composerMode === 'run' ? 'Add a note before running' : 'What would you like to change?'}
-              </span>
-              <button onClick={() => setComposerMode(null)} className="text-[11px] font-medium text-ink-500 hover:text-ink-900">Cancel</button>
-            </div>
-            <textarea
-              autoFocus
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.nativeEvent.isComposing || event.keyCode === 229) return;
-                if (event.key === 'Enter' && !event.shiftKey) event.preventDefault();
-              }}
-              rows={3}
-              placeholder={composerMode === 'run' ? 'Optional instructions…' : 'For example, include only Q2 data…'}
-              className="w-full resize-none rounded-xl bg-surface-50 px-3 py-2 text-[13px] leading-5 text-ink-900 outline-none placeholder:text-ink-300 focus:ring-2 focus:ring-mint-200"
-            />
-            <div className="flex items-center justify-between px-1 pt-2">
-              <span className="text-[10px] text-ink-300">Shift + Enter for a new line</span>
-              <button className="flex h-8 w-8 items-center justify-center rounded-full bg-mint-400 text-navy-900 transition hover:bg-mint-300" aria-label="Send message">
-                <Send className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </aside>
   );
