@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import {
+  AlignLeft,
   Check,
   ChevronDown,
   Database,
   Layers3,
+  LayoutList,
   ListFilter,
   MessageCircle,
   Send,
@@ -44,7 +46,7 @@ const runDetails = [
 type ContextView = 'summary' | 'glance';
 
 export function ChatPanel() {
-  const [contextView, setContextView] = useState<ContextView>('summary');
+  const [contextView, setContextView] = useState<ContextView>('glance');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [message, setMessage] = useState('');
 
@@ -65,7 +67,7 @@ export function ChatPanel() {
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <section className="overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_8px_24px_rgba(19,42,58,0.05)]">
-          <div className="border-b border-mint-100 bg-mint-50 px-4 py-3.5">
+          <div className="flex items-center justify-between gap-2 border-b border-mint-100 bg-mint-50 px-4 py-3.5">
             <div className="flex items-center gap-2 text-navy-900">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200">
                 <MessageCircle className="h-4 w-4" strokeWidth={2.2} />
@@ -75,20 +77,16 @@ export function ChatPanel() {
                 <p className="mt-0.5 text-[11px] text-ink-500">How your request was interpreted</p>
               </div>
             </div>
-            <div className="mt-3 grid grid-cols-2 rounded-xl border border-mint-200 bg-white/80 p-1" role="tablist" aria-label="About this run view">
-              {(['summary', 'glance'] as ContextView[]).map((view) => (
-                <button
-                  key={view}
-                  type="button"
-                  role="tab"
-                  aria-selected={contextView === view}
-                  onClick={() => setContextView(view)}
-                  className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${contextView === view ? 'bg-navy-900 text-white shadow-soft' : 'text-ink-500 hover:text-navy-900'}`}
-                >
-                  {view === 'summary' ? 'Summary' : 'At a glance'}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              onClick={() => setContextView(contextView === 'glance' ? 'summary' : 'glance')}
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-medium text-ink-500 transition hover:bg-white/70 hover:text-navy-900"
+              aria-label={contextView === 'glance' ? 'Switch to summary view' : 'Switch to at a glance view'}
+              title={contextView === 'glance' ? 'Read as summary' : 'Show at a glance'}
+            >
+              {contextView === 'glance' ? <AlignLeft className="h-3.5 w-3.5" /> : <LayoutList className="h-3.5 w-3.5" />}
+              {contextView === 'glance' ? 'Summary' : 'At a glance'}
+            </button>
           </div>
 
           {contextView === 'summary' ? (
@@ -132,11 +130,6 @@ export function ChatPanel() {
       </div>
 
       <div className="border-t border-surface-200 bg-white p-4">
-        <button className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 py-2.5 text-[13px] font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-navy-800">
-          <Check className="h-4 w-4" strokeWidth={2.5} />
-          Run it
-        </button>
-
         <div className="rounded-2xl border border-surface-200 bg-white p-2 transition focus-within:border-mint-300 focus-within:shadow-[0_8px_24px_rgba(19,42,58,0.08)]">
           <textarea
             value={message}
@@ -150,7 +143,13 @@ export function ChatPanel() {
             className="w-full resize-none rounded-xl bg-transparent px-2 py-1.5 text-[13px] leading-5 text-ink-900 outline-none placeholder:text-ink-300"
           />
           <div className="flex items-center justify-between px-1 pt-1.5">
-            <span className="text-[10px] text-ink-300">Shift + Enter for a new line</span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] font-medium text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"
+            >
+              <Check className="h-3.5 w-3.5 text-mint-600" strokeWidth={2.5} />
+              Run it
+            </button>
             <button
               disabled={message.trim().length === 0}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-mint-400 text-navy-900 transition hover:bg-mint-300 disabled:cursor-not-allowed disabled:bg-surface-200 disabled:text-ink-300"

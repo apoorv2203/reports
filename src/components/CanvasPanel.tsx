@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   AlertTriangle,
+  AlignLeft,
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
@@ -9,6 +10,7 @@ import {
   Database,
   FileText,
   Layers3,
+  LayoutList,
   ListFilter,
   TableProperties,
 } from 'lucide-react';
@@ -50,7 +52,7 @@ const resultDetails = [
 
 export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) {
   const [tab, setTab] = useState<'table' | 'chart'>('table');
-  const [contextView, setContextView] = useState<'summary' | 'glance'>('summary');
+  const [contextView, setContextView] = useState<'summary' | 'glance'>('glance');
   const [expandedDetail, setExpandedDetail] = useState<string | null>(null);
   const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'rate',
@@ -119,13 +121,16 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
                 <p className="mt-0.5 text-[11px] text-ink-500">A business-friendly explanation of this result</p>
               </div>
             </div>
-            <div className="grid shrink-0 grid-cols-2 rounded-xl border border-mint-200 bg-white/80 p-1" role="tablist" aria-label="Result explanation view">
-              {(['summary', 'glance'] as const).map((view) => (
-                <button key={view} type="button" role="tab" aria-selected={contextView === view} onClick={() => setContextView(view)} className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${contextView === view ? 'bg-navy-900 text-white shadow-soft' : 'text-ink-500 hover:text-navy-900'}`}>
-                  {view === 'summary' ? 'Summary' : 'At a glance'}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              onClick={() => setContextView(contextView === 'glance' ? 'summary' : 'glance')}
+              className="inline-flex shrink-0 items-center gap-1 self-start rounded-lg px-1.5 py-1 text-[11px] font-medium text-ink-500 transition hover:bg-white/70 hover:text-navy-900 sm:self-auto"
+              aria-label={contextView === 'glance' ? 'Switch to summary view' : 'Switch to at a glance view'}
+              title={contextView === 'glance' ? 'Read as summary' : 'Show at a glance'}
+            >
+              {contextView === 'glance' ? <AlignLeft className="h-3.5 w-3.5" /> : <LayoutList className="h-3.5 w-3.5" />}
+              {contextView === 'glance' ? 'Summary' : 'At a glance'}
+            </button>
           </div>
           {contextView === 'summary' ? (
             <div className="grid gap-4 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px]">
