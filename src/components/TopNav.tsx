@@ -3,12 +3,12 @@ import { LogoMark, Wordmark } from './Logo';
 
 export function TopNav({ onOpenReports }: { onOpenReports: () => void }) {
   return (
-    <header className="flex h-14 items-center justify-between bg-navy-900 px-4 text-white">
+    <header className="flex h-14 shrink-0 items-center justify-between bg-navy-900 px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]">
       <div className="flex items-center gap-3">
         <LogoMark />
         <Wordmark light />
         <span className="h-5 w-px bg-white/20" />
-        <span className="hidden text-[13px] font-medium text-white/55 sm:inline">
+        <span className="hidden text-[13px] font-medium text-white/55 lg:inline">
           Digital Banking · Reporting Workspace
         </span>
       </div>

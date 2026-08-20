@@ -72,16 +72,24 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
           </button>
         </div>
 
-        <div className="mt-5 flex items-start gap-2.5 rounded-[16px] border border-mint-200 bg-mint-50 px-4 py-3.5">
-          <FileText className="mt-0.5 h-4 w-4 shrink-0 text-mint-600" />
-          <div className="flex flex-1 flex-col gap-2.5 text-[12px]">
-            <ExplRow label="Based on" chips={['LMS_PROD', '2026-08']} />
-            <ExplRow label="Showing" chips={['Product', 'Approval rate']} />
-            <ExplRow label="Sorted" chips={['Approval rate ↓', 'Top 5']} />
+        <section className="mt-5 overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
+          <div className="flex items-center gap-2 border-b border-mint-100 bg-mint-50 px-4 py-3">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900">
+              <FileText className="h-4 w-4" />
+            </span>
+            <div>
+              <h2 className="font-display text-[14px] font-bold text-navy-900">What you’re looking at</h2>
+              <p className="mt-0.5 text-[11px] text-ink-500">The data and rules used for this result</p>
+            </div>
           </div>
-        </div>
+          <div className="flex flex-col gap-2.5 px-4 py-3 text-[12px] sm:flex-row sm:flex-wrap sm:gap-x-6">
+            <ExplRow label="Sources" chips={['LMS_PROD', 'August 2026']} />
+            <ExplRow label="Columns" chips={['Product', 'Approval rate']} />
+            <ExplRow label="Order" chips={['Approval rate ↓', 'Top 5']} />
+          </div>
+        </section>
 
-        <div className="mt-5 flex-1 overflow-auto rounded-[16px] border border-[#e5e5e7] shadow-[0_3px_12px_rgba(0,0,0,0.03)]">
+        <div className="mt-4 flex-1 overflow-auto rounded-2xl border border-surface-200 shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
           {tab === 'table' ? (
             <ReportTable rows={sortedRows} sort={sort} onSort={handleSort} />
           ) : (
@@ -95,12 +103,12 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
 
 function ExplRow({ label, chips }: { label: string; chips: string[] }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="w-16 shrink-0 font-semibold text-mint-700">{label}</span>
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="mr-0.5 shrink-0 text-[11px] font-semibold text-ink-500">{label}</span>
       {chips.map((chip) => (
         <span
           key={chip}
-          className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-ink-700 shadow-[0_1px_2px_rgba(14,42,59,0.04)] ring-1 ring-surface-200"
+          className="rounded-full border border-surface-200 bg-surface-50 px-2.5 py-1 text-[11px] font-medium text-navy-900"
         >
           {chip}
         </span>
