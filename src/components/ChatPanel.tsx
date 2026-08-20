@@ -67,15 +67,10 @@ export function ChatPanel() {
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <section className="overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_8px_24px_rgba(19,42,58,0.05)]">
-          <div className="flex items-center justify-between gap-2 border-b border-mint-100 bg-mint-50 px-4 py-3.5">
+          <div className="flex items-center justify-between gap-2 border-b border-mint-100 bg-mint-50 px-3 py-2">
             <div className="flex items-center gap-2 text-navy-900">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200">
-                <MessageCircle className="h-4 w-4" strokeWidth={2.2} />
-              </span>
-              <div>
-                <h3 className="font-display text-[15px] font-bold">About this run</h3>
-                <p className="mt-0.5 text-[11px] text-ink-500">How your request was interpreted</p>
-              </div>
+              <MessageCircle className="h-4 w-4 text-mint-600" strokeWidth={2.2} />
+              <h3 className="font-display text-[13px] font-bold">About this run</h3>
             </div>
             <button
               type="button"
