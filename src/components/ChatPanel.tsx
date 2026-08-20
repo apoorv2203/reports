@@ -60,7 +60,7 @@ export function ChatPanel() {
             Ready
           </span>
         </div>
-        <div className="mt-4 rounded-2xl rounded-br-md bg-navy-900 px-4 py-3 text-[13px] font-medium leading-6 text-white shadow-soft">
+        <div className="mt-4 rounded-2xl rounded-br-md border border-surface-200 bg-white px-4 py-3 text-[13px] font-medium leading-6 text-ink-700">
           Top 5 products by approval rate
         </div>
       </div>
