@@ -31,7 +31,7 @@ export function TopNav({ onOpenReports }: { onOpenReports: () => void }) {
 
         <button
           onClick={onOpenReports}
-          className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[13px] font-semibold text-navy-900 transition hover:bg-mint-300"
+          className="inline-flex items-center gap-1.5 rounded-full border border-mint-300 bg-mint-50 px-3.5 py-1.5 text-[13px] font-semibold text-navy-900 transition hover:border-mint-400 hover:bg-mint-100"
         >
           <FileText className="h-3.5 w-3.5" />
           Reports
