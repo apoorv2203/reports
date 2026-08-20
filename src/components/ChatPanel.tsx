@@ -43,9 +43,11 @@ const runDetails = [
 ];
 
 type ComposerMode = 'run' | 'change' | null;
+type ContextView = 'summary' | 'glance';
 
 export function ChatPanel() {
   const [composerMode, setComposerMode] = useState<ComposerMode>(null);
+  const [contextView, setContextView] = useState<ContextView>('summary');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [message, setMessage] = useState('');
 
@@ -78,51 +80,62 @@ export function ChatPanel() {
               </span>
               <div>
                 <h3 className="font-display text-[15px] font-bold">About this run</h3>
-                <p className="mt-0.5 text-[11px] text-ink-500">Review the request before running it</p>
+                <p className="mt-0.5 text-[11px] text-ink-500">How your request was interpreted</p>
               </div>
+            </div>
+            <div className="mt-3 grid grid-cols-2 rounded-xl border border-mint-200 bg-white/80 p-1" role="tablist" aria-label="About this run view">
+              {(['summary', 'glance'] as ContextView[]).map((view) => (
+                <button
+                  key={view}
+                  type="button"
+                  role="tab"
+                  aria-selected={contextView === view}
+                  onClick={() => setContextView(view)}
+                  className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${contextView === view ? 'bg-navy-900 text-white shadow-soft' : 'text-ink-500 hover:text-navy-900'}`}
+                >
+                  {view === 'summary' ? 'Summary' : 'At a glance'}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="divide-y divide-surface-200">
-            {runDetails.map((detail) => {
-              const isExpanded = expanded === detail.label;
-              const Icon = detail.icon;
-              return (
-                <div key={detail.label}>
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(isExpanded ? null : detail.label)}
-                    className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-mint-50/60"
-                    aria-expanded={isExpanded}
-                  >
-                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-mint-600" />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center justify-between gap-2">
-                        <span className="text-[12px] font-semibold text-ink-900">{detail.label}</span>
-                        <span className="shrink-0 text-[10px] font-semibold text-ink-300">{detail.count}</span>
-                      </span>
-                      <span className="mt-1 block text-[11px] leading-4 text-ink-500">{detail.summary}</span>
-                    </span>
-                    <ChevronDown className={`mt-0.5 h-4 w-4 shrink-0 text-ink-300 transition ${isExpanded ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isExpanded && (
-                    <div className="flex flex-wrap gap-1.5 bg-surface-50 px-4 pb-3.5 pt-1">
-                      {detail.items.map((item) => (
-                        <span key={item} className="rounded-full border border-surface-200 bg-white px-2.5 py-1 text-[11px] font-medium text-ink-700">
-                          {item}
+          {contextView === 'summary' ? (
+            <div className="px-4 py-4">
+              <p className="text-[13px] leading-6 text-ink-700">
+                You asked to see the five products with the highest approval rate. This run compares the current quarter with the same quarter last year and presents the strongest performers first.
+              </p>
+              <div className="mt-3 rounded-xl bg-surface-50 px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-300">Your intent</p>
+                <p className="mt-1 text-[12px] font-medium leading-5 text-navy-900">Rank product performance and highlight the top five results.</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="divide-y divide-surface-200">
+                {runDetails.map((detail) => {
+                  const isExpanded = expanded === detail.label;
+                  const Icon = detail.icon;
+                  return (
+                    <div key={detail.label}>
+                      <button type="button" onClick={() => setExpanded(isExpanded ? null : detail.label)} className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-mint-50/60" aria-expanded={isExpanded}>
+                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-mint-600" />
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center justify-between gap-2"><span className="text-[12px] font-semibold text-ink-900">{detail.label}</span><span className="shrink-0 text-[10px] font-semibold text-ink-300">{detail.count}</span></span>
+                          <span className="mt-1 block text-[11px] leading-4 text-ink-500">{detail.summary}</span>
                         </span>
-                      ))}
+                        <ChevronDown className={`mt-0.5 h-4 w-4 shrink-0 text-ink-300 transition ${isExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      {isExpanded && <div className="flex flex-wrap gap-1.5 bg-surface-50 px-4 pb-3.5 pt-1">{detail.items.map((item) => <span key={item} className="rounded-full border border-surface-200 bg-white px-2.5 py-1 text-[11px] font-medium text-ink-700">{item}</span>)}</div>}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="border-t border-surface-200 bg-surface-50 px-4 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-300">Comparison</p>
-            <p className="mt-1 text-[12px] font-medium text-ink-700">This Q2 compared with Q2 last year</p>
-          </div>
+                  );
+                })}
+              </div>
+              <div className="border-t border-surface-200 bg-surface-50 px-4 py-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-300">Comparison</p>
+                <p className="mt-1 text-[12px] font-medium text-ink-700">This Q2 compared with Q2 last year</p>
+              </div>
+            </>
+          )}
         </section>
       </div>
 

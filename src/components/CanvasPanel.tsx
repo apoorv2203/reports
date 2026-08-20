@@ -14,6 +14,7 @@ type SortDirection = 'asc' | 'desc';
 
 export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) {
   const [tab, setTab] = useState<'table' | 'chart'>('table');
+  const [contextView, setContextView] = useState<'summary' | 'glance'>('summary');
   const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'rate',
     direction: 'desc',
@@ -73,20 +74,38 @@ export function CanvasPanel({ onBuildAReport }: { onBuildAReport: () => void }) 
         </div>
 
         <section className="mt-5 overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
-          <div className="flex items-center gap-2 border-b border-mint-100 bg-mint-50 px-4 py-3">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900">
-              <FileText className="h-4 w-4" />
-            </span>
-            <div>
-              <h2 className="font-display text-[14px] font-bold text-navy-900">What you’re looking at</h2>
-              <p className="mt-0.5 text-[11px] text-ink-500">The data and rules used for this result</p>
+          <div className="flex flex-col gap-3 border-b border-mint-100 bg-mint-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900"><FileText className="h-4 w-4" /></span>
+              <div>
+                <h2 className="font-display text-[14px] font-bold text-navy-900">What you’re looking at</h2>
+                <p className="mt-0.5 text-[11px] text-ink-500">A business-friendly explanation of this result</p>
+              </div>
+            </div>
+            <div className="grid shrink-0 grid-cols-2 rounded-xl border border-mint-200 bg-white/80 p-1" role="tablist" aria-label="Result explanation view">
+              {(['summary', 'glance'] as const).map((view) => (
+                <button key={view} type="button" role="tab" aria-selected={contextView === view} onClick={() => setContextView(view)} className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${contextView === view ? 'bg-navy-900 text-white shadow-soft' : 'text-ink-500 hover:text-navy-900'}`}>
+                  {view === 'summary' ? 'Summary' : 'At a glance'}
+                </button>
+              ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2.5 px-4 py-3 text-[12px] sm:flex-row sm:flex-wrap sm:gap-x-6">
-            <ExplRow label="Sources" chips={['LMS_PROD', 'August 2026']} />
-            <ExplRow label="Columns" chips={['Product', 'Approval rate']} />
-            <ExplRow label="Order" chips={['Approval rate ↓', 'Top 5']} />
-          </div>
+          {contextView === 'summary' ? (
+            <div className="px-4 py-4">
+              <p className="max-w-3xl text-[13px] leading-6 text-ink-700">
+                This result ranks the five best-performing products by approval rate for August 2026. It uses lending production data, calculates the share of approved applications for each product, and orders the results from highest to lowest so you can quickly identify which products are converting most successfully.
+              </p>
+              <p className="mt-2 text-[12px] leading-5 text-ink-500">
+                Each row represents one product. The approval rate is the number of approved applications divided by all applications received for that product during the selected period.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5 px-4 py-3 text-[12px] sm:flex-row sm:flex-wrap sm:gap-x-6">
+              <ExplRow label="Based on" chips={['Lending production data', 'August 2026']} />
+              <ExplRow label="Showing" chips={['Product', 'Approval rate']} />
+              <ExplRow label="Ordered by" chips={['Highest approval rate first', 'Top 5']} />
+            </div>
+          )}
         </section>
 
         <div className="mt-4 flex-1 overflow-auto rounded-2xl border border-surface-200 shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
