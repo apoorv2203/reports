@@ -51,22 +51,22 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports }: {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#e5e5e7] bg-navy-900 px-5 text-white">
-        <div className="flex items-center gap-3">
-          <button onClick={onBack} className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><ArrowLeft className="h-4 w-4" /></button>
-          <span className="h-5 w-px bg-white/20" />
-          <span className="font-display text-[16px] font-bold">ReportIQ</span>
-          <span className="text-white/40">/</span>
-          <span className="text-[13px] text-white/65">My reports</span>
-          <span className="text-white/40">/</span>
-          <span className="text-[13px] font-semibold text-white">{title}</span>
-          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-200 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-200 bg-white px-5 text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.04)]">
+        <div className="flex min-w-0 items-center gap-3">
+          <button onClick={onBack} className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><ArrowLeft className="h-4 w-4" /></button>
+          <span className="h-5 w-px bg-surface-200" />
+          <span className="font-display text-[16px] font-bold text-navy-900">ReportIQ</span>
+          <span className="text-ink-300">/</span>
+          <span className="hidden text-[13px] text-ink-500 sm:inline">My reports</span>
+          <span className="hidden text-ink-300 sm:inline">/</span>
+          <span className="truncate text-[13px] font-semibold text-navy-900">{title}</span>
+          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-100 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10 hover:text-white"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
-          <button onClick={() => setSaved(true)} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white/80 hover:bg-white/10">{saved ? <Check className="h-3.5 w-3.5 text-mint-300" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
-          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center gap-1.5 rounded-full bg-mint-400 px-3.5 py-1.5 text-[12px] font-bold text-navy-900 hover:bg-mint-300"><ArrowUpRight className="h-3.5 w-3.5" /> {publishedParameters ? 'Edit publish settings' : 'Publish'}</button>
-          <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-full border border-surface-200 px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-navy-900 sm:inline-flex"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
+          <button onClick={() => setSaved(true)} className="hidden items-center gap-1.5 rounded-full border border-surface-200 px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 sm:inline-flex">{saved ? <Check className="h-3.5 w-3.5 text-mint-600" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
+          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3.5 py-1.5 text-[12px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-3.5 w-3.5" /> {publishedParameters ? 'Edit publish settings' : 'Publish'}</button>
+          <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><X className="h-4 w-4" /></button>
         </div>
       </header>
 
