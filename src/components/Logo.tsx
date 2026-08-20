@@ -3,7 +3,7 @@ import { Mountain } from 'lucide-react';
 export function LogoMark({ className = '' }: { className?: string }) {
   return (
     <span
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-mint-400/15 text-mint-400 ${className}`}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-navy-900 text-mint-400 ${className}`}
       aria-hidden
     >
       <Mountain className="h-[18px] w-[18px]" strokeWidth={2.5} />
