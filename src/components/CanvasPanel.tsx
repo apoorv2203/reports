@@ -78,7 +78,7 @@ export function CanvasPanel() {
   return (
     <section className="flex h-full flex-col overflow-hidden bg-white">
       <div className="flex flex-1 flex-col overflow-hidden p-6">
-        <section className="overflow-hidden rounded-2xl border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
+        <section className="overflow-hidden rounded-lg border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
           <div className="flex flex-col gap-3 border-b border-mint-100 bg-mint-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900"><FileText className="h-4 w-4" /></span>
@@ -174,7 +174,7 @@ export function CanvasPanel() {
           </div>
         </div>
 
-        <div className="mt-2.5 flex-1 overflow-auto rounded-2xl border border-surface-200 bg-white shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
+        <div className="mt-2.5 flex-1 overflow-auto rounded-lg border border-surface-200 bg-white shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
           {tab === 'table' ? (
             <ReportTable rows={sortedRows} sort={sort} onSort={handleSort} />
           ) : (
