@@ -20,13 +20,13 @@ function App() {
       <TopNav onOpenReports={() => setView({ kind: 'reports' })} />
 
       {view.kind === 'workspace' && (
-        <div className="grid flex-1 grid-cols-[280px_1fr_210px] overflow-hidden border-t border-surface-200">
-          <div className="border-r border-surface-200">
+        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden border-t border-surface-200 sm:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_220px]">
+          <div className="hidden min-h-0 border-r border-surface-200 sm:block">
             <ChatPanel />
           </div>
-          <CanvasPanel onBuildAReport={() => setView({ kind: 'builder' })} />
-          <div className="border-l border-surface-200">
-            <ActionsPanel />
+          <CanvasPanel />
+          <div className="hidden min-h-0 border-l border-surface-200 xl:block">
+            <ActionsPanel onConvertToReport={() => setView({ kind: 'builder' })} />
           </div>
         </div>
       )}
