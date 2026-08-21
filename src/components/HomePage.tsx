@@ -24,7 +24,7 @@ export function HomePage({ onNewSession, onOpenReports, onOpenWidgets, onEditWid
             <p className="mt-1.5 text-[13px] text-ink-500">{isNewUser ? "Let's get you started by adding widgets and building your home dashboard." : "Here's what's happening with your business today."}</p>
           </div>
           <div className="flex gap-2">
-            <button type="button" className="inline-flex items-center gap-2 rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-[12px] font-bold text-navy-900 transition hover:border-mint-300 hover:bg-mint-50"><Plus className="h-4 w-4" /> Add widget</button>
+            <button type="button" onClick={onOpenWidgets} className="inline-flex items-center gap-2 rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-[12px] font-bold text-navy-900 transition hover:border-mint-300 hover:bg-mint-50"><Plus className="h-4 w-4" /> Add widget</button>
             <button type="button" onClick={onNewSession} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-navy-800"><Plus className="h-4 w-4" /> New session</button>
           </div>
         </div>
