@@ -63,7 +63,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports }: {
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-100 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-full border border-surface-200 px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-navy-900 sm:inline-flex"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
+          <button type="button" onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 sm:inline-flex"><BookOpen className="h-4 w-4" /> Reports</button>
           <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><X className="h-4 w-4" /></button>
         </div>
       </header>

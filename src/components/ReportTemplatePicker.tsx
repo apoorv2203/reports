@@ -19,8 +19,8 @@ export function ReportTemplatePicker({
           <span className="text-[13px] text-ink-500">Choose a starting point</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={onBrowseReports} className="inline-flex items-center gap-2 rounded-full border border-[#d2d2d7] bg-white px-4 py-2 text-[13px] font-bold text-ink-700 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
-            <BookOpen className="h-4 w-4" /> Browse reports
+          <button type="button" onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700">
+            <BookOpen className="h-4 w-4" /> Reports
           </button>
           <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-[#f5f5f7] hover:text-ink-900">
             Cancel
