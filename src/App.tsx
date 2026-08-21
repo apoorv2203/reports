@@ -64,7 +64,7 @@ function AppContent() {
         </div>
       )}
 
-      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} />}
+      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} />}
 
       {view.kind === 'reports' && (
         <ReportsHub
