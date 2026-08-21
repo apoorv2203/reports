@@ -31,7 +31,7 @@ export function WidgetsPage({ onBack, onEditWidget }: Props) {
   const [shareWidget, setShareWidget] = useState<Widget | null>(null);
   const [publishWidget, setPublishWidget] = useState<Widget | null>(null);
   const [viewWidget, setViewWidget] = useState<Widget | null>(null);
-  const [added, setAdded] = useState<string[]>([]);
+  const [added, setAdded] = useState<string[]>(['disbursed', 'approval', 'npa-trend']);
   const [removedFromHome, setRemovedFromHome] = useState<string[]>([]);
   const source = (tab === 'mine' ? myWidgets : tab === 'catalogue' ? catalogueWidgets : sharedWidgets).filter((widget) => tab !== 'mine' || !removedFromHome.includes(widget.id));
   const widgets = useMemo(() => source.filter((widget) => `${widget.title} ${widget.description} ${widget.owner}`.toLowerCase().includes(query.toLowerCase())), [source, query]);
