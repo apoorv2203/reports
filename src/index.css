@@ -78,3 +78,28 @@ button:focus-visible {
 }
 .rb-overlay { animation: rb-fade-in 0.18s ease-out; }
 .rb-panel { animation: rb-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ---- Widget previews ---- */
+.donut-chart {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      #5d55dc 0% 42%,
+      #8178ea 42% 70%,
+      #afa9f4 70% 89%,
+      #e9e7fb 89% 100%
+    );
+  -webkit-mask: radial-gradient(circle 16px at 50% 50%, transparent 98%, #000 100%);
+  mask: radial-gradient(circle 16px at 50% 50%, transparent 98%, #000 100%);
+}
+.legend-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+

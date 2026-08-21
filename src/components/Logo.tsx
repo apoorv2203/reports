@@ -1,4 +1,4 @@
-import { Mountain } from 'lucide-react';
+import { ChartBar as BarChart3 } from 'lucide-react';
 
 export function LogoMark({ className = '' }: { className?: string }) {
   return (
@@ -6,7 +6,7 @@ export function LogoMark({ className = '' }: { className?: string }) {
       className={`inline-flex h-8 w-8 items-center justify-center rounded-[10px] bg-navy-900 text-mint-400 ${className}`}
       aria-hidden
     >
-      <Mountain className="h-[18px] w-[18px]" strokeWidth={2.5} />
+      <BarChart3 className="h-[18px] w-[18px]" strokeWidth={2.5} />
     </span>
   );
 }
