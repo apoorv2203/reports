@@ -13,7 +13,7 @@ import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
   | { kind: 'home' }
-  | { kind: 'workspace' }
+  | { kind: 'workspace'; newWidget?: boolean }
   | { kind: 'reports' }
   | { kind: 'widgets' }
   | { kind: 'builder'; template?: ReportTemplate };
@@ -56,16 +56,16 @@ function AppContent() {
       {view.kind === 'workspace' && (
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden border-t border-surface-200 sm:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_220px]">
           <div className="hidden min-h-0 border-r border-surface-200 sm:block">
-            <ChatPanel />
+            <ChatPanel empty={view.newWidget} />
           </div>
-          <CanvasPanel />
+          <CanvasPanel empty={view.newWidget} />
           <div className="hidden min-h-0 border-l border-surface-200 xl:block">
-            <ActionsPanel onConvertToReport={() => setView({ kind: 'builder' })} />
+            <ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />
           </div>
         </div>
       )}
 
-      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} />}
+      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} />}
 
       {view.kind === 'reports' && (
         <ReportsHub

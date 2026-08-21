@@ -45,7 +45,7 @@ const runDetails = [
 
 type ContextView = 'summary' | 'glance';
 
-export function ChatPanel() {
+export function ChatPanel({ empty = false }: { empty?: boolean }) {
   const [contextView, setContextView] = useState<ContextView>('glance');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [message, setMessage] = useState('');
@@ -60,9 +60,7 @@ export function ChatPanel() {
             Ready
           </span>
         </div>
-        <div className="mt-4 rounded-2xl rounded-br-md border border-surface-200 bg-white px-4 py-3 text-[13px] font-medium leading-6 text-ink-700">
-          Top 5 products by approval rate
-        </div>
+          {!empty && <div className="mt-4 rounded-2xl rounded-br-md border border-surface-200 bg-white px-4 py-3 text-[13px] font-medium leading-6 text-ink-700">Top 5 products by approval rate</div>}
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FileOutput, Save, X } from 'lucide-react';
 
-export function ActionsPanel({ onConvertToReport }: { onConvertToReport: () => void }) {
+export function ActionsPanel({ onConvertToReport, disabled = false }: { onConvertToReport: () => void; disabled?: boolean }) {
   const [showWidgetModal, setShowWidgetModal] = useState(false);
   const [widgetType, setWidgetType] = useState<'table' | 'chart'>('table');
   const [widgetName, setWidgetName] = useState('');
@@ -23,6 +23,7 @@ export function ActionsPanel({ onConvertToReport }: { onConvertToReport: () => v
         <button
           type="button"
           onClick={onConvertToReport}
+          disabled={disabled}
           className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black"
         >
           <FileOutput className="h-4 w-4" />
@@ -32,6 +33,7 @@ export function ActionsPanel({ onConvertToReport }: { onConvertToReport: () => v
         <button
           type="button"
           onClick={() => setShowWidgetModal(true)}
+          disabled={disabled}
           className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-navy-900"
         >
           <Save className="h-4 w-4" />
