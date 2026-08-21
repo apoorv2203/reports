@@ -1,6 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 export type Profile = {
   id: string;
@@ -8,84 +6,48 @@ export type Profile = {
   is_new_user: boolean;
 };
 
-type AuthState = {
-  user: User | null;
-  session: Session | null;
+type AuthContextValue = {
   profile: Profile | null;
-  loading: boolean;
-};
-
-type AuthContextValue = AuthState & {
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signOut: () => Promise<void>;
+  signOut: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const mockUsers: Record<string, Profile & { password: string }> = {
+  'rahul.new@reportiq.dev': {
+    id: 'demo-new',
+    full_name: 'Rahul',
+    is_new_user: true,
+    password: 'welcome123',
+  },
+  'anita.experienced@reportiq.dev': {
+    id: 'demo-experienced',
+    full_name: 'Anita Gupta',
+    is_new_user: false,
+    password: 'welcome123',
+  },
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    session: null,
-    profile: null,
-    loading: true,
-  });
-
-  async function loadProfile(userId: string): Promise<Profile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, is_new_user')
-      .eq('id', userId)
-      .maybeSingle();
-    if (error) return null;
-    return data as Profile | null;
-  }
-
-  useEffect(() => {
-    let mounted = true;
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      if (session?.user) {
-        loadProfile(session.user.id).then((profile) => {
-          if (!mounted) return;
-          setState({ user: session.user, session, profile, loading: false });
-        });
-      } else {
-        setState({ user: null, session: null, profile: null, loading: false });
-      }
-    });
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        if (session?.user) {
-          const profile = await loadProfile(session.user.id);
-          if (!mounted) return;
-          setState({ user: session.user, session, profile, loading: false });
-        } else {
-          if (!mounted) return;
-          setState({ user: null, session: null, profile: null, loading: false });
-        }
-      })();
-    });
-
-    return () => {
-      mounted = false;
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   async function signIn(email: string, password: string): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    const key = email.trim().toLowerCase();
+    const user = mockUsers[key];
+    if (!user || user.password !== password) {
+      return { error: 'Invalid email or password. Try one of the demo accounts below.' };
+    }
+    setProfile({ id: user.id, full_name: user.full_name, is_new_user: user.is_new_user });
     return { error: null };
   }
 
-  async function signOut(): Promise<void> {
-    await supabase.auth.signOut();
+  function signOut() {
+    setProfile(null);
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, signIn, signOut }}>
+    <AuthContext.Provider value={{ profile, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

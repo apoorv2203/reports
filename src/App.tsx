@@ -17,26 +17,16 @@ type View =
   | { kind: 'builder'; template?: ReportTemplate };
 
 function AppContent() {
-  const { user, profile, loading, signOut } = useAuth();
+  const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-[#f5f5f7]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-mint-200 border-t-mint-500" />
-          <span className="text-[13px] font-medium text-ink-500">Loading your workspace…</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
+  if (!profile) {
     return <LoginScreen />;
   }
 
-  const firstName = profile?.full_name?.split(' ')[0] ?? 'there';
-  const isNewUser = profile?.is_new_user ?? false;
+  const firstName = profile.full_name.split(' ')[0];
+  const isNewUser = profile.is_new_user;
+  const initials = profile.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('');
 
   return (
     <div className="flex h-screen flex-col bg-[#f5f5f7] text-ink-900">
@@ -45,7 +35,7 @@ function AppContent() {
         onOpenReports={() => setView({ kind: 'reports' })}
         onOpenSessions={() => setView({ kind: 'workspace' })}
         userName={firstName}
-        userInitials={profile?.full_name?.split(' ').map((n) => n[0]).slice(0, 2).join('') ?? 'U'}
+        userInitials={initials}
         onSignOut={signOut}
       />
 
