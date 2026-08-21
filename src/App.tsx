@@ -21,6 +21,8 @@ type View =
 function AppContent() {
   const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
+  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend']);
+  const toggleHomeWidget = (id: string) => setHomeWidgetIds((current) => current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]);
 
   if (!profile) {
     return <LoginScreen />;
@@ -48,6 +50,8 @@ function AppContent() {
           onOpenReports={() => setView({ kind: 'reports' })}
           onOpenWidgets={() => setView({ kind: 'widgets' })}
           onEditWidget={() => setView({ kind: 'workspace' })}
+          homeWidgetIds={homeWidgetIds}
+          onRemoveWidget={toggleHomeWidget}
           isNewUser={isNewUser}
           userName={firstName}
         />
@@ -65,7 +69,7 @@ function AppContent() {
         </div>
       )}
 
-      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} />}
+      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} homeWidgetIds={homeWidgetIds} onToggleHomeWidget={toggleHomeWidget} />}
 
       {view.kind === 'reports' && (
         <ReportsHub
