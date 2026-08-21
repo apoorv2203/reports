@@ -47,6 +47,7 @@ function AppContent() {
           onNewSession={() => setView({ kind: 'workspace' })}
           onOpenReports={() => setView({ kind: 'reports' })}
           onOpenWidgets={() => setView({ kind: 'widgets' })}
+          onEditWidget={() => setView({ kind: 'workspace' })}
           isNewUser={isNewUser}
           userName={firstName}
         />
