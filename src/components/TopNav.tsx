@@ -5,13 +5,14 @@ import { LogoMark, Wordmark } from './Logo';
 type TopNavProps = {
   onOpenHome: () => void;
   onOpenReports: () => void;
+  onOpenWidgets: () => void;
   onOpenSessions: () => void;
   userName: string;
   userInitials: string;
   onSignOut: () => void;
 };
 
-export function TopNav({ onOpenHome, onOpenReports, onOpenSessions, userName, userInitials, onSignOut }: TopNavProps) {
+export function TopNav({ onOpenHome, onOpenReports, onOpenWidgets, onOpenSessions, userName, userInitials, onSignOut }: TopNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -22,7 +23,7 @@ export function TopNav({ onOpenHome, onOpenReports, onOpenSessions, userName, us
       <label className="mx-auto hidden min-w-0 max-w-[470px] flex-1 items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2 text-ink-300 md:flex"><Search className="h-4 w-4 shrink-0" /><span className="sr-only">Search</span><input className="min-w-0 flex-1 bg-transparent text-[12px] text-navy-900 outline-none placeholder:text-ink-500" placeholder="Search for reports, widgets, or ask anything..." /><kbd className="rounded bg-surface-100 px-1.5 py-0.5 text-[10px] font-bold text-ink-500">⌘ K</kbd></label>
       <nav className="ml-auto flex items-center gap-2 sm:gap-3">
         <button type="button" onClick={onOpenSessions} className="hidden items-center gap-1.5 text-[12px] font-bold text-navy-900 hover:text-mint-700 sm:inline-flex"><Clock3 className="h-4 w-4" /> Sessions</button>
-        <button type="button" className="hidden items-center gap-1.5 text-[12px] font-bold text-navy-900 hover:text-mint-700 lg:inline-flex"><Grid2X2 className="h-4 w-4" /> Widgets</button>
+        <button type="button" onClick={onOpenWidgets} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 lg:inline-flex"><Grid2X2 className="h-4 w-4" /> Widgets</button>
         <button type="button" onClick={onOpenReports} className="hidden items-center gap-1.5 text-[12px] font-bold text-navy-900 hover:text-mint-700 sm:inline-flex"><FileText className="h-4 w-4" /> Reports</button>
         <button type="button" className="relative flex h-8 w-8 items-center justify-center rounded-full text-navy-900 hover:bg-surface-50" aria-label="Notifications"><Bell className="h-4 w-4" /><span className="absolute right-1 top-0.5 h-1.5 w-1.5 rounded-full bg-red-500" /></button>
         <div className="relative">

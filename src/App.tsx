@@ -8,12 +8,14 @@ import { ReportBuilder } from '@/components/ReportBuilder';
 import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { LoginScreen } from '@/components/LoginScreen';
+import { WidgetsPage } from '@/components/WidgetsPage';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
   | { kind: 'home' }
   | { kind: 'workspace' }
   | { kind: 'reports' }
+  | { kind: 'widgets' }
   | { kind: 'builder'; template?: ReportTemplate };
 
 function AppContent() {
@@ -33,6 +35,7 @@ function AppContent() {
       <TopNav
         onOpenHome={() => setView({ kind: 'home' })}
         onOpenReports={() => setView({ kind: 'reports' })}
+        onOpenWidgets={() => setView({ kind: 'widgets' })}
         onOpenSessions={() => setView({ kind: 'workspace' })}
         userName={firstName}
         userInitials={initials}
@@ -59,6 +62,8 @@ function AppContent() {
           </div>
         </div>
       )}
+
+      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} />}
 
       {view.kind === 'reports' && (
         <ReportsHub
