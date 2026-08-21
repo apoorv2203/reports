@@ -1,157 +1,77 @@
 import { useState } from 'react';
-import {
-  Download,
-  Share2,
-  CalendarClock,
-  Heart,
-  ChevronDown,
-  ShieldCheck,
-  FileOutput,
-} from 'lucide-react';
+import { FileOutput, Save, X } from 'lucide-react';
 
 export function ActionsPanel({ onConvertToReport }: { onConvertToReport: () => void }) {
-  const [exportOpen, setExportOpen] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
+  const [showWidgetModal, setShowWidgetModal] = useState(false);
+  const [widgetType, setWidgetType] = useState<'table' | 'chart'>('table');
+  const [widgetName, setWidgetName] = useState('');
+
+  function saveWidget() {
+    if (!widgetName.trim()) return;
+    setShowWidgetModal(false);
+    setWidgetName('');
+  }
 
   return (
-    <aside className="flex h-full flex-col gap-4 overflow-y-auto bg-surface-50 p-4">
-      <div>
-        <h2 className="font-display text-sm font-bold text-navy-900">Actions</h2>
-        <p className="mt-1 text-[11px] leading-4 text-ink-500">Export, share or save this result</p>
-      </div>
-
-      <button
-        onClick={onConvertToReport}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black"
-      >
-        <FileOutput className="h-4 w-4" />
-        Convert to report
-      </button>
-
-      <div className="flex flex-col gap-2">
-        {/* Export dropdown */}
-        <div className="relative">
-          <DropdownButton
-            icon={<Download className="h-4 w-4" />}
-            label="Export"
-            open={exportOpen}
-            onClick={() => {
-              setExportOpen((v) => !v);
-              setShareOpen(false);
-            }}
-          />
-          {exportOpen && (
-            <Menu>
-              <MenuItem label="PDF" />
-              <MenuItem label="HTML" />
-            </Menu>
-          )}
+    <>
+      <aside className="flex h-full flex-col gap-3 overflow-y-auto bg-surface-50 p-4">
+        <div>
+          <h2 className="font-display text-sm font-bold text-navy-900">Actions</h2>
+          <p className="mt-1 text-[11px] leading-4 text-ink-500">Save or convert this result</p>
         </div>
 
-        {/* Share dropdown */}
-        <div className="relative">
-          <DropdownButton
-            icon={<Share2 className="h-4 w-4" />}
-            label="Share"
-            open={shareOpen}
-            onClick={() => {
-              setShareOpen((v) => !v);
-              setExportOpen(false);
-            }}
-          />
-          {shareOpen && (
-            <Menu>
-              <MenuItem label="Share with users" />
-              <MenuItem label="Share via email" />
-              <MenuItem label="Share via Teams" />
-            </Menu>
-          )}
+        <button
+          type="button"
+          onClick={onConvertToReport}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black"
+        >
+          <FileOutput className="h-4 w-4" />
+          Convert to report
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowWidgetModal(true)}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-navy-900"
+        >
+          <Save className="h-4 w-4" />
+          Save
+        </button>
+      </aside>
+
+      {showWidgetModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-navy-900/30 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowWidgetModal(false); }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="save-widget-title" className="w-full max-w-md rounded-lg border border-surface-200 bg-white p-5 shadow-floaty">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="save-widget-title" className="font-display text-[18px] font-bold text-navy-900">Save as widget</h2>
+                <p className="mt-1 text-[12px] text-ink-500">What would you like to save?</p>
+              </div>
+              <button type="button" onClick={() => setShowWidgetModal(false)} className="flex h-7 w-7 items-center justify-center rounded-md text-ink-400 transition hover:bg-surface-100 hover:text-navy-900" aria-label="Close save as widget dialog"><X className="h-4 w-4" /></button>
+            </div>
+
+            <fieldset className="mt-5 flex flex-col gap-2.5">
+              <legend className="sr-only">Choose a result to save</legend>
+              <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-surface-200 p-3 transition has-[:checked]:border-navy-900 has-[:checked]:bg-surface-50">
+                <input type="radio" name="widget-result" value="table" checked={widgetType === 'table'} onChange={() => setWidgetType('table')} className="mt-0.5 accent-[#1d1d1f]" />
+                <span><span className="block text-[13px] font-semibold text-navy-900">Table</span><span className="mt-0.5 block text-[12px] text-ink-500">Top 5 products by approval rate</span></span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-surface-200 p-3 transition has-[:checked]:border-navy-900 has-[:checked]:bg-surface-50">
+                <input type="radio" name="widget-result" value="chart" checked={widgetType === 'chart'} onChange={() => setWidgetType('chart')} className="mt-0.5 accent-[#1d1d1f]" />
+                <span><span className="block text-[13px] font-semibold text-navy-900">Chart</span><span className="mt-0.5 block text-[12px] text-ink-500">Approval rate by product</span></span>
+              </label>
+            </fieldset>
+
+            <label htmlFor="widget-name" className="mt-5 block text-[12px] font-semibold text-navy-900">Widget name</label>
+            <input id="widget-name" value={widgetName} onChange={(event) => setWidgetName(event.target.value)} placeholder="Enter a name for your widget" className="mt-2 w-full rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-[13px] text-navy-900 outline-none transition placeholder:text-ink-300 focus:border-navy-900 focus:ring-2 focus:ring-navy-900/10" />
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={() => setShowWidgetModal(false)} className="rounded-lg border border-surface-200 px-3.5 py-2 text-[12px] font-semibold text-ink-700 transition hover:bg-surface-50">Cancel</button>
+              <button type="button" onClick={saveWidget} disabled={!widgetName.trim()} className="rounded-lg bg-[#1d1d1f] px-3.5 py-2 text-[12px] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40">Save widget</button>
+            </div>
+          </section>
         </div>
-
-        <OutlineButton icon={<CalendarClock className="h-4 w-4" />} label="Schedule monthly" />
-        <OutlineButton icon={<Heart className="h-4 w-4" />} label="Save to favourites" />
-      </div>
-
-      <div className="my-1 h-px bg-surface-200" />
-
-      {/* data trust */}
-      <div className="rounded-xl border border-surface-200 bg-white p-3.5">
-        <div className="mb-2 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-ink-700">
-          <ShieldCheck className="h-4 w-4 text-mint-600" />
-          Data trust
-        </div>
-        <div className="flex flex-col gap-1.5 text-[12px]">
-          <div className="flex items-center justify-between">
-            <span className="text-ink-500">Response time</span>
-            <span className="font-semibold text-ink-900">21.4s</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-ink-500">Integrity</span>
-            <span className="inline-flex items-center gap-1 font-bold text-mint-600">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Verified
-            </span>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function DropdownButton({
-  icon,
-  label,
-  open,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  open: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex w-full items-center justify-between rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-ink-900 transition hover:border-mint-300 hover:bg-mint-50"
-    >
-      <span className="flex items-center gap-2 text-ink-700">
-        {icon}
-        {label}
-      </span>
-      <ChevronDown
-        className={`h-4 w-4 text-ink-500 transition ${open ? 'rotate-180' : ''}`}
-      />
-    </button>
-  );
-}
-
-function OutlineButton({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <button className="flex w-full items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
-      {icon}
-      {label}
-    </button>
-  );
-}
-
-function Menu({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="absolute left-0 right-0 top-full z-10 mt-1 overflow-hidden rounded-lg border border-surface-200 bg-white py-1 shadow-floaty">
-      {children}
-    </div>
-  );
-}
-
-function MenuItem({ label }: { label: string }) {
-  return (
-    <button className="block w-full px-3 py-2 text-left text-[13px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">
-      {label}
-    </button>
+      )}
+    </>
   );
 }
