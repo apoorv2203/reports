@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, LayoutDashboard, MessageSquare, MoreHorizontal,   Pencil, Save, Send, Share2, Sparkles, Table2, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
 import type { LibraryReport, ReportParameter, ReportTemplate, TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
@@ -9,8 +9,8 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports }: {
   const [title, setTitle] = useState(report?.title ?? template.sections[0]?.title ?? 'Untitled report');
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<{ prompt: string; result: string }[]>([]);
-  const [saved, setSaved] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [publishedParameters, setPublishedParameters] = useState<ReportParameter[] | null>(null);
 
   const emptySections = useMemo(() => sections.filter((s) => s.kind === 'empty'), [sections]);
@@ -64,8 +64,6 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports }: {
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <button onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-full border border-surface-200 px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-navy-900 sm:inline-flex"><BookOpen className="h-3.5 w-3.5" /> Browse reports</button>
-          <button onClick={() => setSaved(true)} className="hidden items-center gap-1.5 rounded-full border border-surface-200 px-3 py-1.5 text-[12px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 sm:inline-flex">{saved ? <Check className="h-3.5 w-3.5 text-mint-600" /> : <Save className="h-3.5 w-3.5" />}{saved ? 'Saved' : 'Save draft'}</button>
-          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3.5 py-1.5 text-[12px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-3.5 w-3.5" /> {publishedParameters ? 'Edit publish settings' : 'Publish'}</button>
           <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><X className="h-4 w-4" /></button>
         </div>
       </header>
@@ -101,11 +99,18 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports }: {
 
         <aside className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l xl:flex border-[#e5e5e7] bg-[#f5f5f7] p-4">
           <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
-          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> {publishedParameters ? 'Edit publish settings' : 'Publish to catalogue'}</button>
-          <ActionButton icon={<ArrowDownToLine className="h-4 w-4" />} label="Export" />
-          <ActionButton icon={<Share2 className="h-4 w-4" />} label="Share" />
-          <ActionButton icon={<LayoutDashboard className="h-4 w-4" />} label="Schedule" />
-          <ActionButton icon={<FileText className="h-4 w-4" />} label="Save to favourites" />
+          <button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
+          <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p>
+          <div>
+            <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
+              <ArrowDownToLine className="h-4 w-4" />
+              Export
+              <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-[#e5e5e7] bg-white p-1">
+              {['Export as Image', 'Export as JRXML', 'Export as PDF', 'Schedule'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
+            </div>}
+          </div>
           <div className="my-2 h-px bg-[#e5e5e7]" />
           <div className="text-[12px] font-bold uppercase tracking-wide text-ink-500">Layout</div>
           <div className="rounded-[14px] border border-[#e5e5e7] bg-white p-3"><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
@@ -133,4 +138,3 @@ function ReportSectionCard({ section, onEdit }: { section: TemplateSection; onEd
 function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) { return <div className="rounded-lg bg-[#f5f5f7] px-3 py-2.5"><div className="text-[11px] text-ink-500">{label}</div><div className={`mt-1 font-display text-[18px] font-bold ${danger ? 'text-red-600' : 'text-ink-900'}`}>{value}</div></div>; }
 function MiniChart() { return <div className="mt-4 flex h-32 items-end justify-around gap-4 rounded-lg bg-[#f5f5f7] px-6 pb-3 pt-4">{[78, 54, 66, 34, 48, 88].map((height, index) => <div key={index} className="flex h-full flex-1 items-end"><div className={`w-full rounded-t-md ${index < 2 ? 'bg-red-400/80' : 'bg-mint-400'}`} style={{ height: `${height}%` }} /></div>)}</div>; }
 function MiniTable() { return <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e5e5e7]"><div className="grid grid-cols-3 bg-navy-900 px-3 py-2 text-[11px] font-bold text-white"><span>Segment</span><span>Accounts</span><span className="text-right">Balance</span></div>{['Retail', 'Corporate', 'SME'].map((row, index) => <div key={row} className="grid grid-cols-3 border-t border-[#e5e5e7] px-3 py-2 text-[12px] text-ink-700"><span>{row}</span><span>{[782, 341, 161][index]}</span><span className="text-right font-semibold">{['43.2 Cr', '31.8 Cr', '22.9 Cr'][index]}</span></div>)}</div>; }
-function ActionButton({ icon, label }: { icon: React.ReactNode; label: string }) { return <button className="flex items-center gap-2 rounded-lg border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:-translate-y-0.5 hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">{icon}{label}<ChevronDown className="ml-auto h-4 w-4 text-ink-300" /></button>; }
