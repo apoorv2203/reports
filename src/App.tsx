@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { TopNav } from '@/components/TopNav';
+import { HomePage } from '@/components/HomePage';
 import { ChatPanel } from '@/components/ChatPanel';
 import { CanvasPanel } from '@/components/CanvasPanel';
 import { ActionsPanel } from '@/components/ActionsPanel';
@@ -8,16 +9,19 @@ import { ReportsHub } from '@/components/ReportsHub';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
+  | { kind: 'home' }
   | { kind: 'workspace' }
   | { kind: 'reports' }
   | { kind: 'builder'; template?: ReportTemplate };
 
 function App() {
-  const [view, setView] = useState<View>({ kind: 'workspace' });
+  const [view, setView] = useState<View>({ kind: 'home' });
 
   return (
     <div className="flex h-screen flex-col bg-[#f5f5f7] text-ink-900">
-      <TopNav onOpenReports={() => setView({ kind: 'reports' })} />
+      <TopNav onOpenHome={() => setView({ kind: 'home' })} onOpenReports={() => setView({ kind: 'reports' })} onOpenSessions={() => setView({ kind: 'workspace' })} />
+
+      {view.kind === 'home' && <HomePage onNewSession={() => setView({ kind: 'workspace' })} onOpenReports={() => setView({ kind: 'reports' })} />}
 
       {view.kind === 'workspace' && (
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden border-t border-surface-200 sm:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_220px]">
