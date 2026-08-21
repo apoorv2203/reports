@@ -79,6 +79,7 @@ function AppContent() {
         <ReportBuilder
           initialTemplate={view.template}
           onClose={() => setView({ kind: 'workspace' })}
+          onBrowseReports={() => setView({ kind: 'reports' })}
         />
       )}
     </div>
