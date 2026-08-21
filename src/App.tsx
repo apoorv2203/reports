@@ -5,6 +5,7 @@ import { ChatPanel } from '@/components/ChatPanel';
 import { CanvasPanel } from '@/components/CanvasPanel';
 import { ActionsPanel } from '@/components/ActionsPanel';
 import { ReportBuilder } from '@/components/ReportBuilder';
+import { ReportWorkspace } from '@/components/ReportWorkspace';
 import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { LoginScreen } from '@/components/LoginScreen';
@@ -16,7 +17,8 @@ type View =
   | { kind: 'workspace'; newWidget?: boolean }
   | { kind: 'reports' }
   | { kind: 'widgets' }
-  | { kind: 'builder'; template?: ReportTemplate };
+  | { kind: 'builder'; template?: ReportTemplate }
+  | { kind: 'run'; template: ReportTemplate };
 
 function AppContent() {
   const { profile, signOut } = useAuth();
@@ -75,9 +77,11 @@ function AppContent() {
         <ReportsHub
           onBack={() => setView({ kind: 'home' })}
           onBuild={() => setView({ kind: 'builder' })}
-          onOpenTemplate={(template) => setView({ kind: 'builder', template })}
+          onOpenTemplate={(template) => setView({ kind: 'run', template })}
         />
       )}
+
+      {view.kind === 'run' && <ReportWorkspace template={view.template} onBack={() => setView({ kind: 'reports' })} onBrowseReports={() => setView({ kind: 'reports' })} readOnly />}
 
       {view.kind === 'builder' && (
         <ReportBuilder
