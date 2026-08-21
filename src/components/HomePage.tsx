@@ -2,9 +2,9 @@ import { useState, type ReactNode } from 'react';
 import { ChartBar as BarChart3, ChartLine as LineChart, Clock3, FileText, LockKeyhole, MessageSquareText, Pin, Plus, Search, Send, Sparkles, Star, UsersRound } from 'lucide-react';
 import { myWidgets, pinnedReports, recentSessions, recommendedWidgets, type Widget, type WidgetKind } from '@/data/homeData';
 
-type HomePageProps = { onNewSession: () => void; onOpenReports: () => void; isNewUser?: boolean; userName?: string };
+type HomePageProps = { onNewSession: () => void; onOpenReports: () => void; onOpenWidgets: () => void; isNewUser?: boolean; userName?: string };
 
-export function HomePage({ onNewSession, onOpenReports, isNewUser = false, userName = 'Rahul' }: HomePageProps) {
+export function HomePage({ onNewSession, onOpenReports, onOpenWidgets, isNewUser = false, userName = 'Rahul' }: HomePageProps) {
   const [addedWidgets, setAddedWidgets] = useState<string[]>([]);
   const [question, setQuestion] = useState('');
 
@@ -40,9 +40,9 @@ export function HomePage({ onNewSession, onOpenReports, isNewUser = false, userN
           </aside>
 
           <div className="min-w-0">
-            <SectionHeading title="My widgets" onViewAll={onOpenReports} />
-            {isNewUser ? <EmptyDashboard onAddWidget={onOpenReports} /> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{myWidgets.map((widget) => <WidgetCard key={widget.id} widget={widget} />)}</div>}
-            <div className="mt-8"><SectionHeading title="Recommended for you" onViewAll={onOpenReports} />{isNewUser ? <div className="rounded-xl border border-surface-200 bg-white px-5 py-5"><div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 text-mint-700"><Sparkles className="h-4 w-4" /></span><div><h3 className="text-[12px] font-bold text-navy-900">Recommendations will appear here</h3><p className="mt-1 text-[11px] text-ink-500">As you explore and use ReportIQ, we'll recommend widgets and reports tailored to your needs.</p></div></div></div> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{recommendedWidgets.map((widget) => <WidgetCard key={widget.id} widget={widget} recommended added={addedWidgets.includes(widget.id)} onAdd={() => addWidget(widget.id)} />)}</div>}</div>
+            <SectionHeading title="My widgets" onViewAll={onOpenWidgets} />
+            {isNewUser ? <EmptyDashboard onAddWidget={onOpenWidgets} /> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{myWidgets.map((widget) => <WidgetCard key={widget.id} widget={widget} />)}</div>}
+            <div className="mt-8"><SectionHeading title="Recommended for you" onViewAll={onOpenWidgets} />{isNewUser ? <div className="rounded-xl border border-surface-200 bg-white px-5 py-5"><div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 text-mint-700"><Sparkles className="h-4 w-4" /></span><div><h3 className="text-[12px] font-bold text-navy-900">Recommendations will appear here</h3><p className="mt-1 text-[11px] text-ink-500">As you explore and use ReportIQ, we'll recommend widgets and reports tailored to your needs.</p></div></div></div> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{recommendedWidgets.map((widget) => <WidgetCard key={widget.id} widget={widget} recommended added={addedWidgets.includes(widget.id)} onAdd={() => addWidget(widget.id)} />)}</div>}</div>
           </div>
         </div>
       </div>

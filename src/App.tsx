@@ -46,6 +46,7 @@ function AppContent() {
         <HomePage
           onNewSession={() => setView({ kind: 'workspace' })}
           onOpenReports={() => setView({ kind: 'reports' })}
+          onOpenWidgets={() => setView({ kind: 'widgets' })}
           isNewUser={isNewUser}
           userName={firstName}
         />
