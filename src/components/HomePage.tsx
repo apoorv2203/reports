@@ -2,9 +2,9 @@ import { useState, type ReactNode } from 'react';
 import { ChartBar as BarChart3, ChartLine as LineChart, Clock3, FileText, LockKeyhole, MessageSquareText, Pin, Plus, Search, Send, Sparkles, Star, UsersRound } from 'lucide-react';
 import { myWidgets, pinnedReports, recentSessions, recommendedWidgets, type Widget, type WidgetKind } from '@/data/homeData';
 
-type HomePageProps = { onNewSession: () => void; onOpenReports: () => void; isNewUser?: boolean };
+type HomePageProps = { onNewSession: () => void; onOpenReports: () => void; isNewUser?: boolean; userName?: string };
 
-export function HomePage({ onNewSession, onOpenReports, isNewUser = false }: HomePageProps) {
+export function HomePage({ onNewSession, onOpenReports, isNewUser = false, userName = 'Rahul' }: HomePageProps) {
   const [addedWidgets, setAddedWidgets] = useState<string[]>([]);
   const [question, setQuestion] = useState('');
 
@@ -17,7 +17,7 @@ export function HomePage({ onNewSession, onOpenReports, isNewUser = false }: Hom
       <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
-            <h1 className="font-display text-[24px] font-bold tracking-[-0.04em] text-navy-900 sm:text-[27px]">{isNewUser ? 'Welcome to ReportIQ, Rahul!' : 'Good morning, Rahul!'}</h1>
+            <h1 className="font-display text-[24px] font-bold tracking-[-0.04em] text-navy-900 sm:text-[27px]">{isNewUser ? `Welcome to ReportIQ, ${userName}!` : `Good morning, ${userName}!`}</h1>
             <p className="mt-1.5 text-[13px] text-ink-500">{isNewUser ? "Let's get you started by adding widgets and building your home dashboard." : "Here's what's happening with your business today."}</p>
           </div>
           <div className="flex gap-2">
