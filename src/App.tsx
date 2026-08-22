@@ -76,7 +76,7 @@ function AppContent() {
       {view.kind === 'reports' && (
         <ReportsHub
           onBack={() => setView({ kind: 'home' })}
-          onBuild={() => setView({ kind: 'builder' })}
+          onBuild={(template) => setView({ kind: 'builder', template })}
           onOpenTemplate={(template) => setView({ kind: 'run', template })}
         />
       )}
