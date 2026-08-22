@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
-import type { LibraryReport, ReportParameter, ReportTemplate, TemplateSection } from '@/data/reportTemplates';
+import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
 
@@ -92,7 +92,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         <main className="min-h-0 overflow-y-auto bg-white px-8 py-7">
           <div className="mx-auto max-w-2xl">
             <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
-            {report && <ReportParameterRunner parameters={report.parameters} reportTitle={report.title} />}
+            {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
             <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
           </div>
         </main>
@@ -108,7 +108,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
               <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
             </button>
             {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-[#e5e5e7] bg-white p-1">
-              {['Export as Image', 'Export as JRXML', 'Export as PDF', 'Schedule'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
+              {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
             </div>}
           </div>
           <div className={`my-2 h-px bg-[#e5e5e7] ${readOnly ? 'hidden' : ''}`} />
