@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from '@/lib/auth';
 import { LoginScreen } from '@/components/LoginScreen';
 import { WidgetsPage } from '@/components/WidgetsPage';
 import { AdminTablesPage } from '@/components/AdminTablesPage';
+import { AdminAuditTrailPage } from '@/components/AdminAuditTrailPage';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
@@ -20,7 +21,8 @@ type View =
   | { kind: 'widgets' }
   | { kind: 'builder'; template?: ReportTemplate }
   | { kind: 'run'; template: ReportTemplate }
-  | { kind: 'admin' };
+  | { kind: 'admin' }
+  | { kind: 'audit' };
 
 function AppContent() {
   const { profile, signOut } = useAuth();
@@ -50,7 +52,8 @@ function AppContent() {
         onOpenSettings={() => setView({ kind: 'admin' })}
       />
 
-      {view.kind === 'admin' && <AdminTablesPage onBack={() => setView({ kind: 'home' })} />}
+      {view.kind === 'admin' && <AdminTablesPage onBack={() => setView({ kind: 'home' })} onAudit={() => setView({ kind: 'audit' })} />}
+      {view.kind === 'audit' && <AdminAuditTrailPage onReplay={() => setView({ kind: 'workspace' })} />}
 
       {view.kind === 'home' && (
         <HomePage
