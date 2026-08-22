@@ -8,7 +8,7 @@ export type Widget = {
   owner: string;
   initials: string;
   updated: string;
-  privacy: 'Private' | 'Catalogue';
+  privacy: 'Private' | 'Shared' | 'Catalogue';
   value?: string;
   change?: string;
   changeDirection?: 'up' | 'down';

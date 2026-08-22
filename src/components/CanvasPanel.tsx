@@ -49,7 +49,7 @@ const resultDetails = [
   },
 ];
 
-export function CanvasPanel() {
+export function CanvasPanel({ empty = false }: { empty?: boolean }) {
   const [tab, setTab] = useState<'table' | 'chart'>('table');
   const [contextView, setContextView] = useState<'summary' | 'glance'>('glance');
   const [expandedDetail, setExpandedDetail] = useState<string | null>(null);
@@ -74,6 +74,8 @@ export function CanvasPanel() {
         current.key === key && current.direction === 'asc' ? 'desc' : 'asc',
     }));
   }
+
+  if (empty) return <section className="flex h-full items-center justify-center bg-white"><div className="text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-50 text-ink-300"><FileText className="h-5 w-5" /></div><p className="mt-3 text-[13px] font-semibold text-navy-900">Start building your widget</p><p className="mt-1 text-[12px] text-ink-500">Ask a question in the left pane to create a result.</p></div></section>;
 
   return (
     <section className="flex h-full flex-col overflow-hidden bg-white">

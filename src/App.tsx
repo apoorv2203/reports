@@ -5,20 +5,32 @@ import { ChatPanel } from '@/components/ChatPanel';
 import { CanvasPanel } from '@/components/CanvasPanel';
 import { ActionsPanel } from '@/components/ActionsPanel';
 import { ReportBuilder } from '@/components/ReportBuilder';
+import { ReportWorkspace } from '@/components/ReportWorkspace';
 import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { LoginScreen } from '@/components/LoginScreen';
+import { WidgetsPage } from '@/components/WidgetsPage';
+import { AdminTablesPage } from '@/components/AdminTablesPage';
+import { AdminAuditTrailPage } from '@/components/AdminAuditTrailPage';
+import { AdminShell } from '@/components/AdminShell';
+import { ResizableThreePane } from '@/components/ResizableThreePane';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
   | { kind: 'home' }
-  | { kind: 'workspace' }
+  | { kind: 'workspace'; newWidget?: boolean }
   | { kind: 'reports' }
-  | { kind: 'builder'; template?: ReportTemplate };
+  | { kind: 'widgets' }
+  | { kind: 'builder'; template?: ReportTemplate }
+  | { kind: 'run'; template: ReportTemplate }
+  | { kind: 'admin' }
+  | { kind: 'audit' };
 
 function AppContent() {
   const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
+  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend']);
+  const toggleHomeWidget = (id: string) => setHomeWidgetIds((current) => current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]);
 
   if (!profile) {
     return <LoginScreen />;
@@ -33,45 +45,52 @@ function AppContent() {
       <TopNav
         onOpenHome={() => setView({ kind: 'home' })}
         onOpenReports={() => setView({ kind: 'reports' })}
+        onOpenWidgets={() => setView({ kind: 'widgets' })}
         onOpenSessions={() => setView({ kind: 'workspace' })}
         userName={firstName}
         userInitials={initials}
         onSignOut={signOut}
+        isAdmin={profile.role === 'admin'}
+        onOpenSettings={() => setView({ kind: 'admin' })}
       />
+
+      {view.kind === 'admin' && <AdminShell section="tables" onNavigate={(section) => setView({ kind: section === 'audit' ? 'audit' : 'admin' })}><AdminTablesPage onBack={() => setView({ kind: 'home' })} onAudit={() => setView({ kind: 'audit' })} shellManaged /></AdminShell>}
+      {view.kind === 'audit' && <AdminShell section="audit" onNavigate={(section) => setView({ kind: section === 'audit' ? 'audit' : 'admin' })}><AdminAuditTrailPage onReplay={() => setView({ kind: 'workspace' })} shellManaged /></AdminShell>}
 
       {view.kind === 'home' && (
         <HomePage
           onNewSession={() => setView({ kind: 'workspace' })}
           onOpenReports={() => setView({ kind: 'reports' })}
+          onOpenWidgets={() => setView({ kind: 'widgets' })}
+          onEditWidget={() => setView({ kind: 'workspace' })}
+          homeWidgetIds={homeWidgetIds}
+          onRemoveWidget={toggleHomeWidget}
           isNewUser={isNewUser}
           userName={firstName}
         />
       )}
 
       {view.kind === 'workspace' && (
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden border-t border-surface-200 sm:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_220px]">
-          <div className="hidden min-h-0 border-r border-surface-200 sm:block">
-            <ChatPanel />
-          </div>
-          <CanvasPanel />
-          <div className="hidden min-h-0 border-l border-surface-200 xl:block">
-            <ActionsPanel onConvertToReport={() => setView({ kind: 'builder' })} />
-          </div>
-        </div>
+        <ResizableThreePane left={<ChatPanel empty={view.newWidget} />} center={<CanvasPanel empty={view.newWidget} />} right={<ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />} leftLabel="Chat pane" rightLabel="Actions pane" />
       )}
+
+      {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} homeWidgetIds={homeWidgetIds} onToggleHomeWidget={toggleHomeWidget} />}
 
       {view.kind === 'reports' && (
         <ReportsHub
           onBack={() => setView({ kind: 'home' })}
-          onBuild={() => setView({ kind: 'builder' })}
-          onOpenTemplate={(template) => setView({ kind: 'builder', template })}
+          onBuild={(template) => setView({ kind: 'builder', template })}
+          onOpenTemplate={(template) => setView({ kind: 'run', template })}
         />
       )}
+
+      {view.kind === 'run' && <ReportWorkspace template={view.template} onBack={() => setView({ kind: 'reports' })} onBrowseReports={() => setView({ kind: 'reports' })} readOnly />}
 
       {view.kind === 'builder' && (
         <ReportBuilder
           initialTemplate={view.template}
           onClose={() => setView({ kind: 'workspace' })}
+          onBrowseReports={() => setView({ kind: 'reports' })}
         />
       )}
     </div>

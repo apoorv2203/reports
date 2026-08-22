@@ -4,6 +4,7 @@ export type Profile = {
   id: string;
   full_name: string;
   is_new_user: boolean;
+  role: 'admin' | 'user';
 };
 
 type AuthContextValue = {
@@ -19,12 +20,21 @@ const mockUsers: Record<string, Profile & { password: string }> = {
     id: 'demo-new',
     full_name: 'Rahul',
     is_new_user: true,
+    role: 'user',
+    password: 'welcome123',
+  },
+  'admin@reportiq.dev': {
+    id: 'demo-admin',
+    full_name: 'Admin User',
+    is_new_user: false,
+    role: 'admin',
     password: 'welcome123',
   },
   'anita.experienced@reportiq.dev': {
     id: 'demo-experienced',
     full_name: 'Anita Gupta',
     is_new_user: false,
+    role: 'user',
     password: 'welcome123',
   },
 };
@@ -38,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user || user.password !== password) {
       return { error: 'Invalid email or password. Try one of the demo accounts below.' };
     }
-    setProfile({ id: user.id, full_name: user.full_name, is_new_user: user.is_new_user });
+    setProfile({ id: user.id, full_name: user.full_name, is_new_user: user.is_new_user, role: user.role });
     return { error: null };
   }
 
