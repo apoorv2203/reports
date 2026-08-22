@@ -37,12 +37,11 @@ export function AdminTablesPage({ onBack, onAudit, shellManaged = false }: { onB
   const [selectedTable, setSelectedTable] = useState('branch');
   const [expandedSchemas, setExpandedSchemas] = useState<Record<string, boolean>>({ public: true });
   const [expandedTables, setExpandedTables] = useState<Record<string, boolean>>({ public: true });
-  const [paneState, setPaneState] = useState({ left: true, center: true, right: true });
+  const [paneState, setPaneState] = useState({ left: true, center: true });
   const [leftWidth, setLeftWidth] = useState(245);
-  const [rightWidth, setRightWidth] = useState(300);
   const resizePane = (side: 'left' | 'right', event: React.PointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
-    const move = (moveEvent: PointerEvent) => side === 'left' ? setLeftWidth(Math.min(360, Math.max(190, moveEvent.clientX))) : setRightWidth(Math.min(420, Math.max(250, window.innerWidth - moveEvent.clientX)));
+    const move = (moveEvent: PointerEvent) => setLeftWidth(Math.min(360, Math.max(190, moveEvent.clientX)));
     const stop = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', stop); };
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', stop);
   };
