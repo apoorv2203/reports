@@ -12,6 +12,7 @@ import { LoginScreen } from '@/components/LoginScreen';
 import { WidgetsPage } from '@/components/WidgetsPage';
 import { AdminTablesPage } from '@/components/AdminTablesPage';
 import { AdminAuditTrailPage } from '@/components/AdminAuditTrailPage';
+import { AdminShell } from '@/components/AdminShell';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
@@ -52,8 +53,8 @@ function AppContent() {
         onOpenSettings={() => setView({ kind: 'admin' })}
       />
 
-      {view.kind === 'admin' && <AdminTablesPage onBack={() => setView({ kind: 'home' })} onAudit={() => setView({ kind: 'audit' })} />}
-      {view.kind === 'audit' && <AdminAuditTrailPage onReplay={() => setView({ kind: 'workspace' })} />}
+      {view.kind === 'admin' && <AdminShell section="tables" onNavigate={(section) => setView({ kind: section === 'audit' ? 'audit' : 'admin' })}><AdminTablesPage onBack={() => setView({ kind: 'home' })} onAudit={() => setView({ kind: 'audit' })} shellManaged /></AdminShell>}
+      {view.kind === 'audit' && <AdminShell section="audit" onNavigate={(section) => setView({ kind: section === 'audit' ? 'audit' : 'admin' })}><AdminAuditTrailPage onReplay={() => setView({ kind: 'workspace' })} shellManaged /></AdminShell>}
 
       {view.kind === 'home' && (
         <HomePage
