@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Database, Grid3X3, LockKeyhole, Menu, MoreHorizontal, Pencil, Search, Table2 } from 'lucide-react';
+import { ChevronDown, Database, Grid3X3, LockKeyhole, Menu, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Pencil, Search, Table2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ColumnDetailsDrawer } from '@/components/ColumnDetailsDrawer';
 
@@ -31,7 +31,7 @@ export function AdminTablesPage({ onBack, onAudit, shellManaged = false }: { onB
       </main></div></div>{selectedColumn && <ColumnDetailsDrawer column={selectedColumn} onClose={() => setSelectedColumn(null)} />}</>;
 }
 
-function PaneToggle({ label, open, onClick }: { label: string; open: boolean; onClick: () => void }) { return <button type="button" onClick={onClick} aria-label={`${open ? 'Collapse' : 'Expand'} ${label}`} className="mb-3 flex size-8 items-center justify-center rounded-md border border-surface-200 text-blue-900 hover:bg-blue-50"><span className={`block size-4 rounded-[4px] border-2 border-current ${open ? 'after:absolute after:ml-1.5 after:mt-[-2px] after:h-4 after:w-px after:bg-current' : ''}`} /></button>; }
+function PaneToggle({ label, open, onClick }: { label: string; open: boolean; onClick: () => void }) { const Icon = open ? PanelLeftClose : PanelLeftOpen; return <button type="button" onClick={onClick} aria-label={`${open ? 'Collapse' : 'Expand'} ${label}`} title={`${open ? 'Collapse' : 'Expand'} ${label}`} className="mb-3 flex size-8 items-center justify-center rounded-md border border-surface-200 text-blue-900 hover:bg-blue-50"><Icon className="size-4" /></button>; }
 function AdminNav({ onAudit }: { onAudit: () => void }) { return <nav className="flex flex-col gap-7 text-[13px] font-semibold"><NavGroup title="DATA GOVERNANCE" items={['Tables & Columns']} active /><button type="button" onClick={onAudit} className="rounded-lg px-3 py-3 text-left text-blue-900 hover:bg-blue-50">Audit Trail</button><NavGroup title="AI OBSERVABILITY" items={['AI Traceability']} /><NavGroup title="COMPLIANCE" items={['Policy Packs']} /></nav>; }
 function NavGroup({ title, items, active = false }: { title: string; items: string[]; active?: boolean }) { return <div><p className="mb-3 px-2 text-[11px] font-bold text-blue-900">{title}</p>{items.map((item, index) => <div key={item} className={`flex items-center gap-3 rounded-lg px-3 py-3 ${active && index === 0 ? 'bg-blue-50 text-blue-600' : 'text-blue-900'}`}><Grid3X3 className="size-4" />{item}</div>)}</div>; }
 function AdminSelect({ label, value, compact = false }: { label?: string; value: string; compact?: boolean }) { return <label className={compact ? 'flex h-10 items-center gap-3 rounded-lg border border-surface-200 px-3 text-[11px] font-semibold' : 'flex flex-col gap-2 text-[10px] font-semibold'}>{label}{!compact && <span className="flex h-10 items-center justify-between rounded-lg border border-surface-200 px-3 text-[12px]"><span>{value}</span><ChevronDown className="size-4" /></span>}{compact && <><span>{value}</span><ChevronDown className="size-4" /></>}</label>; }
