@@ -10,6 +10,7 @@ import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { LoginScreen } from '@/components/LoginScreen';
 import { WidgetsPage } from '@/components/WidgetsPage';
+import { AdminTablesPage } from '@/components/AdminTablesPage';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
@@ -18,7 +19,8 @@ type View =
   | { kind: 'reports' }
   | { kind: 'widgets' }
   | { kind: 'builder'; template?: ReportTemplate }
-  | { kind: 'run'; template: ReportTemplate };
+  | { kind: 'run'; template: ReportTemplate }
+  | { kind: 'admin' };
 
 function AppContent() {
   const { profile, signOut } = useAuth();
@@ -44,7 +46,11 @@ function AppContent() {
         userName={firstName}
         userInitials={initials}
         onSignOut={signOut}
+        isAdmin={profile.role === 'admin'}
+        onOpenSettings={() => setView({ kind: 'admin' })}
       />
+
+      {view.kind === 'admin' && <AdminTablesPage onBack={() => setView({ kind: 'home' })} />}
 
       {view.kind === 'home' && (
         <HomePage

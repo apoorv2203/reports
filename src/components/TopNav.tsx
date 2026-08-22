@@ -10,9 +10,11 @@ type TopNavProps = {
   userName: string;
   userInitials: string;
   onSignOut: () => void;
+  isAdmin: boolean;
+  onOpenSettings: () => void;
 };
 
-export function TopNav({ onOpenHome, onOpenReports, onOpenWidgets, onOpenSessions, userName, userInitials, onSignOut }: TopNavProps) {
+export function TopNav({ onOpenHome, onOpenReports, onOpenWidgets, onOpenSessions, userName, userInitials, onSignOut, isAdmin, onOpenSettings }: TopNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -39,6 +41,7 @@ export function TopNav({ onOpenHome, onOpenReports, onOpenWidgets, onOpenSession
                   <div className="text-[12px] font-bold text-navy-900">{userName}</div>
                   <div className="mt-0.5 text-[11px] text-ink-500">Signed in</div>
                 </div>
+                {isAdmin && <button type="button" onClick={() => { setMenuOpen(false); onOpenSettings(); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[12px] font-semibold text-navy-900 transition hover:bg-surface-50"><span>⚙</span> Settings</button>}
                 <button type="button" onClick={() => { setMenuOpen(false); onSignOut(); }} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[12px] font-semibold text-red-600 transition hover:bg-red-50"><LogOut className="h-4 w-4" /> Sign out</button>
               </div>
             </>
