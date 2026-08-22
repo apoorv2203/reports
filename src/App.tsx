@@ -13,6 +13,7 @@ import { WidgetsPage } from '@/components/WidgetsPage';
 import { AdminTablesPage } from '@/components/AdminTablesPage';
 import { AdminAuditTrailPage } from '@/components/AdminAuditTrailPage';
 import { AdminShell } from '@/components/AdminShell';
+import { ResizableThreePane } from '@/components/ResizableThreePane';
 import type { ReportTemplate } from '@/data/reportTemplates';
 
 type View =
@@ -70,15 +71,7 @@ function AppContent() {
       )}
 
       {view.kind === 'workspace' && (
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden border-t border-surface-200 sm:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_220px]">
-          <div className="hidden min-h-0 border-r border-surface-200 sm:block">
-            <ChatPanel empty={view.newWidget} />
-          </div>
-          <CanvasPanel empty={view.newWidget} />
-          <div className="hidden min-h-0 border-l border-surface-200 xl:block">
-            <ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />
-          </div>
-        </div>
+        <ResizableThreePane left={<ChatPanel empty={view.newWidget} />} center={<CanvasPanel empty={view.newWidget} />} right={<ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />} leftLabel="Chat pane" rightLabel="Actions pane" />
       )}
 
       {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} homeWidgetIds={homeWidgetIds} onToggleHomeWidget={toggleHomeWidget} />}
