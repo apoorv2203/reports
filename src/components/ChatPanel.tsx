@@ -45,7 +45,7 @@ const runDetails = [
 
 type ContextView = 'summary' | 'glance';
 
-export function ChatPanel({ empty = false }: { empty?: boolean }) {
+export function ChatPanel({ empty = false, paneControl }: { empty?: boolean; paneControl?: React.ReactNode }) {
   const [contextView, setContextView] = useState<ContextView>('glance');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [message, setMessage] = useState('');
@@ -59,6 +59,7 @@ export function ChatPanel({ empty = false }: { empty?: boolean }) {
             <span className="h-1.5 w-1.5 rounded-full bg-mint-500" />
             Ready
           </span>
+          {paneControl}
         </div>
           {!empty && <div className="mt-4 rounded-2xl rounded-br-md border border-surface-200 bg-white px-4 py-3 text-[13px] font-medium leading-6 text-ink-700">Top 5 products by approval rate</div>}
       </div>
