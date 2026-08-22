@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownToLine, ArrowLeft, ArrowUpRight, BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowLeft, ArrowUpRight, ChartBar as BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
 import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
+import { ResizableThreePane } from './ResizableThreePane';
 
 export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
   const [sections, setSections] = useState<TemplateSection[]>(template.sections);
@@ -68,54 +69,60 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[280px_minmax(420px,1fr)_230px]">
-        <aside className={`hidden min-h-0 flex-col border-r xl:flex border-[#e5e5e7] bg-[#f5f5f7] p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
-          {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}
-          {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
-            {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
-            <div className="flex flex-col gap-3">
-              {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-[#1d1d1f] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-[#174f91]"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
-            </div>
-            <div className="mt-6 border-t border-[#e5e5e7] pt-4">
-              <div className="text-[12px] font-bold text-ink-500">Try next</div>
-              <div className="mt-2 flex flex-col gap-2">
-                {['Add a KPI block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-[#d2d2d7] bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
+      <ResizableThreePane
+        leftLabel="Editing this report"
+        rightLabel="Actions"
+        left={
+          <aside className={`flex h-full min-h-0 flex-col border-r border-[#e5e5e7] bg-[#f5f5f7] p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
+            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}
+            {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
+              {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
+              <div className="flex flex-col gap-3">
+                {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-[#1d1d1f] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-[#174f91]"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
-            </div>
-          </div>}
-          <div className="mt-3 rounded-[14px] border border-[#d2d2d7] bg-white p-2">
-            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
-            <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
-          </div>
-        </aside>
-
-        <main className="min-h-0 overflow-y-auto bg-white px-8 py-7">
-          <div className="mx-auto max-w-2xl">
-            <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
-            {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
-            <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
-          </div>
-        </main>
-
-        <aside className="hidden min-h-0 flex-col gap-3 overflow-y-auto border-l xl:flex border-[#e5e5e7] bg-[#f5f5f7] p-4">
-          <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
-          {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
-          <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
-          <div>
-            <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
-              <ArrowDownToLine className="h-4 w-4" />
-              Export
-              <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-[#e5e5e7] bg-white p-1">
-              {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
+              <div className="mt-6 border-t border-[#e5e5e7] pt-4">
+                <div className="text-[12px] font-bold text-ink-500">Try next</div>
+                <div className="mt-2 flex flex-col gap-2">
+                  {['Add a KPI block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-[#d2d2d7] bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
+                </div>
+              </div>
             </div>}
-          </div>
-          <div className={`my-2 h-px bg-[#e5e5e7] ${readOnly ? 'hidden' : ''}`} />
-          <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
-          <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-[#e5e5e7] bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
-        </aside>
-      </div>
+            <div className="mt-3 rounded-[14px] border border-[#d2d2d7] bg-white p-2">
+              <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
+              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
+            </div>
+          </aside>
+        }
+        center={
+          <main className="h-full min-h-0 overflow-y-auto bg-white px-8 py-7">
+            <div className="mx-auto max-w-2xl">
+              <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
+              {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
+              <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
+            </div>
+          </main>
+        }
+        right={
+          <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e5e5e7] bg-[#f5f5f7] p-4">
+            <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
+            {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
+            <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
+            <div>
+              <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
+                <ArrowDownToLine className="h-4 w-4" />
+                Export
+                <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-[#e5e5e7] bg-white p-1">
+                {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
+              </div>}
+            </div>
+            <div className={`my-2 h-px bg-[#e5e5e7] ${readOnly ? 'hidden' : ''}`} />
+            <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
+            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-[#e5e5e7] bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
+          </aside>
+        }
+      />
       {showPublishDialog && <PublishReportDialog onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} />}
     </div>
   );
