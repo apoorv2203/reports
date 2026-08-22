@@ -22,12 +22,15 @@ export function LoginScreen() {
     }
   }
 
-  function fillDemo(user: 'new' | 'experienced') {
+  function fillDemo(user: 'new' | 'experienced' | 'admin') {
     if (user === 'new') {
       setEmail('rahul.new@reportiq.dev');
       setPassword('welcome123');
-    } else {
+    } else if (user === 'experienced') {
       setEmail('anita.experienced@reportiq.dev');
+      setPassword('welcome123');
+    } else {
+      setEmail('admin@reportiq.dev');
       setPassword('welcome123');
     }
     setError(null);
@@ -134,7 +137,7 @@ export function LoginScreen() {
             <span className="h-px flex-1 bg-surface-200" />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               type="button"
               onClick={() => fillDemo('new')}
@@ -142,6 +145,14 @@ export function LoginScreen() {
             >
               <div className="text-[12px] font-bold text-navy-900">New user</div>
               <div className="mt-0.5 text-[10px] text-ink-500">Rahul · empty dashboard</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillDemo('admin')}
+              className="rounded-xl border border-surface-200 bg-surface-50 px-3.5 py-3 text-left transition hover:border-mint-300 hover:bg-mint-50"
+            >
+              <div className="text-[12px] font-bold text-navy-900">Admin user</div>
+              <div className="mt-0.5 text-[10px] text-ink-500">Admin · settings access</div>
             </button>
             <button
               type="button"
