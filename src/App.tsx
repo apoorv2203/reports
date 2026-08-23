@@ -14,7 +14,7 @@ import { AdminTablesPage } from '@/components/AdminTablesPage';
 import { AdminAuditTrailPage } from '@/components/AdminAuditTrailPage';
 import { AdminShell } from '@/components/AdminShell';
 import { ResizableThreePane } from '@/components/ResizableThreePane';
-import type { ReportTemplate } from '@/data/reportTemplates';
+import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
 
 type View =
   | { kind: 'home' }
@@ -61,6 +61,7 @@ function AppContent() {
       {view.kind === 'home' && (
         <HomePage
           onNewSession={(question) => { setInitialQuestion(question ?? ''); setView({ kind: 'workspace' }); }}
+          onRunPinnedReport={(reportName) => { const template = reportTemplates.find((item) => item.name.toLowerCase().includes(reportName.toLowerCase().split(' ')[0])) ?? reportTemplates[0]; setView({ kind: 'run', template }); }}
           onOpenReports={() => setView({ kind: 'reports' })}
           onCreateReport={() => setView({ kind: 'builder' })}
           onOpenWidgets={() => setView({ kind: 'widgets' })}
