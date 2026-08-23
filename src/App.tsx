@@ -30,7 +30,7 @@ function AppContent() {
   const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
   const [initialQuestion, setInitialQuestion] = useState('');
-  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend']);
+  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend', 'active-loans', 'npa', 'collection', 'loan-region', 'branch-performance']);
   const toggleHomeWidget = (id: string) => setHomeWidgetIds((current) => current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]);
 
   if (!profile) {
