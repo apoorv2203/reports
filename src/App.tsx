@@ -29,6 +29,7 @@ type View =
 function AppContent() {
   const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
+  const [initialQuestion, setInitialQuestion] = useState('');
   const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend']);
   const toggleHomeWidget = (id: string) => setHomeWidgetIds((current) => current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]);
 
@@ -59,7 +60,7 @@ function AppContent() {
 
       {view.kind === 'home' && (
         <HomePage
-          onNewSession={() => setView({ kind: 'workspace' })}
+          onNewSession={(question) => { setInitialQuestion(question ?? ''); setView({ kind: 'workspace' }); }}
           onOpenReports={() => setView({ kind: 'reports' })}
           onOpenWidgets={() => setView({ kind: 'widgets' })}
           onEditWidget={() => setView({ kind: 'workspace' })}
@@ -71,7 +72,7 @@ function AppContent() {
       )}
 
       {view.kind === 'workspace' && (
-        <ResizableThreePane left={<ChatPanel empty={view.newWidget} />} center={<CanvasPanel empty={view.newWidget} />} right={<ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />} leftLabel="Chat pane" rightLabel="Actions pane" />
+        <ResizableThreePane left={<ChatPanel empty={view.newWidget} initialQuestion={initialQuestion} />} center={<CanvasPanel empty={view.newWidget} />} right={<ActionsPanel disabled={view.newWidget} onConvertToReport={() => setView({ kind: 'builder' })} />} leftLabel="Chat pane" rightLabel="Actions pane" />
       )}
 
       {view.kind === 'widgets' && <WidgetsPage onBack={() => setView({ kind: 'home' })} onEditWidget={() => setView({ kind: 'workspace' })} onNewWidget={() => setView({ kind: 'workspace', newWidget: true })} homeWidgetIds={homeWidgetIds} onToggleHomeWidget={toggleHomeWidget} />}
