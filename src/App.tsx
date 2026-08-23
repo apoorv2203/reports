@@ -62,6 +62,7 @@ function AppContent() {
         <HomePage
           onNewSession={(question) => { setInitialQuestion(question ?? ''); setView({ kind: 'workspace' }); }}
           onOpenReports={() => setView({ kind: 'reports' })}
+          onCreateReport={() => setView({ kind: 'builder' })}
           onOpenWidgets={() => setView({ kind: 'widgets' })}
           onEditWidget={() => setView({ kind: 'workspace' })}
           homeWidgetIds={homeWidgetIds}
