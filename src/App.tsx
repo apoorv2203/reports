@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { addWidgetToHome, getHomeWidgets, getWidgetData, removeWidgetFromHome, type HomeWidget, type WidgetData } from '@/services/widgetService';
 import { TopNav } from '@/components/TopNav';
 import { HomePage } from '@/components/HomePage';
 import { ChatPanel } from '@/components/ChatPanel';
@@ -30,8 +31,13 @@ function AppContent() {
   const { profile, signOut } = useAuth();
   const [view, setView] = useState<View>({ kind: 'home' });
   const [initialQuestion, setInitialQuestion] = useState('');
-  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>(['disbursed', 'approval', 'npa-trend', 'active-loans', 'npa', 'collection', 'loan-region', 'branch-performance']);
-  const toggleHomeWidget = (id: string) => setHomeWidgetIds((current) => current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]);
+  const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>([]);
+  const [homeWidgets, setHomeWidgets] = useState<HomeWidget[]>([]);
+  const [widgetData, setWidgetData] = useState<Record<string, WidgetData | undefined>>({});
+  const [widgetLoading, setWidgetLoading] = useState<Record<string, boolean>>({});
+  const [widgetErrors, setWidgetErrors] = useState<Record<string, boolean>>({});
+  useEffect(() => { getHomeWidgets().then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); Promise.allSettled(widgets.filter((widget) => widget.isOnHome).map(async (widget) => { setWidgetLoading((current) => ({ ...current, [widget.id]: true })); try { const data = await getWidgetData(widget.id); setWidgetData((current) => ({ ...current, [widget.id]: data })); } catch { setWidgetErrors((current) => ({ ...current, [widget.id]: true })); } finally { setWidgetLoading((current) => ({ ...current, [widget.id]: false })); } })); }); }, []);
+  const toggleHomeWidget = (id: string) => { const removing = homeWidgetIds.includes(id); (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)).then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } }); };
 
   if (!profile) {
     return <LoginScreen />;
@@ -67,6 +73,11 @@ function AppContent() {
           onOpenWidgets={() => setView({ kind: 'widgets' })}
           onEditWidget={() => setView({ kind: 'workspace' })}
           homeWidgetIds={homeWidgetIds}
+          homeWidgets={homeWidgets}
+          widgetData={widgetData}
+          widgetLoading={widgetLoading}
+          widgetErrors={widgetErrors}
+          onRetryWidget={(id) => getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data })))}
           onRemoveWidget={toggleHomeWidget}
           isNewUser={isNewUser}
           userName={firstName}
