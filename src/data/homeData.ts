@@ -16,11 +16,24 @@ export type Widget = {
   accent: 'mint' | 'blue' | 'violet' | 'amber';
 };
 
+export const scheduledDeliveries = [
+  { name: 'Loan Portfolio Summary', format: 'PDF', time: 'Today, 09:00 AM', status: 'Delivered' },
+  { name: 'Collections Performance', format: 'XLSX', time: 'Yesterday, 07:30 PM', status: 'Delivered' },
+  { name: 'Branch Review Report', format: 'PDF', time: '20 Aug 2025, 08:00 AM', status: 'Delivered' },
+  { name: 'Delinquency Analysis', format: 'XLSX', time: '18 Aug 2025, 07:00 PM', status: 'Delivered' },
+];
+
 export const pinnedReports = [
   { name: 'Loan Portfolio Summary', updated: 'Updated 2h ago', pinned: true },
   { name: 'Delinquency Analysis', updated: 'Updated 1d ago', pinned: true },
-  { name: 'Branch Performance', updated: 'Updated 3d ago', pinned: false },
-  { name: 'Credit Risk Overview', updated: 'Updated 5d ago', pinned: false },
+  { name: 'Branch Performance', updated: 'Updated 3d ago', pinned: true },
+  { name: 'Collection Performance', updated: 'Updated 5d ago', pinned: false },
+  { name: 'Credit Risk Overview', updated: 'Updated 6d ago', pinned: false },
+  { name: 'Portfolio Vintage Analysis', updated: 'Updated 1w ago', pinned: false },
+  { name: 'Regional Disbursement', updated: 'Updated 9d ago', pinned: false },
+  { name: 'Loan Aging Summary', updated: 'Updated 12d ago', pinned: false },
+  { name: 'Branch Target Tracker', updated: 'Updated 2w ago', pinned: false },
+  { name: 'Customer Segmentation', updated: 'Updated 3w ago', pinned: false },
 ];
 
 export const recentSessions = [
