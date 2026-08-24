@@ -211,7 +211,7 @@ export function HomePage({
                         type="button"
                         key={report.name}
                         onClick={() => onRunPinnedReport(report.name)}
-                        className="h-auto w-full justify-start gap-2.5 py-2.5 text-left"
+                        size="list-row"
                       >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
                           <FileText className="h-4 w-4" />
@@ -416,7 +416,7 @@ function EmptySideState({
       <p className="mt-1 max-w-[190px] text-[11px] leading-5 text-ink-500">
         {text}
       </p>
-      <AppButton variant="secondary" type="button" onClick={onAction} size="action-sm" className="mt-3">
+      <AppButton variant="secondary" type="button" onClick={onAction} size="action-sm">
         {action}
       </AppButton>
     </div>
@@ -502,7 +502,7 @@ function WidgetCard({
               onClick={onMaximize}
               aria-label={t("home.previewWidgetName", { name: widget.title })}
               title={t("home.previewWidget")}
-              className="size-6 text-navy-900"
+              size="icon-sm"
             >
               {recommended ? (
                 <Eye className="h-4 w-4" aria-hidden="true" />
@@ -523,7 +523,7 @@ function WidgetCard({
                   onClick={() => setMenuOpen((open) => !open)}
                   aria-label={t("home.moreOptions", { name: widget.title })}
                   aria-expanded={menuOpen}
-                  className="size-6 text-navy-900"
+                  size="icon-sm"
                 >
                   <Ellipsis />
                 </AppButton>
@@ -533,7 +533,7 @@ function WidgetCard({
                       variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      className="h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold"
+                      size="menu"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />{" "}
                       {t("home.refreshData")}
@@ -545,7 +545,7 @@ function WidgetCard({
                         onRemove?.();
                         closeMenu();
                       }}
-                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
+                      size="menu"
                     >
                       <Trash2 className="h-3.5 w-3.5" />{" "}
                       {t("home.removeFromHome")}
@@ -554,7 +554,7 @@ function WidgetCard({
                       variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
+                      size="menu"
                     >
                       <Info data-icon="inline-start" /> {t("home.viewDetails")}
                     </AppButton>
@@ -599,7 +599,7 @@ function WidgetCard({
           type="button"
           onClick={onAdd}
           disabled={added}
-          className="mt-3 h-auto w-full gap-1.5 py-1.5 text-[10px] font-bold"
+          size="widget"
         >
           {added ? (
             <>
@@ -638,8 +638,8 @@ function MaximizedWidget({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay-light p-4">
       <AppCard
-        variant="report"
-        className="w-full max-w-5xl rounded-xl p-6 shadow-floaty"
+variant="report"
+            density="modal"
         role="dialog"
         aria-modal="true"
         aria-label={t("home.previewWidgetName", { name: widget.title })}

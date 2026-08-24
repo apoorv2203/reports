@@ -3,7 +3,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'icon' | 'compact';
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' | 'action-sm';
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row';
 };
 
 type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
@@ -29,6 +29,9 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
   'action-md': { size: 'default', className: 'px-4 py-2.5 text-[12px] font-bold' },
   'icon-lg': { size: 'icon', className: 'size-9 text-muted-foreground' },
   retry: { size: 'default', className: 'h-auto p-0 font-bold text-primary' },
+  menu: { size: 'default', className: 'h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold' },
+  widget: { size: 'default', className: 'mt-3 h-auto w-full gap-1.5 py-1.5 text-[10px] font-bold' },
+  'list-row': { size: 'default', className: 'h-auto w-full justify-start gap-2.5 py-2.5 text-left' },
 };
 
 export function AppButton({ variant = 'primary', size, className, ...props }: AppButtonProps) {

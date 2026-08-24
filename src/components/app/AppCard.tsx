@@ -12,7 +12,7 @@ const styles: Record<AppCardVariant, string> = {
   admin: 'rounded-[14px] border border-border bg-card shadow-card-alt',
 };
 
-export function AppCard({ variant = 'default', density, className, ...props }: React.ComponentProps<typeof Card> & { variant?: AppCardVariant; density?: 'default' | 'compact' | 'empty' | 'recommendation' }) {
-  const densityClass = density === 'compact' ? 'px-4 py-3' : density === 'empty' ? 'flex min-h-[430px] flex-col items-center justify-center px-6 text-center' : density === 'recommendation' ? 'px-5 py-5' : undefined;
+export function AppCard({ variant = 'default', density, className, ...props }: React.ComponentProps<typeof Card> & { variant?: AppCardVariant; density?: 'default' | 'compact' | 'empty' | 'recommendation' | 'modal' }) {
+  const densityClass = density === 'compact' ? 'px-4 py-3' : density === 'empty' ? 'flex min-h-[430px] flex-col items-center justify-center px-6 text-center' : density === 'recommendation' ? 'px-5 py-5' : density === 'modal' ? 'w-full max-w-5xl rounded-xl p-6 shadow-floaty' : undefined;
   return <Card {...props} className={cn(styles[variant], densityClass, className)} />;
 }
