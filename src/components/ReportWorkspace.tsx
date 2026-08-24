@@ -57,9 +57,9 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-200 bg-surface px-5 text-navy-900 shadow-tab-active">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-5 text-foreground shadow-sm">
         <div className="flex min-w-0 items-center gap-3">
-          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label="Back"><ArrowLeft /></AppButton>
+          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label={t('common.back')}><ArrowLeft /></AppButton>
           <span className="h-5 w-px bg-surface-200" />
           <span className="font-display text-[16px] font-bold text-navy-900">ReportIQ</span>
           <span className="text-ink-300">/</span>
@@ -70,7 +70,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <AppButton variant="ghost" size="action-sm" type="button" onClick={onBrowseReports} className="hidden sm:inline-flex"><BookOpen /> {t('workspace.reports')}</AppButton>
-          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label="Close"><X /></AppButton>
+          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label={t('common.close')}><X /></AppButton>
         </div>
       </header>
 
@@ -79,9 +79,9 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         rightLabel={t('workspace.actions')}
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-surface-200 bg-background p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
-            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}
+            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
             {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
-              {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-border-light p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
+              {messages.length === 0 && <AppCard variant="report" className="border-dashed p-4 text-[12px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</AppCard>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-text-primary px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-badge-blue-text"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
@@ -92,16 +92,16 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
                 </div>
               </div>
             </div>}
-            <div className="mt-3 rounded-[14px] border border-border-light bg-white p-2">
-              <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
-              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-text-primary text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
-            </div>
+            <AppCard variant="report" className="mt-3 p-2">
+              <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
+              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
+            </AppCard>
           </aside>
         }
         center={
           <main className="h-full min-h-0 overflow-y-auto bg-white px-8 py-7">
             <div className="mx-auto max-w-2xl">
-              <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-background"><MoreHorizontal className="h-5 w-5" /></button></div>
+              <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><AppButton variant="ghost" size="icon-sm" aria-label={t('workspace.moreOptions')}><MoreHorizontal /></AppButton></div>
               {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
               <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
             </div>
@@ -111,20 +111,20 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-surface-200 bg-background p-4">
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
             {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="action-md"><ArrowUpRight /> Publish report</AppButton>
-            <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
+            <p className="-mt-1 text-[11px] leading-4 text-ink-500">{t('workspace.publishHelper')}</p></>}
             <div>
-              <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
+              <AppButton type="button" onClick={() => setExportOpen((open) => !open)} variant="secondary" size="menu-item" className="py-3">
                 <ArrowDownToLine className="h-4 w-4" />
                 Export
                 <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
-              </button>
+              </AppButton>
               {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-surface-200 bg-white p-1">
-                {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
+                {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <AppButton key={option} type="button" variant="ghost" size="menu-item">{option}</AppButton>)}
               </div>}
             </div>
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
-            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-surface-200 bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border-light py-2 text-[12px] font-semibold text-ink-700 hover:bg-background"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
+            <AppCard variant="report" className={readOnly ? 'hidden' : 'p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><AppButton variant="secondary" size="action-sm" className="mt-3 w-full"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
           </aside>
         }
       />
