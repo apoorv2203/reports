@@ -59,7 +59,7 @@ export function BuilderReportsLibrary({
           <button onClick={onBack} aria-label="Back to report builder" className="flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-background hover:text-ink-900">
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <span className="h-5 w-px bg-[#d2d2d7]" />
+          <span className="h-5 w-px bg-border-light" />
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-mint-700">Report library</p>
             <h1 id="reports-library-title" className="font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">Reuse what your team already knows</h1>

@@ -39,7 +39,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     } else if (/kpi|metric|number/i.test(text)) {
       const target = nextSections.findIndex((section, index) => index > 0 && section.kind === 'empty');
       if (target >= 0) nextSections[target] = { ...nextSections[target], kind: 'kpi', body: 'Outstanding balance · Loans · Year-over-year' };
-      result = target >= 0 ? `KPI block added to section ${target + 1}` : 'KPI block added';
+      result = target >= 0 ? `Metric block added to section ${target + 1}` : 'KPI block added';
     } else if (/add|create|include/i.test(text) && emptySections.length > 0) {
       const target = nextSections.findIndex((section) => section.kind === 'empty');
       nextSections[target] = { ...nextSections[target], kind: 'table', body: 'New report detail' };
@@ -76,20 +76,20 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <aside className={`flex h-full min-h-0 flex-col border-r border-surface-200 bg-background p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}
             {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
-              {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
+              {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-border-light p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
               <div className="flex flex-col gap-3">
-                {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-[#1d1d1f] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-[#174f91]"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
+                {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-text-primary px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-badge-blue-text"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
               <div className="mt-6 border-t border-surface-200 pt-4">
                 <div className="text-[12px] font-bold text-ink-500">Try next</div>
                 <div className="mt-2 flex flex-col gap-2">
-                  {['Add a KPI block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-[#d2d2d7] bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
+                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-border-light bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
                 </div>
               </div>
             </div>}
-            <div className="mt-3 rounded-[14px] border border-[#d2d2d7] bg-white p-2">
+            <div className="mt-3 rounded-[14px] border border-border-light bg-white p-2">
               <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder="Ask to update a section..." rows={3} className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" />
-              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
+              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">Enter to send</span><button onClick={() => applyPrompt(prompt)} className="flex h-7 w-7 items-center justify-center rounded-full bg-text-primary text-white hover:bg-black"><Send className="h-3.5 w-3.5" /></button></div>
             </div>
           </aside>
         }
@@ -105,7 +105,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         right={
           <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-surface-200 bg-background p-4">
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
-            {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
+            {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-text-primary px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
             <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
             <div>
               <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
@@ -117,9 +117,9 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
                 {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
               </div>}
             </div>
-            <div className={`my-2 h-px bg-[#e5e5e7] ${readOnly ? 'hidden' : ''}`} />
+            <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
-            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-surface-200 bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-background"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
+            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-surface-200 bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border-light py-2 text-[12px] font-semibold text-ink-700 hover:bg-background"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
           </aside>
         }
       />
@@ -131,14 +131,14 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 function ReportSectionCard({ section, onEdit, readOnly = false }: { section: TemplateSection; onEdit: (value: string) => void; readOnly?: boolean }) {
   const [editing, setEditing] = useState(false);
   const Icon = section.kind === 'chart' ? BarChart3 : section.kind === 'table' ? Table2 : section.kind === 'kpi' ? Sparkles : FileText;
-  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-[#d2d2d7] bg-[#fafafa]' : 'border-surface-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
+  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-border-light bg-surface-tertiary' : 'border-surface-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
     <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-ink-500"><Icon className="h-4 w-4 text-mint-600" /> {section.kind === 'empty' ? 'Empty section' : section.kind}</div>{!readOnly && <button onClick={() => setEditing(!editing)} className="text-ink-300 hover:text-ink-900"><Pencil className="h-3.5 w-3.5" /></button>}</div>
     {editing ? <input autoFocus defaultValue={section.title} onBlur={(e) => { onEdit(e.target.value); setEditing(false); }} onKeyDown={(e) => { if (e.key === 'Enter') { onEdit(e.currentTarget.value); setEditing(false); } }} className="input mt-3" /> : <h3 className="mt-3 font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">{section.title}</h3>}
     {section.kind === 'title' && <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This summary gives your team a clear view of what changed and where attention is needed.</p>}
     {section.kind === 'kpi' && <div className="mt-4 grid grid-cols-3 gap-3"><Metric label="Outstanding" value="97.9 Cr" /><Metric label="Loans" value="1,284" /><Metric label="YoY" value="+7.2%" danger /></div>}
     {section.kind === 'chart' && <MiniChart />}
     {section.kind === 'table' && <MiniTable />}
-    {section.kind === 'empty' && <div className="mt-5 flex min-h-[72px] items-center justify-center text-center text-[13px] text-ink-500">Empty — ask ReportIQ to add a chart, table, or KPI here</div>}
+    {section.kind === 'empty' && <div className="mt-5 flex min-h-[72px] items-center justify-center text-center text-[13px] text-ink-500">Empty — ask ReportIQ to add a chart, table, or metric here</div>}
   </section>;
 }
 
