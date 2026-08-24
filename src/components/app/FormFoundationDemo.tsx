@@ -4,11 +4,8 @@ import { AppField, AppForm, AppInput, FieldGroup } from "./AppForm"
 import type { SubmitHandler } from "react-hook-form"
 import { useT } from "@/providers/I18nProvider"
 
-export const formFoundationSchema = z.object({
-  name: z.string().trim().min(2, "Enter at least 2 characters."),
-})
+type FormFoundationValues = { name: string }
 
-type FormFoundationValues = z.infer<typeof formFoundationSchema>
 const handleDemoSubmit: SubmitHandler<FormFoundationValues> = () => undefined
 
 export function FormFoundationDemo() {
