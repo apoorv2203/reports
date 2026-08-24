@@ -1,4 +1,8 @@
 import { useMemo, useState } from 'react';
+import { AppButton } from '@/components/app/AppButton';
+import { AppInput } from '@/components/app/AppInput';
+import { AppCard } from '@/components/app/AppCard';
+import { AppBadge } from '@/components/app/AppBadge';
 import { useT } from '@/providers/I18nProvider';
 import {
   ArrowLeft,
@@ -58,34 +62,34 @@ export function BuilderReportsLibrary({
     <div className="rb-overlay fixed inset-0 z-50 flex flex-col overflow-hidden bg-background" role="dialog" aria-modal="true" aria-labelledby="reports-library-title">
       <header className="flex min-h-16 shrink-0 flex-wrap items-center justify-between gap-3 border-b border-surface-200 bg-white px-5 py-3 md:px-8">
         <div className="flex items-center gap-3">
-          <button onClick={onBack} aria-label="Back to report builder" className="flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-background hover:text-ink-900">
+          <AppButton variant="ghost" size="icon-lg" onClick={onBack} aria-label={t('builderLibrary.backButton')}>
             <ArrowLeft className="h-4 w-4" />
-          </button>
+          </AppButton>
           <span className="h-5 w-px bg-border-light" />
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-mint-700">Report library</p>
             <h1 id="reports-library-title" className="font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">Reuse what your team already knows</h1>
           </div>
         </div>
-        <button onClick={onBack} className="rounded-full bg-mint-400 px-4 py-2 text-[13px] font-bold text-navy-900 hover:bg-mint-300">Back to builder</button>
+        <AppButton variant="primary" size="action-sm" onClick={onBack}>{t('builderLibrary.backButton')}</AppButton>
       </header>
 
       <main className="min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
         <div className="mx-auto max-w-7xl">
           <div className="inline-flex rounded-[14px] border border-surface-200 bg-white p-1 shadow-soft" aria-label={t('reports.library')}>
-            <button onClick={() => { setTab('mine'); setCategory('All'); }} className={`rounded-[10px] px-5 py-2.5 text-[14px] font-semibold ${tab === 'mine' ? 'bg-navy-900 text-white' : 'text-ink-500 hover:text-ink-900'}`}>My reports</button>
-            <button onClick={() => { setTab('catalogue'); setCategory('All'); }} className={`rounded-[10px] px-5 py-2.5 text-[14px] font-semibold ${tab === 'catalogue' ? 'bg-navy-900 text-white' : 'text-ink-500 hover:text-ink-900'}`}>Catalogue</button>
+            <AppButton size="tab" active={tab === 'mine'} onClick={() => { setTab('mine'); setCategory('All'); }}>{t('builderLibrary.myReports')}</AppButton>
+            <AppButton size="tab" active={tab === 'catalogue'} onClick={() => { setTab('catalogue'); setCategory('All'); }}>{t('builderLibrary.catalogue')}</AppButton>
           </div>
 
           <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center">
             <label className="flex min-w-0 flex-1 items-center gap-3 rounded-[14px] border border-border-light bg-white px-4 py-3 text-ink-300 focus-within:border-mint-400 focus-within:ring-2 focus-within:ring-mint-100">
               <Search className="h-5 w-5 shrink-0" />
               <span className="sr-only">Search reports</span>
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tab === 'mine' ? 'Search my reports' : 'Search shared reports'} className="min-w-0 flex-1 bg-transparent text-[14px] text-ink-900 outline-none placeholder:text-ink-300" />
+              <AppInput value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tab === 'mine' ? t('builderLibrary.searchMyReports') : t('builderLibrary.searchSharedReports')} size="inline" />
             </label>
             <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Report categories">
               {categories.map((item) => (
-                <button key={item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-4 py-2.5 text-[13px] font-semibold ${category === item ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-white text-ink-500 hover:border-ink-500 hover:text-ink-900'}`}>{item}</button>
+                <AppButton key={item} size="pill" active={category === item} onClick={() => setCategory(item)}>{item}</AppButton>
               ))}
             </div>
           </div>
@@ -117,7 +121,7 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
   };
 
   return (
-    <article className="flex min-h-[300px] flex-col rounded-[18px] border border-surface-200 bg-surface p-5 shadow-card-alt transition hover:-translate-y-0.5 hover:shadow-floaty">
+    <AppCard variant="report" density="recommendation" className="min-h-[300px]">
       <div><span className={`inline-flex rounded-full px-3 py-1 text-[12px] font-bold ${categoryStyles[report.category]}`}>{report.category}</span></div>
       <h2 className="mt-4 text-balance font-display text-[19px] font-bold tracking-[-0.03em] text-ink-900">{report.title}</h2>
       <p className="mt-2 flex-1 text-[14px] leading-relaxed text-ink-500">{report.description}</p>
@@ -136,6 +140,6 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
         )}
       </div>
       {report.ownedByYou && <p className="mt-3 text-center text-[11px] font-semibold text-ink-300">{report.published ? 'Published by you' : 'Private draft'}</p>}
-    </article>
+    </AppCard>
   );
 }

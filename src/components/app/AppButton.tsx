@@ -44,5 +44,5 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
 export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
-  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), className)} />;
+  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), className)} />;
 }

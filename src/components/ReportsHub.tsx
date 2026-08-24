@@ -25,6 +25,10 @@ import {
 } from "lucide-react";
 import { reportTemplates, type ReportTemplate } from "@/data/reportTemplates";
 import { useT } from "@/providers/I18nProvider";
+import { AppButton } from "@/components/app/AppButton";
+import { AppInput } from "@/components/app/AppInput";
+import { AppCard } from "@/components/app/AppCard";
+import { AppBadge } from "@/components/app/AppBadge";
 
 type Report = {
   id: string;
@@ -173,19 +177,20 @@ export function ReportsHub({
             <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-ink-300 md:flex">
               <Search className="h-4 w-4" />
               <span className="sr-only">{t("reports.searchLabel")}</span>
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t("reports.searchPlaceholder")}
-                className="min-w-0 flex-1 text-[12px] text-navy-900 outline-none placeholder:text-ink-400"
-              />
+<AppInput
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t("reports.searchPlaceholder")}
+            size="inline"
+          />
             </label>
-            <button
-              onClick={() => onBuild()}
-              className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2.5 text-[12px] font-bold text-white hover:bg-navy-800"
-            >
+<AppButton
+          variant="primary"
+          size="action-md"
+          onClick={() => onBuild()}
+        >
               <Plus className="h-4 w-4" /> {t("reports.newReport")}
-            </button>
+            </AppButton>
           </div>
         </div>
         <nav className="mt-7 flex gap-7">
@@ -202,17 +207,18 @@ export function ReportsHub({
       </header>
       <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8">
         <div className="flex flex-wrap items-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-4 py-2.5 text-[12px] font-bold text-navy-900 hover:bg-surface-50">
-            <Filter className="h-4 w-4" /> {t("common.filters")}
-          </button>
+          <AppButton variant="secondary" size="filter">
+              <Filter className="h-4 w-4" /> {t("common.filters")}
+          </AppButton>
           {categoryLabels.map((label) => (
-            <button
-              key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-surface-200 px-4 py-2.5 text-[12px] font-semibold text-ink-700 hover:border-mint-300 hover:bg-mint-50"
-            >
+<AppButton
+            key={label}
+            variant="secondary"
+            size="pill"
+          >
               {label}
               <ChevronDown className="h-3.5 w-3.5 text-ink-400" />
-            </button>
+            </AppButton>
           ))}
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
@@ -294,12 +300,9 @@ function Tab({
   children: React.ReactNode;
 }) {
   return (
-    <button
-      onClick={onClick}
-      className={`border-b-2 px-1 pb-3 text-[13px] font-bold transition ${active ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
-    >
+    <AppButton size="tab" active={active} onClick={onClick}>
       {children}
-    </button>
+    </AppButton>
   );
 }
 function ReportCard({
@@ -331,7 +334,7 @@ function ReportCard({
       <FileText className="h-5 w-5" />
     );
   return (
-    <article className="relative flex min-h-[255px] flex-col rounded-lg border border-surface-200 bg-white p-5 shadow-card-dark transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty">
+    <AppCard variant="report" className="relative min-h-[255px]">
       <div className="flex items-start justify-between">
         <span
           className={`flex h-10 w-10 items-center justify-center rounded-md ${report.icon === "chart" ? "bg-badge-purple-bg text-badge-purple-text" : "bg-mint-100 text-mint-700"}`}
@@ -339,13 +342,11 @@ function ReportCard({
           {icon}
         </span>
         <div className="flex items-start gap-3">
-          <span
-            className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${report.status === "Published" ? "bg-mint-100 text-mint-700" : "bg-amber-100 text-amber-800"}`}
-          >
+<AppBadge variant={report.status === "Published" ? "success" : "warning"} size="status">
             {report.status === "Published"
               ? t("reports.published")
               : t("reports.draft")}
-          </span>
+          </AppBadge>
           <button
             onClick={onRun}
             aria-label={t("reports.runReportName", { name: report.title })}
@@ -404,8 +405,8 @@ function ReportCard({
         </div>
       </div>
       {menuOpen && <ReportMenu onOpen={onOpen} />}
-    </article>
-  );
+      </AppCard>
+    );
 }
 function ReportMenu({ onOpen }: { onOpen: () => void }) {
   const t = useT();
