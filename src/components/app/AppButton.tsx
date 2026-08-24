@@ -35,7 +35,7 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
   'list-row': { size: 'default', className: 'h-auto w-full justify-start gap-2.5 py-2.5 text-left' },
   filter: { size: 'default', className: 'px-4 py-2.5 text-[12px] font-bold' },
   pill: { size: 'default', className: 'h-auto rounded-full px-4 py-2.5 text-[12px] font-semibold text-foreground' },
-  tab: { size: 'default', className: 'h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition' },
+  tab: { size: 'default', className: 'h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition shadow-none' },
   toggle: { size: 'icon', className: 'size-8 rounded-md' },
   'card-action': { size: 'default', className: 'flex-1 py-2 text-[10px] font-bold' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
@@ -47,5 +47,5 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
 export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
-  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
+  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
 }

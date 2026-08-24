@@ -77,7 +77,7 @@ export function BuilderReportsLibrary({
 
       <main className="min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
         <div className="mx-auto max-w-7xl">
-          <div className="inline-flex rounded-[14px] border border-border bg-card p-1 shadow-soft" aria-label={t('reports.library')}>
+          <div className="flex items-end gap-7 border-b border-border shadow-none" aria-label={t('reports.library')}>
             <AppButton size="tab" active={tab === 'mine'} onClick={() => { setTab('mine'); setCategory('All'); }}>{t('builderLibrary.myReports')}</AppButton>
             <AppButton size="tab" active={tab === 'catalogue'} onClick={() => { setTab('catalogue'); setCategory('All'); }}>{t('builderLibrary.catalogue')}</AppButton>
           </div>
