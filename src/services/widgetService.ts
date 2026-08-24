@@ -16,7 +16,7 @@ const dataById: Record<string, WidgetData> = {
 
 function readState(): string[] { if (typeof window === 'undefined') return [...homeDefaults]; try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify([...homeDefaults])); } catch { return [...homeDefaults]; } }
 function writeState(ids: string[]) { if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); }
-export async function getHomeWidgets(): Promise<{ widgets: HomeWidget[] }> { const ids = readState(); return { widgets: myWidgets.filter((widget) => widget.kind !== 'KPI').map((widget) => ({ ...widget, isOnHome: ids.includes(widget.id), dataApi: `/api/widgets/${widget.id}/data` })) }; }
+export async function getHomeWidgets(): Promise<{ widgets: HomeWidget[] }> { const ids = readState(); return { widgets: myWidgets.map((widget) => ({ ...widget, isOnHome: ids.includes(widget.id), dataApi: `/api/widgets/${widget.id}/data` })) }; }
 export async function addWidgetToHome(widgetId: string) { const ids = readState(); if (!ids.includes(widgetId)) writeState([...ids, widgetId]); return getHomeWidgets(); }
 export async function removeWidgetFromHome(widgetId: string) { writeState(readState().filter((id) => id !== widgetId)); return getHomeWidgets(); }
 export function isWidgetOnHome(widgetId: string) { return readState().includes(widgetId); }

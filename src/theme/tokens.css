@@ -118,6 +118,7 @@
   --shadow-card: 0 2px 8px rgba(14, 42, 59, 0.03);
   --shadow-card-alt: 0 2px 8px rgba(0, 0, 0, 0.03);
   --shadow-card-dark: 0 2px 8px rgba(19, 42, 58, 0.03);
+  --shadow-drawer: -10px 0 30px rgba(15, 35, 55, 0.12);
   --shadow-floaty: 0 4px 16px rgba(14, 42, 59, 0.08);
   --shadow-drawer-left: -10px 0 30px rgba(15, 35, 55, 0.12);
   --shadow-drawer-right: -8px 0 30px rgba(15, 35, 55, 0.08);

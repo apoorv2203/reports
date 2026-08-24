@@ -11,18 +11,18 @@ export function ReportTemplatePicker({
   onBrowseReports: () => void;
 }) {
   return (
-    <div className="rb-overlay fixed inset-0 z-50 overflow-y-auto bg-[#f5f5f7]" role="dialog" aria-modal="true">
-      <header className="flex h-16 items-center justify-between border-b border-[#e5e5e7] bg-white px-8">
+    <div className="rb-overlay fixed inset-0 z-50 overflow-y-auto bg-background" role="dialog" aria-modal="true">
+      <header className="flex h-16 items-center justify-between border-b border-surface-200 bg-white px-8">
         <div className="flex items-center gap-3">
           <span className="font-display text-[17px] font-bold tracking-[-0.03em] text-ink-900">Build a report</span>
-          <span className="h-5 w-px bg-[#d2d2d7]" />
+          <span className="h-5 w-px bg-border-light" />
           <span className="text-[13px] text-ink-500">Choose a starting point</span>
         </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700">
             <BookOpen className="h-4 w-4" /> Reports
           </button>
-          <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-[#f5f5f7] hover:text-ink-900">
+          <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-background hover:text-ink-900">
             Cancel
           </button>
         </div>
@@ -33,12 +33,12 @@ export function ReportTemplatePicker({
           <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-mint-700">ReportIQ templates</p>
           <h1 className="mt-2 font-display text-[32px] font-bold tracking-[-0.04em] text-ink-900">Start with a shell, then make it yours.</h1>
           <p className="mt-3 text-[15px] leading-relaxed text-ink-500">
-            Pick a prepared layout and use natural language to shape every section. You can add charts, KPIs, tables, and explanations as you go.
+            Pick a prepared layout and use natural language to shape every section. You can add charts, tables, and explanations as you go.
           </p>
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 rounded-[12px] border border-[#e5e5e7] bg-white px-3 py-2 text-ink-300 shadow-soft">
+          <div className="flex items-center gap-2 rounded-[12px] border border-surface-200 bg-white px-3 py-2 text-ink-300 shadow-soft">
             <Search className="h-4 w-4" />
             <input className="w-52 bg-transparent text-[13px] text-ink-900 outline-none placeholder:text-ink-300" placeholder="Search templates" />
           </div>
@@ -58,8 +58,8 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-[#e5e5e7] bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
-      <div className="relative aspect-[4/3] overflow-hidden border-b border-[#e5e5e7] bg-[#f5f5f7]">
+    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-surface-200 bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-surface-200 bg-background">
         <img
           src={template.preview || "/placeholder.svg"}
           alt={`${template.name} template preview`}

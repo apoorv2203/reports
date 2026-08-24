@@ -73,14 +73,14 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         leftLabel="Editing this report"
         rightLabel="Actions"
         left={
-          <aside className={`flex h-full min-h-0 flex-col border-r border-[#e5e5e7] bg-[#f5f5f7] p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
+          <aside className={`flex h-full min-h-0 flex-col border-r border-surface-200 bg-background p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}
             {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
               {messages.length === 0 && <div className="rounded-[14px] border border-dashed border-[#d2d2d7] p-4 text-[12px] leading-relaxed text-ink-500">Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.</div>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-[#1d1d1f] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-[#174f91]"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
-              <div className="mt-6 border-t border-[#e5e5e7] pt-4">
+              <div className="mt-6 border-t border-surface-200 pt-4">
                 <div className="text-[12px] font-bold text-ink-500">Try next</div>
                 <div className="mt-2 flex flex-col gap-2">
                   {['Add a KPI block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-[#d2d2d7] bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
@@ -96,30 +96,30 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         center={
           <main className="h-full min-h-0 overflow-y-auto bg-white px-8 py-7">
             <div className="mx-auto max-w-2xl">
-              <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-[#f5f5f7]"><MoreHorizontal className="h-5 w-5" /></button></div>
+              <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-300">{report ? 'Report view' : 'Report preview'}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-ink-900">{title}</h1></div><button className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-background"><MoreHorizontal className="h-5 w-5" /></button></div>
               {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
               <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
             </div>
           </main>
         }
         right={
-          <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-[#e5e5e7] bg-[#f5f5f7] p-4">
+          <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-surface-200 bg-background p-4">
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
             {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#1d1d1f] px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
             <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
             <div>
-              <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-[#e5e5e7] bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
+              <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
                 <ArrowDownToLine className="h-4 w-4" />
                 Export
                 <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
               </button>
-              {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-[#e5e5e7] bg-white p-1">
+              {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-surface-200 bg-white p-1">
                 {['Export as Image', 'Export as JRXML', 'Export as PDF'].map((option) => <button key={option} type="button" className="rounded-md px-3 py-2 text-left text-[12px] font-medium text-ink-700 transition hover:bg-mint-50 hover:text-mint-700">{option}</button>)}
               </div>}
             </div>
             <div className={`my-2 h-px bg-[#e5e5e7] ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
-            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-[#e5e5e7] bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-[#f5f5f7]"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
+            <div className={readOnly ? 'hidden' : 'rounded-[14px] border border-surface-200 bg-white p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><button className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-[#d2d2d7] py-2 text-[12px] font-semibold text-ink-700 hover:bg-background"><Pencil className="h-3.5 w-3.5" /> Edit in designer</button></div>
           </aside>
         }
       />
@@ -131,7 +131,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 function ReportSectionCard({ section, onEdit, readOnly = false }: { section: TemplateSection; onEdit: (value: string) => void; readOnly?: boolean }) {
   const [editing, setEditing] = useState(false);
   const Icon = section.kind === 'chart' ? BarChart3 : section.kind === 'table' ? Table2 : section.kind === 'kpi' ? Sparkles : FileText;
-  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-[#d2d2d7] bg-[#fafafa]' : 'border-[#e5e5e7] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
+  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-[#d2d2d7] bg-[#fafafa]' : 'border-surface-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
     <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-ink-500"><Icon className="h-4 w-4 text-mint-600" /> {section.kind === 'empty' ? 'Empty section' : section.kind}</div>{!readOnly && <button onClick={() => setEditing(!editing)} className="text-ink-300 hover:text-ink-900"><Pencil className="h-3.5 w-3.5" /></button>}</div>
     {editing ? <input autoFocus defaultValue={section.title} onBlur={(e) => { onEdit(e.target.value); setEditing(false); }} onKeyDown={(e) => { if (e.key === 'Enter') { onEdit(e.currentTarget.value); setEditing(false); } }} className="input mt-3" /> : <h3 className="mt-3 font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">{section.title}</h3>}
     {section.kind === 'title' && <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This summary gives your team a clear view of what changed and where attention is needed.</p>}
@@ -142,6 +142,6 @@ function ReportSectionCard({ section, onEdit, readOnly = false }: { section: Tem
   </section>;
 }
 
-function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) { return <div className="rounded-lg bg-[#f5f5f7] px-3 py-2.5"><div className="text-[11px] text-ink-500">{label}</div><div className={`mt-1 font-display text-[18px] font-bold ${danger ? 'text-red-600' : 'text-ink-900'}`}>{value}</div></div>; }
-function MiniChart() { return <div className="mt-4 flex h-32 items-end justify-around gap-4 rounded-lg bg-[#f5f5f7] px-6 pb-3 pt-4">{[78, 54, 66, 34, 48, 88].map((height, index) => <div key={index} className="flex h-full flex-1 items-end"><div className={`w-full rounded-t-md ${index < 2 ? 'bg-red-400/80' : 'bg-mint-400'}`} style={{ height: `${height}%` }} /></div>)}</div>; }
-function MiniTable() { return <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e5e5e7]"><div className="grid grid-cols-3 bg-navy-900 px-3 py-2 text-[11px] font-bold text-white"><span>Segment</span><span>Accounts</span><span className="text-right">Balance</span></div>{['Retail', 'Corporate', 'SME'].map((row, index) => <div key={row} className="grid grid-cols-3 border-t border-[#e5e5e7] px-3 py-2 text-[12px] text-ink-700"><span>{row}</span><span>{[782, 341, 161][index]}</span><span className="text-right font-semibold">{['43.2 Cr', '31.8 Cr', '22.9 Cr'][index]}</span></div>)}</div>; }
+function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) { return <div className="rounded-lg bg-background px-3 py-2.5"><div className="text-[11px] text-ink-500">{label}</div><div className={`mt-1 font-display text-[18px] font-bold ${danger ? 'text-red-600' : 'text-ink-900'}`}>{value}</div></div>; }
+function MiniChart() { return <div className="mt-4 flex h-32 items-end justify-around gap-4 rounded-lg bg-background px-6 pb-3 pt-4">{[78, 54, 66, 34, 48, 88].map((height, index) => <div key={index} className="flex h-full flex-1 items-end"><div className={`w-full rounded-t-md ${index < 2 ? 'bg-red-400/80' : 'bg-mint-400'}`} style={{ height: `${height}%` }} /></div>)}</div>; }
+function MiniTable() { return <div className="mt-4 overflow-hidden rounded-[10px] border border-surface-200"><div className="grid grid-cols-3 bg-navy-900 px-3 py-2 text-[11px] font-bold text-white"><span>Segment</span><span>Accounts</span><span className="text-right">Balance</span></div>{['Retail', 'Corporate', 'SME'].map((row, index) => <div key={row} className="grid grid-cols-3 border-t border-surface-200 px-3 py-2 text-[12px] text-ink-700"><span>{row}</span><span>{[782, 341, 161][index]}</span><span className="text-right font-semibold">{['43.2 Cr', '31.8 Cr', '22.9 Cr'][index]}</span></div>)}</div>; }

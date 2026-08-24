@@ -9,7 +9,6 @@ const categories: Category[] = ['All', 'Lending', 'Risk', 'Collections', 'Sales'
 const catalogueWidgets: Widget[] = [
   { id: 'catalogue-approval', kind: 'TABLE', title: 'Approval rate by product', description: 'Approval rate (%) by product and customer segment.', owner: 'You', initials: 'RA', updated: 'Updated 2h ago', privacy: 'Catalogue', preview: 'table', accent: 'mint' },
   { id: 'catalogue-npa', kind: 'CHART', title: 'NPA trend over time', description: 'Gross NPA (%) trend over the last 12 months.', owner: 'Anita Gupta', initials: 'AG', updated: 'Updated 1d ago', privacy: 'Catalogue', preview: 'line', accent: 'blue' },
-  { id: 'catalogue-disbursed', kind: 'KPI', title: 'Total disbursed amount', description: 'Total loan amount disbursed this month.', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated 3d ago', privacy: 'Catalogue', value: '₹ 1,245 Cr', change: '12.4% vs last month', changeDirection: 'up', preview: 'line', accent: 'mint' },
   { id: 'catalogue-collection', kind: 'CHART', title: 'Collection efficiency trend', description: 'Collection efficiency (%) trend over time.', owner: 'S. Banerjee', initials: 'SB', updated: 'Updated 5d ago', privacy: 'Catalogue', preview: 'bars', accent: 'violet' },
   { id: 'catalogue-overdue', kind: 'TABLE', title: 'Top overdue accounts', description: 'Top 20 overdue accounts by outstanding amount.', owner: 'You', initials: 'RA', updated: 'Updated 5d ago', privacy: 'Private', preview: 'table', accent: 'mint' },
   ...recommendedWidgets,
@@ -17,10 +16,9 @@ const catalogueWidgets: Widget[] = [
 const sharedWidgets: Widget[] = [
   { id: 'shared-npa', kind: 'CHART', title: 'NPA trend over time', description: 'Gross NPA (%) trend over the last 12 months.', owner: 'Anita Gupta', initials: 'AG', updated: 'Updated 1d ago', privacy: 'Shared', preview: 'line', accent: 'blue' },
   { id: 'shared-collection', kind: 'CHART', title: 'Collection efficiency trend', description: 'Collection efficiency (%) trend over time.', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated 2d ago', privacy: 'Shared', preview: 'bars', accent: 'violet' },
-  { id: 'shared-disbursed', kind: 'KPI', title: 'Total disbursed amount', description: 'Total loan amount disbursed this month.', owner: 'S. Banerjee', initials: 'SB', updated: 'Updated 3d ago', privacy: 'Shared', value: '₹ 1,245 Cr', change: '12.4% vs last month', changeDirection: 'up', preview: 'line', accent: 'mint' },
   { id: 'shared-loan-book', kind: 'CHART', title: 'Loan book by region', description: 'Loan book (%) distribution across regions.', owner: 'Anita Gupta', initials: 'AG', updated: 'Updated 6d ago', privacy: 'Shared', preview: 'donut', accent: 'violet' },
 ];
-const kindStyles: Record<WidgetKind, string> = { TABLE: 'bg-mint-100 text-mint-700', CHART: 'bg-badge-purple-bg text-badge-purple-text', KPI: 'bg-badge-green-bg text-badge-green-text' };
+const kindStyles: Record<WidgetKind, string> = { TABLE: 'bg-mint-100 text-mint-700', CHART: 'bg-badge-purple-bg text-badge-purple-text' };
 
 export function WidgetsPage({ onBack, onEditWidget, onNewWidget, homeWidgetIds, onToggleHomeWidget }: Props) {
   const t = useT();
@@ -115,7 +113,6 @@ function ShareToCatalogueModal({ widget, onClose }: { widget: Widget; onClose: (
 
 function Preview({ widget }: { widget: Widget }) {
   const t = useT();
-  if (widget.kind === 'KPI') return <div className="mt-3 flex items-end justify-between rounded-md bg-surface-50 px-3 py-3"><div><div className="font-display text-[24px] font-bold text-navy-900">{widget.value}</div><div className="mt-1 text-[9px] font-bold text-mint-700">{t('common.arrowUp')} {widget.change || t('common.vsLastMonth')}</div></div><MiniLine /></div>;
   if (widget.preview === 'table') return <div className="mt-3 overflow-hidden rounded-md border border-surface-100 text-[8px]"><div className="grid grid-cols-2 bg-surface-50 px-2 py-1 font-bold text-ink-500"><span>{t('common.product')}</span><span className="text-right">{t('common.approvalRate')}</span></div>{[t('common.personalLoan'), t('common.homeLoan'), t('common.vehicleLoan'), t('common.businessLoan')].map((row, index) => <div key={row} className="grid grid-cols-2 border-t border-surface-100 px-2 py-1 text-ink-700"><span>{row}</span><span className="text-right">{['83.6%', '76.4%', '72.1%', '68.3%'][index]}</span></div>)}</div>;
   if (widget.preview === 'donut') return <div className="mt-3 flex h-[74px] items-center justify-center gap-3"><div className="donut-chart violet" /><div className="text-[8px] leading-4 text-ink-500">{t('common.north42')}<br />{t('common.west28')}<br />{t('common.south19')}</div></div>;
   if (widget.preview === 'bars') return <div className="mt-3 flex h-[74px] items-end gap-2 border-b border-surface-200 px-3">{[42, 60, 48, 76, 66, 71].map((height) => <span key={height} className="flex-1 rounded-t-sm bg-chart-blue-medium" style={{ height: `${height}%` }} />)}</div>;
