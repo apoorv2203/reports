@@ -190,14 +190,14 @@ export function WidgetsPage({
 
   return (
     <main
-      className="min-h-0 flex-1 overflow-y-auto bg-white"
+      className="min-h-0 flex-1 overflow-y-auto bg-surface"
       onClick={() => menuId && setMenuId(null)}
     >
       <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <AppPageHeader title={t("widgets.title")} description={t("widgets.subtitle")} />
           <div className="flex items-center gap-3">
-            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-ink-300 md:flex">
+            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-surface px-3 py-2.5 text-ink-300 md:flex">
               <Search className="h-4 w-4" />
               <span className="sr-only">{t("widgets.searchLabel")}</span>
               <AppInput
@@ -265,7 +265,7 @@ export function WidgetsPage({
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              className="rounded-lg border border-surface-200 bg-white px-3 py-2.5 font-bold text-navy-900 outline-none"
+              className="rounded-lg border border-surface-200 bg-surface px-3 py-2.5 font-bold text-navy-900 outline-none"
             >
               <option>{t("common.recentlyUpdated")}</option>
               <option>{t("common.nameAZ")}</option>
@@ -379,7 +379,8 @@ function WidgetCard({
           {widget.kind}
         </AppBadge>
         <div className="flex items-center gap-2">
-          <button
+          <AppButton
+            variant="icon"
             type="button"
             onClick={(event) => {
               event.stopPropagation();
@@ -387,10 +388,10 @@ function WidgetCard({
             }}
             aria-label={t("home.previewWidgetName", { name: widget.title })}
             title={t("home.previewWidget")}
-            className="text-navy-900 transition hover:text-mint-700"
+            className="size-6 text-navy-900 transition hover:text-mint-700"
           >
-            <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+            <Eye aria-hidden="true" />
+          </AppButton>
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-2">
@@ -470,7 +471,7 @@ function WidgetMenu({
   ];
   return (
     <div
-      className="absolute right-3 top-11 z-20 w-48 overflow-hidden rounded-lg border border-surface-200 bg-white py-1 shadow-floaty"
+      className="absolute right-3 top-11 z-20 w-48 overflow-hidden rounded-lg border border-surface-200 bg-surface py-1 shadow-floaty"
       onClick={(event) => event.stopPropagation()}
     >
       {items.map(([label, handler]) => (
@@ -501,7 +502,7 @@ function WidgetReadOnlyView({
         role="dialog"
         aria-modal="true"
         aria-labelledby="widget-view-title"
-        className="relative w-full max-w-5xl rounded-lg border border-surface-200 bg-white p-6 shadow-floaty"
+        className="relative w-full max-w-5xl rounded-lg border border-surface-200 bg-surface p-6 shadow-floaty"
       >
         <div className="flex items-start justify-between">
           <div>
@@ -581,7 +582,7 @@ function ShareWidgetModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-widget-title"
-        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-lg border border-surface-200 bg-white p-6 shadow-floaty"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-lg border border-surface-200 bg-surface p-6 shadow-floaty"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -614,16 +615,17 @@ function ShareWidgetModal({
             />
           </div>
           {search && suggestions.length > 0 && (
-            <div className="mt-1 rounded-lg border border-surface-200 bg-white p-1 shadow-floaty">
+            <div className="mt-1 rounded-lg border border-surface-200 bg-surface p-1 shadow-floaty">
               {suggestions.map((item) => (
-                <button
+                <AppButton
+                  variant="ghost"
                   type="button"
                   key={item}
                   onClick={() => {
                     setRecipients((current) => [...current, item]);
                     setSearch("");
                   }}
-                  className="block w-full rounded-md px-3 py-2 text-left text-[12px] font-semibold text-navy-900 hover:bg-mint-50"
+                  className="h-auto w-full justify-start rounded-md px-3 py-2 text-left text-[12px] font-semibold"
                 >
                   {item}
                   <span className="ml-2 text-ink-400">
@@ -631,7 +633,7 @@ function ShareWidgetModal({
                       ? t("widgets.team")
                       : t("widgets.person")}
                   </span>
-                </button>
+                </AppButton>
               ))}
             </div>
           )}
@@ -642,19 +644,19 @@ function ShareWidgetModal({
                 className="inline-flex items-center gap-2 rounded-md border border-surface-200 bg-surface-50 px-3 py-2 text-[12px] font-semibold text-navy-900"
               >
                 {recipient}
-                <button
+                <AppButton
+                  variant="icon"
                   type="button"
                   onClick={() =>
                     setRecipients((current) =>
                       current.filter((item) => item !== recipient),
                     )
                   }
-                  className="text-[16px] leading-none text-ink-400 hover:text-navy-900"
+                  className="size-5 text-ink-400 hover:text-navy-900"
                   aria-label={t("widgets.removeRecipient", { name: recipient })}
-                  aria-hidden
                 >
-                  ×
-                </button>
+                  <X />
+                </AppButton>
               </span>
             ))}
           </div>
@@ -707,16 +709,17 @@ function ShareWidgetModal({
               {t("widgets.notifyDesc")}
             </p>
           </div>
-          <button
+          <AppButton
+            variant="ghost"
             type="button"
             onClick={() => setNotify((value) => !value)}
             aria-pressed={notify}
-            className={`relative h-6 w-11 rounded-full transition ${notify ? "bg-mint-500" : "bg-surface-300"}`}
+            className={`relative h-6 w-11 rounded-full p-0 transition ${notify ? "bg-mint-500" : "bg-surface-300"}`}
           >
             <span
-              className={`absolute top-1 h-4 w-4 rounded-full bg-white transition ${notify ? "left-6" : "left-1"}`}
+              className={`absolute top-1 h-4 w-4 rounded-full bg-surface transition ${notify ? "left-6" : "left-1"}`}
             />
-          </button>
+          </AppButton>
         </div>
         <div className="mt-6 flex items-center justify-between">
           <p className="text-[11px] text-ink-500">
@@ -725,21 +728,12 @@ function ShareWidgetModal({
             })}
           </p>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-surface-200 px-4 py-2.5 text-[12px] font-bold text-navy-900 hover:bg-surface-50"
-            >
+            <AppButton variant="secondary" type="button" onClick={onClose} className="px-4 py-2.5 text-[12px] font-bold">
               {t("common.cancel")}
-            </button>
-            <button
-              type="button"
-              disabled={!recipients.length}
-              onClick={onClose}
-              className="rounded-lg bg-mint-500 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-mint-600 disabled:opacity-40"
-            >
+            </AppButton>
+            <AppButton variant="primary" type="button" disabled={!recipients.length} onClick={onClose} className="px-5 py-2.5 text-[12px] font-bold disabled:opacity-40">
               {t("common.share")}
-            </button>
+            </AppButton>
           </div>
         </div>
       </section>
@@ -777,7 +771,7 @@ function ShareToCatalogueModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="catalogue-title"
-        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-lg border border-surface-200 bg-white p-6 shadow-floaty"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-lg border border-surface-200 bg-surface p-6 shadow-floaty"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -825,7 +819,7 @@ function ShareToCatalogueModal({
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-surface-200 bg-white px-3 py-3 text-[13px] font-semibold text-navy-900 outline-none focus:border-mint-500"
+            className="mt-2 w-full rounded-lg border border-surface-200 bg-surface px-3 py-3 text-[13px] font-semibold text-navy-900 outline-none focus:border-mint-500"
           >
             {cats.map((item) => (
               <option key={item}>{item}</option>
@@ -908,20 +902,12 @@ function ShareToCatalogueModal({
           {t("widgets.publishedInfo")}
         </div>
         <div className="mt-5 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-surface-200 px-4 py-2.5 text-[12px] font-bold text-navy-900 hover:bg-surface-50"
-          >
+          <AppButton variant="secondary" type="button" onClick={onClose} className="px-4 py-2.5 text-[12px] font-bold">
             {t("common.cancel")}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg bg-mint-500 px-5 py-2.5 text-[12px] font-bold text-white hover:bg-mint-600"
-          >
+          </AppButton>
+          <AppButton variant="primary" type="button" onClick={onClose} className="px-5 py-2.5 text-[12px] font-bold">
             {t("widgets.publishButton")}
-          </button>
+          </AppButton>
         </div>
       </section>
     </div>

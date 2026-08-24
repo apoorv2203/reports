@@ -90,7 +90,7 @@ export function HomePage({
 
   return (
     <>
-      <main className="min-h-0 flex-1 overflow-y-auto bg-white">
+      <main className="min-h-0 flex-1 overflow-y-auto bg-surface">
         <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
           <AppPageHeader
             title={isNewUser ? t("home.welcomeNew", { name: userName }) : t("home.goodMorning", { name: userName })}
@@ -102,7 +102,7 @@ export function HomePage({
               event.preventDefault();
               if (question.trim()) onNewSession(question.trim());
             }}
-            className="mt-6 flex h-10 w-[67.5%] items-center gap-2 rounded-lg border border-mint-300 bg-white px-3 shadow-card"
+            className="mt-6 flex h-10 w-[67.5%] items-center gap-2 rounded-lg border border-mint-300 bg-surface px-3 shadow-card"
           >
             <Sparkles className="h-5 w-5 shrink-0 text-mint-600" />
             <AppInput
@@ -112,7 +112,7 @@ export function HomePage({
               className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-500 focus-visible:ring-0"
               aria-label={t("home.askAnythingLabel")}
             />
-            <AppButton variant="icon" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg bg-mint-600 text-white hover:bg-mint-700">
+            <AppButton variant="icon" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg bg-mint-600 text-surface hover:bg-mint-700">
               <Send data-icon="inline-start" />
             </AppButton>
           </form>
@@ -528,7 +528,7 @@ function WidgetCard({
                   <Ellipsis />
                 </AppButton>
                 {menuOpen && (
-                  <div className="absolute right-0 top-7 z-30 w-44 rounded-lg border border-surface-200 bg-white p-1.5 shadow-floaty">
+                  <div className="absolute right-0 top-7 z-30 w-44 rounded-lg border border-surface-200 bg-surface p-1.5 shadow-floaty">
                     <AppButton
                       variant="ghost"
                       type="button"
