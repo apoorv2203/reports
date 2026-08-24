@@ -123,17 +123,18 @@ export function HomePage({
               t("home.exampleQ3"),
               t("home.exampleQ4"),
             ].map((example) => (
-              <button
+              <AppButton
+                variant="secondary"
                 type="button"
                 key={example}
                 onClick={() => {
                   setQuestion(example);
                   onNewSession(example);
                 }}
-                className="rounded-lg border border-surface-200 px-3 py-1.5 text-[11px] text-ink-500 hover:border-mint-300 hover:text-navy-900"
+                className="h-auto px-3 py-1.5 text-[11px] text-ink-500"
               >
                 {example}
-              </button>
+              </AppButton>
             ))}
           </div>
           <div className="mt-7 grid gap-5 lg:grid-cols-[275px_minmax(0,1fr)]">
@@ -159,13 +160,11 @@ export function HomePage({
                           key={delivery.name}
                           className="flex items-center gap-2.5 py-2.5"
                         >
-                          <span
-                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[8px] font-bold ${delivery.format === "PDF" ? "bg-red-50 text-red-500" : "bg-mint-50 text-mint-700"}`}
-                          >
+                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} className="flex size-7 shrink-0 items-center justify-center p-0 text-[8px]">
                             {delivery.format === "PDF"
                               ? t("common.pdf")
                               : t("common.xlsx")}
-                          </span>
+                          </AppBadge>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-[11px] font-bold text-navy-900">
                               {delivery.name}
@@ -174,20 +173,20 @@ export function HomePage({
                               {delivery.time}
                             </span>
                           </span>
-                          <span className="rounded-md bg-mint-100 px-2 py-1 text-[9px] font-bold text-mint-700">
+                          <AppBadge variant="success" className="rounded-md px-2 py-1 text-[9px] font-bold">
                             {t("common.delivered")}
-                          </span>
+                          </AppBadge>
                         </div>
                       ))}
                     </div>
-                    <button
+                    <AppButton
+                      variant="ghost"
                       type="button"
                       onClick={onOpenReports}
-                      className="mt-2 flex w-full items-center justify-center gap-1.5 border-t border-surface-100 pt-3 text-[11px] font-bold text-navy-900"
+                      className="mt-2 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold"
                     >
-                      <Plus className="h-3.5 w-3.5" />{" "}
-                      {t("home.scheduleReport")}
-                    </button>
+                      <Plus data-icon="inline-start" /> {t("home.scheduleReport")}
+                    </AppButton>
                   </>
                 )}
               </SideCard>
@@ -207,11 +206,12 @@ export function HomePage({
                 ) : (
                   <div className="divide-y divide-surface-100">
                     {pinnedReports.slice(0, pinnedVisible).map((report) => (
-                      <button
+                      <AppButton
+                        variant="ghost"
                         type="button"
                         key={report.name}
                         onClick={() => onRunPinnedReport(report.name)}
-                        className="flex w-full items-center gap-2.5 py-2.5 text-left transition hover:bg-mint-50/50"
+                        className="h-auto w-full justify-start gap-2.5 py-2.5 text-left"
                       >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
                           <FileText className="h-4 w-4" />
@@ -227,32 +227,28 @@ export function HomePage({
                         <Star
                           className={`h-3.5 w-3.5 shrink-0 ${report.pinned ? "fill-amber-400 text-amber-400" : "text-ink-300"}`}
                         />
-                      </button>
+                      </AppButton>
                     ))}
                   </div>
                 )}
                 {pinnedVisible < pinnedReports.length && (
-                  <button
+                  <AppButton
+                    variant="ghost"
                     type="button"
-                    onClick={() =>
-                      setPinnedVisible((count) =>
-                        Math.min(count + 5, pinnedReports.length),
-                      )
-                    }
-                    className="mt-3 flex w-full items-center justify-center gap-1 border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
+                    onClick={() => setPinnedVisible((count) => Math.min(count + 5, pinnedReports.length))}
+                    className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
                   >
-                    {t("common.viewMore")}{" "}
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </button>
+                    {t("common.viewMore")} <ChevronDown data-icon="inline-end" />
+                  </AppButton>
                 )}
-                <button
+                <AppButton
+                  variant="ghost"
                   type="button"
                   onClick={onCreateReport}
-                  className="mt-3 flex w-full items-center justify-center gap-1.5 border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700 hover:text-mint-600"
+                  className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
                 >
-                  <Plus className="h-3.5 w-3.5" />{" "}
-                  {t("home.createReportFromTemplate")}
-                </button>
+                  <Plus data-icon="inline-start" /> {t("home.createReportFromTemplate")}
+                </AppButton>
               </SideCard>
             </aside>
 
@@ -307,7 +303,7 @@ export function HomePage({
                   onViewAll={onOpenWidgets}
                 />
                 {isNewUser ? (
-                  <div className="rounded-xl border border-surface-200 bg-white px-5 py-5">
+                  <AppCard variant="recommendation" className="rounded-xl px-5 py-5">
                     <div className="flex items-center gap-3">
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 text-mint-700">
                         <Sparkles className="h-4 w-4" />
@@ -321,7 +317,7 @@ export function HomePage({
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </AppCard>
                 ) : (
                   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {recommendedWidgets.map((widget) => (
@@ -377,13 +373,9 @@ function SideCard({
           {icon}
           <h2 className="font-display text-[12px] font-bold">{title}</h2>
         </div>
-        <button
-          type="button"
-          onClick={onViewAll}
-          className="text-[10px] font-bold text-mint-700 hover:text-mint-600"
-        >
+        <AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[10px] font-bold text-mint-700">
           {t("common.viewAll")} <span aria-hidden>›</span>
-        </button>
+        </AppButton>
       </div>
       <div className="mt-2">{children}      </div>
     </AppCard>
@@ -424,20 +416,16 @@ function EmptySideState({
       <p className="mt-1 max-w-[190px] text-[11px] leading-5 text-ink-500">
         {text}
       </p>
-      <button
-        type="button"
-        onClick={onAction}
-        className="mt-3 rounded-lg border border-mint-300 px-3 py-2 text-[11px] font-bold text-mint-700 hover:bg-mint-50"
-      >
+      <AppButton variant="secondary" type="button" onClick={onAction} className="mt-3 px-3 py-2 text-[11px] font-bold text-mint-700">
         {action}
-      </button>
+      </AppButton>
     </div>
   );
 }
 function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
   const t = useT();
   return (
-    <div className="flex min-h-[430px] flex-col items-center justify-center rounded-xl border border-surface-200 bg-white px-6 text-center">
+    <AppCard variant="recommendation" className="flex min-h-[430px] flex-col items-center justify-center px-6 text-center">
       <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-mint-50 text-mint-600">
         <LineChart className="h-9 w-9" />
       </span>
@@ -447,26 +435,18 @@ function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
       <p className="mt-2 max-w-[320px] text-[12px] leading-5 text-ink-500">
         {t("home.emptyDashboardDesc")}
       </p>
-      <button
-        type="button"
-        onClick={onAddWidget}
-        className="mt-5 inline-flex items-center gap-2 rounded-lg bg-chart-green-accent px-4 py-2.5 text-[12px] font-bold text-white hover:bg-chart-green-hover"
-      >
-        <Plus className="h-4 w-4" /> {t("home.addFirstWidget")}
-      </button>
+      <AppButton variant="primary" type="button" onClick={onAddWidget} className="mt-5 px-4 py-2.5 text-[12px] font-bold">
+        <Plus data-icon="inline-start" /> {t("home.addFirstWidget")}
+      </AppButton>
       <div className="my-4 flex w-full max-w-[280px] items-center gap-3 text-[11px] text-ink-300">
         <span className="h-px flex-1 bg-surface-200" />
         {t("home.or")}
         <span className="h-px flex-1 bg-surface-200" />
       </div>
-      <button
-        type="button"
-        onClick={onAddWidget}
-        className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-4 py-2.5 text-[11px] font-bold text-navy-900 hover:bg-surface-50"
-      >
-        <BarChart3 className="h-4 w-4" /> {t("home.exploreWidgetCatalogue")}
-      </button>
-    </div>
+      <AppButton variant="secondary" type="button" onClick={onAddWidget} className="px-4 py-2.5 text-[11px] font-bold text-navy-900">
+        <BarChart3 data-icon="inline-start" /> {t("home.exploreWidgetCatalogue")}
+      </AppButton>
+    </AppCard>
   );
 }
 
@@ -511,17 +491,18 @@ function WidgetCard({
   return (
     <AppCard variant="widget">
       <div className="flex items-start justify-between gap-2">
-        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="rounded-md px-2 py-1 text-[9px] font-bold tracking-wide">
+        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
           {widget.kind}
         </AppBadge>
         <div ref={menuRef} className="relative flex items-center gap-2">
           <>
-            <button
+            <AppButton
+              variant="icon"
               type="button"
               onClick={onMaximize}
               aria-label={t("home.previewWidgetName", { name: widget.title })}
               title={t("home.previewWidget")}
-              className="text-navy-900 transition hover:text-mint-700"
+              className="size-6 text-navy-900"
             >
               {recommended ? (
                 <Eye className="h-4 w-4" aria-hidden="true" />
@@ -533,46 +514,50 @@ function WidgetCard({
                   [ ]
                 </span>
               )}
-            </button>
+            </AppButton>
             {!recommended && (
               <>
-                <button
+                <AppButton
+                  variant="icon"
                   type="button"
                   onClick={() => setMenuOpen((open) => !open)}
                   aria-label={t("home.moreOptions", { name: widget.title })}
                   aria-expanded={menuOpen}
-                  className="text-navy-900 transition hover:text-mint-700"
+                  className="size-6 text-navy-900"
                 >
-                  <Ellipsis className="h-4 w-4" />
-                </button>
+                  <Ellipsis />
+                </AppButton>
                 {menuOpen && (
                   <div className="absolute right-0 top-7 z-30 w-44 rounded-lg border border-surface-200 bg-white p-1.5 shadow-floaty">
-                    <button
+                    <AppButton
+                      variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-[11px] font-semibold text-navy-900 hover:bg-surface-50"
+                      className="h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />{" "}
                       {t("home.refreshData")}
-                    </button>
-                    <button
+                    </AppButton>
+                    <AppButton
+                      variant="danger"
                       type="button"
                       onClick={() => {
                         onRemove?.();
                         closeMenu();
                       }}
-                      className="flex w-full items-center gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold text-red-600 hover:bg-red-50"
+                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
                       <Trash2 className="h-3.5 w-3.5" />{" "}
                       {t("home.removeFromHome")}
-                    </button>
-                    <button
+                    </AppButton>
+                    <AppButton
+                      variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      className="flex w-full items-center gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold text-navy-900 hover:bg-surface-50"
+                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
-                      <Info className="h-3.5 w-3.5" /> {t("home.viewDetails")}
-                    </button>
+                      <Info data-icon="inline-start" /> {t("home.viewDetails")}
+                    </AppButton>
                   </div>
                 )}
               </>
@@ -593,13 +578,9 @@ function WidgetCard({
       ) : error ? (
         <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-2 text-center text-[11px] text-ink-500">
           <span>{t("home.unableToLoad")}</span>
-          <button
-            type="button"
-            onClick={onRetry}
-            className="font-bold text-mint-700"
-          >
+          <AppButton variant="ghost" type="button" onClick={onRetry} className="h-auto p-0 font-bold text-mint-700">
             {t("common.retry")}
-          </button>
+          </AppButton>
         </div>
       ) : (
         <WidgetPreview widget={widget} data={data} />
@@ -613,11 +594,12 @@ function WidgetCard({
         <span className="truncate">{widget.updated}</span>
       </div>
       {recommended ? (
-        <button
+        <AppButton
+          variant="secondary"
           type="button"
           onClick={onAdd}
           disabled={added}
-          className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-md border border-surface-200 py-1.5 text-[10px] font-bold text-navy-900 hover:border-mint-300 hover:bg-mint-50 disabled:text-mint-700"
+          className="mt-3 h-auto w-full gap-1.5 py-1.5 text-[10px] font-bold"
         >
           {added ? (
             <>
@@ -628,7 +610,7 @@ function WidgetCard({
               <Plus className="h-3 w-3" /> {t("home.addToHome")}
             </>
           )}
-        </button>
+        </AppButton>
       ) : (
         <div className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-mint-700">
           {widget.privacy === "Private" ? (
@@ -664,7 +646,7 @@ function MaximizedWidget({
       >
         <div className="flex items-start justify-between">
           <div>
-            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="rounded-md px-2 py-1 text-[9px] font-bold tracking-wide">
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
               {widget.kind}
             </AppBadge>
             <h2 className="mt-3 font-display text-[24px] font-bold text-navy-900">
@@ -675,21 +657,12 @@ function MaximizedWidget({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onEdit}
-              className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-3 py-2 text-[12px] font-bold text-navy-900 hover:bg-mint-50"
-            >
-              <Edit3 className="h-4 w-4" /> {t("home.editWidget")}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-surface-50"
-              aria-label={t("home.close")}
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
+              <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
+            </AppButton>
+            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("home.close")}>
+              <X />
+            </AppButton>
           </div>
         </div>
         <div className="mt-7 rounded-lg border border-surface-200 bg-surface-50 p-6">
