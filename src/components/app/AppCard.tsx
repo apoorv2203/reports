@@ -6,8 +6,8 @@ export type AppCardVariant = 'default' | 'widget' | 'report' | 'recommendation' 
 
 const styles: Record<AppCardVariant, string> = {
   default: '',
-  widget: 'group relative flex min-h-[300px] flex-col rounded-lg border border-border bg-card p-3.5 shadow-card transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty',
-  report: 'rounded-[14px] border border-border bg-card shadow-card-alt',
+  widget: 'group relative flex min-h-[300px] flex-col rounded-lg border border-border bg-card p-3.5 shadow-card ring-0 transition hover:-translate-y-0.5 hover:border-border hover:shadow-floaty focus-within:ring-2 focus-within:ring-primary/20 focus-within:ring-offset-2',
+  report: 'rounded-[14px] border border-border bg-card shadow-card-alt ring-0 transition hover:border-border focus-within:ring-2 focus-within:ring-primary/20 focus-within:ring-offset-2',
   recommendation: 'rounded-xl border border-border bg-card shadow-card-alt',
   admin: 'rounded-[14px] border border-border bg-card shadow-card-alt',
 };
