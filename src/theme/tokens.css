@@ -109,6 +109,10 @@
   --color-badge-blue-text: #174f91;
   --color-badge-amber-bg: #fef3c7;
   --color-badge-amber-text: #92400e;
+  --color-badge-yellow-bg: var(--color-badge-amber-bg);
+  --color-badge-yellow-text: var(--color-badge-amber-text);
+  --color-badge-red-bg: var(--color-danger-light);
+  --color-badge-red-text: var(--color-danger-text);
 
   /* ---- Link ---- */
   --color-link: #174f91;

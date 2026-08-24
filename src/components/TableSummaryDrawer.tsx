@@ -1,6 +1,8 @@
 "use client";
 
 import { Info, LockKeyhole, Pencil, Table2, X } from "lucide-react";
+import { useFormat, useT } from "@/providers/I18nProvider";
+import { AppButton } from "@/components/app/AppButton";
 
 type Props = {
   onClose: () => void;
@@ -9,6 +11,8 @@ type Props = {
 };
 
 export function TableSummaryDrawer({ onClose, onEdit, onViewAccess }: Props) {
+  const t = useT();
+  const { dateTime } = useFormat();
   const overview = [
     ["Description", "Branch master data"],
     ["Total Columns", "23"],
@@ -24,13 +28,9 @@ export function TableSummaryDrawer({ onClose, onEdit, onViewAccess }: Props) {
           <Table2 className="size-7 text-navy-900" />
           <h2 className="font-display text-[20px] font-bold">Table Summary</h2>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close table summary"
-        >
-          <X className="size-6" />
-        </button>
+        <AppButton variant="icon" type="button" onClick={onClose} aria-label={t("common.close")} className="size-9">
+          <X />
+        </AppButton>
       </header>
       <div className="flex-1 overflow-y-auto px-7 py-6">
         <div className="flex items-center justify-between">
@@ -100,7 +100,7 @@ export function TableSummaryDrawer({ onClose, onEdit, onViewAccess }: Props) {
             {[
               ["Owner", "data_admin"],
               ["Source", "PostgreSQL"],
-              ["Last Refreshed", "22 Aug 2026 09:30 AM"],
+              ["Last Refreshed", dateTime("2026-08-22T09:30:00+05:30")],
               ["Refresh Frequency", "Daily"],
             ].map(([label, value]) => (
               <div

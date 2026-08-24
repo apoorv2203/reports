@@ -65,6 +65,10 @@ export default {
           'blue-text': 'var(--color-badge-blue-text)',
           'amber-bg': 'var(--color-badge-amber-bg)',
           'amber-text': 'var(--color-badge-amber-text)',
+          'yellow-bg': 'var(--color-badge-yellow-bg)',
+          'yellow-text': 'var(--color-badge-yellow-text)',
+          'red-bg': 'var(--color-badge-red-bg)',
+          'red-text': 'var(--color-badge-red-text)',
         },
         link: 'var(--color-link)',
         param: {
