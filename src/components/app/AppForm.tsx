@@ -26,8 +26,8 @@ AppInput.displayName = "AppInput"
 export const AppTextarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<typeof Textarea>>((props, ref) => <Textarea ref={ref} {...props} />)
 AppTextarea.displayName = "AppTextarea"
 
-export function AppSelect({ options, ...props }: { options: { value: string; label: string }[] } & React.ComponentProps<typeof Select>) {
-  return <Select {...props}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="__empty__" disabled>Select an option</SelectItem>{options.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>
+export function AppSelect({ options, placeholder, ...props }: { options: { value: string; label: string }[]; placeholder?: string } & React.ComponentProps<typeof Select>) {
+  return <Select {...props}><SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger><SelectContent>{options.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>
 }
 
 export const AppCheckbox = Checkbox
