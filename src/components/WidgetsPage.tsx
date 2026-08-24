@@ -228,7 +228,7 @@ export function WidgetsPage({
               variant="ghost"
               type="button"
               onClick={() => setTab("catalogue")}
-              size="tab" className={tab === "catalogue" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}
+              size="tab" active={tab === "catalogue"}
             >
               {t("widgets.catalogue")}
             </AppButton>
@@ -236,7 +236,7 @@ export function WidgetsPage({
               variant="ghost"
               type="button"
               onClick={() => setTab("shared")}
-              size="tab" className={tab === "shared" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}
+              size="tab" active={tab === "shared"}
             >
               {t("widgets.sharedWithMe")}
             </AppButton>
