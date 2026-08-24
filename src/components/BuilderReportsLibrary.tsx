@@ -113,29 +113,22 @@ export function BuilderReportsLibrary({
 }
 
 function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report: LibraryReport; onOpen: () => void; onFavourite: () => void; onPublish: () => void }) {
-  const categoryStyles: Record<LibraryReport['category'], string> = {
-    Sales: 'bg-mint-100 text-mint-700',
-    Delinquency: 'bg-red-100 text-red-700',
-    Compliance: 'bg-amber-100 text-amber-800',
-    Operations: 'bg-badge-blue-bg text-badge-blue-text',
-  };
-
   return (
     <AppCard variant="report" density="recommendation" className="min-h-[300px]">
-      <div><span className={`inline-flex rounded-full px-3 py-1 text-[12px] font-bold ${categoryStyles[report.category]}`}>{report.category}</span></div>
+      <div><AppBadge variant={report.category === 'Delinquency' ? 'danger' : report.category === 'Compliance' ? 'warning' : report.category === 'Operations' ? 'chart' : 'success'} size="category">{report.category}</AppBadge></div>
       <h2 className="mt-4 text-balance font-display text-[19px] font-bold tracking-[-0.03em] text-ink-900">{report.title}</h2>
       <p className="mt-2 flex-1 text-[14px] leading-relaxed text-ink-500">{report.description}</p>
       <div className="mt-5 flex items-center gap-2 text-[12px] font-medium text-ink-300"><CalendarDays className="h-4 w-4" /><span>{report.cadence} · published by {report.publisher}</span></div>
       <div className="mt-5 flex items-center gap-2">
         {report.ownedByYou ? (
           <>
-            <button onClick={onOpen} className="inline-flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-border-light px-3 py-2.5 text-[13px] font-bold text-ink-900 hover:bg-background"><FilePenLine className="h-4 w-4" /> Edit</button>
-            <button onClick={onPublish} className="inline-flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-border-light px-3 py-2.5 text-[13px] font-bold text-red-700 hover:bg-red-50"><EyeOff className="h-4 w-4" /> {report.published ? 'Unpublish' : 'Publish'}</button>
+            <AppButton variant="secondary" size="report-action" onClick={onOpen}><FilePenLine /> Edit</AppButton>
+            <AppButton variant="danger" size="report-action" onClick={onPublish}><EyeOff /> {report.published ? 'Unpublish' : 'Publish'}</AppButton>
           </>
         ) : (
           <>
-            <button onClick={onOpen} className="inline-flex flex-1 items-center justify-center gap-2 rounded-[12px] bg-navy-900 px-3 py-2.5 text-[13px] font-bold text-white hover:bg-ink-900"><Play className="h-4 w-4" /> Run report</button>
-            <button onClick={onFavourite} aria-label={report.favourite ? `Remove ${report.title} from favourites` : `Add ${report.title} to favourites`} aria-pressed={report.favourite} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border ${report.favourite ? 'border-red-200 bg-red-50 text-red-600' : 'border-border-light text-ink-500 hover:border-ink-500'}`}><Heart className={`h-4 w-4 ${report.favourite ? 'fill-current' : ''}`} /></button>
+            <AppButton variant="primary" size="report-action" onClick={onOpen}><Play /> Run report</AppButton>
+            <AppButton variant="secondary" size="toggle" active={report.favourite} onClick={onFavourite} aria-label={report.favourite ? `Remove ${report.title} from favourites` : `Add ${report.title} to favourites`} aria-pressed={report.favourite}><Heart className={report.favourite ? 'fill-current' : undefined} /></AppButton>
           </>
         )}
       </div>

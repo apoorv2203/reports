@@ -222,16 +222,16 @@ export function ReportsHub({
           ))}
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
-            <button className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-3 py-2.5 font-bold text-navy-900">
+            <AppButton variant="secondary" size="filter">
               {t("common.recentlyUpdated")}
-              <ChevronDown className="h-3.5 w-3.5" />
-            </button>
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-mint-300 bg-mint-50 text-mint-700">
-              <Grid2X2 className="h-4 w-4" />
-            </button>
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200 text-ink-500">
-              <List className="h-4 w-4" />
-            </button>
+              <ChevronDown />
+            </AppButton>
+            <AppButton variant="secondary" size="toggle" active>
+              <Grid2X2 />
+            </AppButton>
+            <AppButton variant="secondary" size="toggle">
+              <List />
+            </AppButton>
           </div>
         </div>
         <p className="mt-5 text-[13px] text-ink-500">
@@ -267,23 +267,24 @@ export function ReportsHub({
         <div className="flex items-center justify-between py-7 text-[12px] text-ink-500">
           <span>{t("reports.showingRange")}</span>
           <div className="flex items-center gap-2">
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200">
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-            <button className="h-9 w-9 rounded-lg border border-mint-400 bg-mint-50 font-bold text-mint-700">
+            <AppButton variant="secondary" size="pagination">
+              <ArrowLeft />
+            </AppButton>
+            <AppButton variant="secondary" size="pagination" active>
               1
-            </button>
+            </AppButton>
             {["2", "3", "…", "6"].map((page) => (
-              <button
+              <AppButton
                 key={page}
-                className="h-9 w-9 rounded-lg border border-surface-200 font-semibold text-navy-900"
+                variant="secondary"
+                size="pagination"
               >
                 {page}
-              </button>
+              </AppButton>
             ))}
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200">
-              <ArrowRight className="h-4 w-4" />
-            </button>
+            <AppButton variant="secondary" size="pagination">
+              <ArrowRight />
+            </AppButton>
           </div>
         </div>
       </main>
@@ -336,25 +337,23 @@ function ReportCard({
   return (
     <AppCard variant="report" className="relative min-h-[255px]">
       <div className="flex items-start justify-between">
-        <span
-          className={`flex h-10 w-10 items-center justify-center rounded-md ${report.icon === "chart" ? "bg-badge-purple-bg text-badge-purple-text" : "bg-mint-100 text-mint-700"}`}
-        >
+        <AppBadge variant={report.icon === "chart" ? "chart" : "success"} size="format">
           {icon}
-        </span>
+        </AppBadge>
         <div className="flex items-start gap-3">
 <AppBadge variant={report.status === "Published" ? "success" : "warning"} size="status">
             {report.status === "Published"
               ? t("reports.published")
               : t("reports.draft")}
           </AppBadge>
-          <button
+          <AppButton
             onClick={onRun}
             aria-label={t("reports.runReportName", { name: report.title })}
-            className="flex h-8 w-8 items-center justify-center text-navy-900 hover:text-mint-700"
+            size="run-icon"
             title={t("reports.runReport")}
           >
-            <Play className="h-3.5 w-3.5" />
-          </button>
+            <Play />
+          </AppButton>
         </div>
       </div>
       <h2 className="mt-7 font-display text-[15px] font-bold tracking-[-0.02em] text-navy-900">
@@ -379,29 +378,29 @@ function ReportCard({
           </span>
         </div>
         <div className="grid grid-cols-[1fr_1fr_auto] gap-3">
-          <button
+          <AppButton
             type="button"
             onClick={onEdit}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-surface-200 px-3 py-1.5 text-[11px] font-bold text-navy-900 hover:bg-mint-50"
+            variant="secondary" size="report-action"
           >
-            <Pencil className="h-5 w-5" /> {t("common.edit")}
-          </button>
-          <button
+            <Pencil /> {t("common.edit")}
+          </AppButton>
+          <AppButton
             type="button"
             onClick={onAdd}
-            className={`inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-1.5 text-[11px] font-bold ${added ? "border-mint-200 bg-mint-50 text-mint-700" : "border-surface-200 text-navy-900 hover:bg-mint-50"}`}
+            variant="secondary" size="report-action" active={added}
           >
             <Bookmark className="h-5 w-5" />{" "}
             {added ? t("reports.added") : t("reports.addToHome")}
-          </button>
-          <button
+          </AppButton>
+          <AppButton
             type="button"
             onClick={onMenu}
             aria-label={t("reports.moreOptions", { name: report.title })}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200 text-navy-900 hover:bg-surface-50"
+            size="toggle"
           >
-            <MoreHorizontal className="h-5 w-5" />
-          </button>
+            <MoreHorizontal />
+          </AppButton>
         </div>
       </div>
       {menuOpen && <ReportMenu onOpen={onOpen} />}
@@ -420,14 +419,15 @@ function ReportMenu({ onOpen }: { onOpen: () => void }) {
   return (
     <div className="absolute bottom-14 right-4 z-20 w-44 overflow-hidden rounded-lg border border-surface-200 bg-white py-1 shadow-floaty">
       {items.map(([label, Icon]) => (
-        <button
+        <AppButton
           key={String(label)}
+          size="menu-item"
+          variant={label === t("common.delete") ? "danger" : "ghost"}
           onClick={label === t("common.duplicate") ? onOpen : undefined}
-          className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] font-semibold ${label === t("common.delete") ? "text-red-600 hover:bg-red-50" : "text-ink-700 hover:bg-mint-50"}`}
         >
           <Icon className="h-3.5 w-3.5" />
           {label}
-        </button>
+        </AppButton>
       ))}
     </div>
   );

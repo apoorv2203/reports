@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'icon' | 'compact';
   active?: boolean;
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item';
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action';
 };
 
 type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
@@ -39,10 +39,13 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
   toggle: { size: 'icon', className: 'size-8 rounded-md' },
   'card-action': { size: 'default', className: 'flex-1 py-2 text-[10px] font-bold' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
+  pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
+  'run-icon': { size: 'icon', className: 'size-8 text-foreground hover:text-primary' },
+  'report-action': { size: 'default', className: 'flex-1 gap-2 py-1.5 text-[11px] font-bold' },
 };
 
 export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
-  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), className)} />;
+  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
 }

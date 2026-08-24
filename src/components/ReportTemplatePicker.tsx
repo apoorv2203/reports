@@ -1,4 +1,8 @@
 import { ArrowRight, BookOpen, Search } from 'lucide-react';
+import { AppButton } from '@/components/app/AppButton';
+import { AppInput } from '@/components/app/AppInput';
+import { AppCard } from '@/components/app/AppCard';
+import { AppBadge } from '@/components/app/AppBadge';
 import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
 
 export function ReportTemplatePicker({
@@ -19,12 +23,12 @@ export function ReportTemplatePicker({
           <span className="text-[13px] text-ink-500">Choose a starting point</span>
         </div>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={onBrowseReports} className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700">
+          <AppButton variant="ghost" size="action-sm" type="button" onClick={onBrowseReports}>
             <BookOpen className="h-4 w-4" /> Reports
-          </button>
-          <button onClick={onClose} className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-background hover:text-ink-900">
+          </AppButton>
+          <AppButton variant="ghost" size="action-md" onClick={onClose}>
             Cancel
-          </button>
+          </AppButton>
         </div>
       </header>
 
@@ -40,7 +44,7 @@ export function ReportTemplatePicker({
         <div className="mt-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 rounded-[12px] border border-surface-200 bg-white px-3 py-2 text-ink-300 shadow-soft">
             <Search className="h-4 w-4" />
-            <input className="w-52 bg-transparent text-[13px] text-ink-900 outline-none placeholder:text-ink-300" placeholder="Search templates" />
+            <AppInput size="inline" className="w-52" placeholder="Search templates" />
           </div>
           <span className="text-[12px] font-medium text-ink-500">{reportTemplates.length} templates</span>
         </div>
@@ -58,7 +62,7 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-surface-200 bg-surface text-left shadow-card-alt transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
+    <button type="button" onClick={() => onSelect(template)} className="group flex min-w-0 flex-col overflow-hidden text-left"><AppCard variant="report" className="cursor-pointer overflow-hidden p-0 text-left transition hover:-translate-y-1">
       <div className="relative aspect-[4/3] overflow-hidden border-b border-surface-200 bg-background">
         <img
           src={template.preview || "/placeholder.svg"}
@@ -66,7 +70,7 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
           className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]"
           loading="lazy"
         />
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold text-navy-900 shadow-soft backdrop-blur-sm">{template.category}</span>
+        <AppBadge variant="success" size="status" className="absolute left-3 top-3 bg-white/90 text-navy-900 shadow-soft backdrop-blur-sm">{template.category}</AppBadge>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-ink-900">{template.name}</h3>
@@ -76,6 +80,6 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
           <ArrowRight className="h-4 w-4 text-ink-300 transition group-hover:translate-x-1 group-hover:text-mint-600" />
         </div>
       </div>
-    </button>
+    </AppCard></button>
   );
 }
