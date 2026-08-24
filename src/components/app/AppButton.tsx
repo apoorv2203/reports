@@ -3,7 +3,8 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'icon' | 'compact';
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row';
+  active?: boolean;
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item';
 };
 
 type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
@@ -32,10 +33,16 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, { size: PrimitiveButton
   menu: { size: 'default', className: 'h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold' },
   widget: { size: 'default', className: 'mt-3 h-auto w-full gap-1.5 py-1.5 text-[10px] font-bold' },
   'list-row': { size: 'default', className: 'h-auto w-full justify-start gap-2.5 py-2.5 text-left' },
+  filter: { size: 'default', className: 'px-4 py-2.5 text-[12px] font-bold' },
+  pill: { size: 'default', className: 'h-auto rounded-full px-4 py-2.5 text-[12px] font-semibold text-foreground' },
+  tab: { size: 'default', className: 'h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition' },
+  toggle: { size: 'icon', className: 'size-8 rounded-md' },
+  'card-action': { size: 'default', className: 'flex-1 py-2 text-[10px] font-bold' },
+  'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
 };
 
-export function AppButton({ variant = 'primary', size, className, ...props }: AppButtonProps) {
+export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
-  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, className)} />;
+  return <Button {...props} variant={mapped.variant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-mint-500 text-mint-700' : 'border-transparent text-ink-500 hover:text-navy-900'), className)} />;
 }

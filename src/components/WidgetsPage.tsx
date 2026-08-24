@@ -206,7 +206,7 @@ export function WidgetsPage({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("widgets.searchPlaceholder")}
-                className="min-w-0 flex-1 border-0 bg-transparent text-[12px] shadow-none outline-none placeholder:text-ink-400 focus-visible:ring-0"
+                size="inline"
               />
             </label>
             <AppButton type="button" onClick={onNewWidget}>
@@ -220,7 +220,7 @@ export function WidgetsPage({
               variant="ghost"
               type="button"
               onClick={() => setTab("mine")}
-              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "mine" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              size="tab" active={tab === "mine"}
             >
               {t("widgets.myWidgets")}
             </AppButton>
@@ -228,7 +228,7 @@ export function WidgetsPage({
               variant="ghost"
               type="button"
               onClick={() => setTab("catalogue")}
-              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "catalogue" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              size="tab" className={tab === "catalogue" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}
             >
               {t("widgets.catalogue")}
             </AppButton>
@@ -236,14 +236,14 @@ export function WidgetsPage({
               variant="ghost"
               type="button"
               onClick={() => setTab("shared")}
-              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "shared" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              size="tab" className={tab === "shared" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}
             >
               {t("widgets.sharedWithMe")}
             </AppButton>
           </div>
         </div>
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <AppButton variant="secondary" type="button" className="px-4 py-2.5 text-[12px] font-bold">
+          <AppButton variant="secondary" type="button" size="filter">
             <SlidersHorizontal data-icon="inline-start" /> {t("common.filters")}
           </AppButton>
           {[
@@ -256,7 +256,7 @@ export function WidgetsPage({
               variant="secondary"
               type="button"
               key={label}
-              className="h-auto rounded-full px-4 py-2.5 text-[12px] font-semibold text-ink-700"
+              size="pill"
             >
               {label}
               <ChevronDown data-icon="inline-end" />
@@ -373,8 +373,9 @@ function WidgetCard({
   return (
     <AppCard
       variant="widget"
+      density="widget"
       onClick={onView}
-      className="cursor-pointer rounded-lg p-4"
+      className="cursor-pointer"
     >
       <div className="flex items-start justify-between gap-2">
         <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
@@ -403,7 +404,7 @@ function WidgetCard({
           </h2>
         </div>
         {added && (
-          <AppBadge variant="success" className="rounded-full border border-mint-200 bg-mint-50 px-2 py-1 text-[9px] font-bold text-mint-700">
+          <AppBadge variant="success" size="status">
             {t("home.addedToHome")}
           </AppBadge>
         )}
@@ -433,7 +434,7 @@ function WidgetCard({
         </span>
       </div>
       <div className="mt-3 flex items-center gap-2">
-        <AppButton variant="secondary" type="button" className="flex-1 py-2 text-[10px] font-bold">
+        <AppButton variant="secondary" type="button" size="card-action">
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
         <AppButton variant="secondary" type="button" onClick={onAdd} className="flex-1 py-2 text-[10px] font-bold">
@@ -477,7 +478,7 @@ function WidgetMenu({
       onClick={(event) => event.stopPropagation()}
     >
       {items.map(([label, handler]) => (
-        <AppButton variant="ghost" type="button" key={label} onClick={handler} className="h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-ink-700">
+        <AppButton variant="ghost" type="button" key={label} onClick={handler} size="menu-item">
           <Edit3 data-icon="inline-start" /> {label}
         </AppButton>
       ))}
