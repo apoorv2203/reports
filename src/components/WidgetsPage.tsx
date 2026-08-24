@@ -27,6 +27,8 @@ import {
   type WidgetKind,
 } from "@/data/homeData";
 import { useT } from "@/providers/I18nProvider";
+import { AppButton } from "@/components/app/AppButton";
+import { AppInput } from "@/components/app/AppInput";
 
 type Props = {
   onBack: () => void;
@@ -206,20 +208,16 @@ export function WidgetsPage({
             <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-ink-300 md:flex">
               <Search className="h-4 w-4" />
               <span className="sr-only">{t("widgets.searchLabel")}</span>
-              <input
+              <AppInput
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("widgets.searchPlaceholder")}
-                className="min-w-0 flex-1 text-[12px] text-navy-900 outline-none placeholder:text-ink-400"
+                className="min-w-0 flex-1 border-0 bg-transparent text-[12px] shadow-none outline-none placeholder:text-ink-400 focus-visible:ring-0"
               />
             </label>
-            <button
-              type="button"
-              onClick={onNewWidget}
-              className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-navy-800"
-            >
-              <Plus className="h-4 w-4" /> {t("widgets.newWidget")}
-            </button>
+            <AppButton type="button" onClick={onNewWidget}>
+              <Plus data-icon="inline-start" /> {t("widgets.newWidget")}
+            </AppButton>
           </div>
         </header>
         <div className="mt-6 border-b border-surface-200">
