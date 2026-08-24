@@ -6,7 +6,7 @@ export type AppCardVariant = 'default' | 'widget' | 'report' | 'recommendation' 
 
 const styles: Record<AppCardVariant, string> = {
   default: '',
-  widget: 'group relative flex min-h-[300px] flex-col rounded-xl border border-border bg-card p-3.5 shadow-card transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty',
+  widget: 'group relative flex min-h-[300px] flex-col rounded-lg border border-border bg-card p-3.5 shadow-card transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty',
   report: 'rounded-[14px] border border-border bg-card shadow-card-alt',
   recommendation: 'rounded-xl border border-border bg-card shadow-card-alt',
   admin: 'rounded-[14px] border border-border bg-card shadow-card-alt',
