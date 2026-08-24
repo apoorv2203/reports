@@ -115,6 +115,15 @@ export function formatRelativeTime(
   return rtf.format(Math.round(days / 30), 'month');
 }
 
+/** Convert legacy labels such as "Updated 2h ago" through Intl formatting. */
+export function formatRelativeLabel(label: string, locale: Locale = activeLocale): string {
+  const match = label.match(/(?:Updated )?(\\d+)(m|h|d|w) ago/i);
+  if (!match) return label;
+  const value = Number(match[1]);
+  const unit = { m: 'minute', h: 'hour', d: 'day', w: 'week' }[match[2].toLowerCase() as 'm' | 'h' | 'd' | 'w'] as Intl.RelativeTimeFormatUnit;
+  return new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: 'auto' }).format(-value, unit);
+}
+
 /**
  * Format a number with grouping (e.g. 8,642).
  */

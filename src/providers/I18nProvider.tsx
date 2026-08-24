@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { setLocale, type Locale, formatDate, formatDateTime, formatRelativeTime, formatNumber, formatCurrency, formatPercentage } from '@/utils/formatting';
+import { setLocale, type Locale, formatDate, formatDateTime, formatRelativeTime, formatRelativeLabel, formatNumber, formatCurrency, formatPercentage } from '@/utils/formatting';
 
 // Import the English translation resource
 import en from '@/i18n/en.json';
@@ -31,6 +31,7 @@ interface I18nContextValue {
     date: typeof formatDate;
     dateTime: typeof formatDateTime;
     relativeTime: typeof formatRelativeTime;
+    relativeLabel: typeof formatRelativeLabel;
     number: typeof formatNumber;
     currency: typeof formatCurrency;
     percentage: typeof formatPercentage;
@@ -97,6 +98,7 @@ export function I18nProvider({ children, defaultLocale = 'en' }: I18nProviderPro
         date: (value) => formatDate(value, locale),
         dateTime: (value) => formatDateTime(value, locale),
         relativeTime: (value) => formatRelativeTime(value, locale),
+        relativeLabel: (value) => formatRelativeLabel(value, locale),
         number: (value) => formatNumber(value, locale),
         currency: (value) => formatCurrency(value, locale),
         percentage: (value, _locale, fractionDigits) => formatPercentage(value, locale, fractionDigits),
