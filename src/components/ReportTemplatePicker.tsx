@@ -4,6 +4,7 @@ import { AppInput } from '@/components/app/AppInput';
 import { AppCard } from '@/components/app/AppCard';
 import { AppBadge } from '@/components/app/AppBadge';
 import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
+import { useT } from '@/providers/I18nProvider';
 
 export function ReportTemplatePicker({
   onSelect,
@@ -14,37 +15,39 @@ export function ReportTemplatePicker({
   onClose: () => void;
   onBrowseReports: () => void;
 }) {
+  const t = useT();
+
   return (
     <div className="rb-overlay fixed inset-0 z-50 overflow-y-auto bg-background" role="dialog" aria-modal="true">
-      <header className="flex h-16 items-center justify-between border-b border-surface-200 bg-white px-8">
+      <header className="flex h-16 items-center justify-between border-b border-border bg-card px-8">
         <div className="flex items-center gap-3">
-          <span className="font-display text-[17px] font-bold tracking-[-0.03em] text-ink-900">Build a report</span>
-          <span className="h-5 w-px bg-border-light" />
-          <span className="text-[13px] text-ink-500">Choose a starting point</span>
+          <span className="font-display text-[17px] font-bold tracking-[-0.03em] text-foreground">{t('reports.buildReport')}</span>
+          <span className="h-5 w-px bg-border" />
+          <span className="text-[13px] text-muted-foreground">{t('reports.chooseStartingPoint')}</span>
         </div>
         <div className="flex items-center gap-2">
           <AppButton variant="ghost" size="action-sm" type="button" onClick={onBrowseReports}>
-            <BookOpen className="h-4 w-4" /> Reports
+            <BookOpen /> {t('reports.library')}
           </AppButton>
           <AppButton variant="ghost" size="action-md" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </AppButton>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-8 py-10">
         <div className="max-w-2xl">
-          <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-mint-700">ReportIQ templates</p>
-          <h1 className="mt-2 font-display text-[32px] font-bold tracking-[-0.04em] text-ink-900">Start with a shell, then make it yours.</h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-500">
-            Pick a prepared layout and use natural language to shape every section. You can add charts, tables, and explanations as you go.
+          <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-primary">{t('reports.templatesEyebrow')}</p>
+          <h1 className="mt-2 font-display text-[32px] font-bold tracking-[-0.04em] text-foreground">{t('reports.templatesTitle')}</h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+            {t('reports.templatesDescription')}
           </p>
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 rounded-[12px] border border-surface-200 bg-white px-3 py-2 text-ink-300 shadow-soft">
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
             <Search className="h-4 w-4" />
-            <AppInput size="inline" className="w-52" placeholder="Search templates" />
+            <AppInput size="inline" className="w-52" placeholder={t('reports.searchTemplates')} />
           </div>
           <span className="text-[12px] font-medium text-ink-500">{reportTemplates.length} templates</span>
         </div>
@@ -63,7 +66,7 @@ export function ReportTemplatePicker({
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
     <button type="button" onClick={() => onSelect(template)} className="group flex min-w-0 flex-col overflow-hidden text-left"><AppCard variant="report" className="cursor-pointer overflow-hidden p-0 text-left transition hover:-translate-y-1">
-      <div className="relative aspect-[4/3] overflow-hidden border-b border-surface-200 bg-background">
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-border bg-muted">
         <img
           src={template.preview || "/placeholder.svg"}
           alt={`${template.name} template preview`}
