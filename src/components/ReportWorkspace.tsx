@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useT } from '@/providers/I18nProvider';
 import { ArrowDownToLine, ArrowLeft, ArrowUpRight, ChartBar as BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
 import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
@@ -6,6 +7,7 @@ import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
 
 export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
+  const t = useT();
   const [sections, setSections] = useState<TemplateSection[]>(template.sections);
   const [title, setTitle] = useState(report?.title ?? template.sections[0]?.title ?? 'Untitled report');
   const [prompt, setPrompt] = useState('');
@@ -58,20 +60,20 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <span className="h-5 w-px bg-surface-200" />
           <span className="font-display text-[16px] font-bold text-navy-900">ReportIQ</span>
           <span className="text-ink-300">/</span>
-          <span className="hidden text-[13px] text-ink-500 sm:inline">My reports</span>
+          <span className="hidden text-[13px] text-ink-500 sm:inline">{t('workspace.myReports')}</span>
           <span className="hidden text-ink-300 sm:inline">/</span>
           <span className="truncate text-[13px] font-semibold text-navy-900">{title}</span>
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-100 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button type="button" onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 sm:inline-flex"><BookOpen className="h-4 w-4" /> Reports</button>
+          <button type="button" onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 sm:inline-flex"><BookOpen className="h-4 w-4" /> {t('workspace.reports')}</button>
           <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><X className="h-4 w-4" /></button>
         </div>
       </header>
 
       <ResizableThreePane
-        leftLabel="Editing this report"
-        rightLabel="Actions"
+        leftLabel={t('workspace.editingReport')}
+        rightLabel={t('workspace.actions')}
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-surface-200 bg-background p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> Editing this report</div>}

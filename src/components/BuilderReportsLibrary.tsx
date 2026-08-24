@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useT } from '@/providers/I18nProvider';
 import {
   ArrowLeft,
   CalendarDays,
@@ -24,12 +25,13 @@ export function BuilderReportsLibrary({
   onBack: () => void;
   onOpenReport: (template: ReportTemplate, report: LibraryReport) => void;
 }) {
+  const t = useT();
   const [tab, setTab] = useState<LibraryTab>('catalogue');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [reports, setReports] = useState(libraryReports);
 
-  const categories = ['All', ...Array.from(new Set(libraryReports.map((report) => report.category)))];
+  const categories = [t('common.all'), ...Array.from(new Set(libraryReports.map((report) => report.category)))];
   const visibleReports = useMemo(() => {
     const query = search.trim().toLowerCase();
     return reports.filter((report) => {
@@ -70,7 +72,7 @@ export function BuilderReportsLibrary({
 
       <main className="min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
         <div className="mx-auto max-w-7xl">
-          <div className="inline-flex rounded-[14px] border border-surface-200 bg-white p-1 shadow-soft" aria-label="Report library sections">
+          <div className="inline-flex rounded-[14px] border border-surface-200 bg-white p-1 shadow-soft" aria-label={t('reports.library')}>
             <button onClick={() => { setTab('mine'); setCategory('All'); }} className={`rounded-[10px] px-5 py-2.5 text-[14px] font-semibold ${tab === 'mine' ? 'bg-navy-900 text-white' : 'text-ink-500 hover:text-ink-900'}`}>My reports</button>
             <button onClick={() => { setTab('catalogue'); setCategory('All'); }} className={`rounded-[10px] px-5 py-2.5 text-[14px] font-semibold ${tab === 'catalogue' ? 'bg-navy-900 text-white' : 'text-ink-500 hover:text-ink-900'}`}>Catalogue</button>
           </div>
