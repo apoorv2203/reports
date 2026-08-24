@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
+@import './theme/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,8 +16,8 @@ html, body, #root {
 
 body {
   margin: 0;
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: var(--color-background);
+  color: var(--color-text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,46 +28,46 @@ button {
 }
 
 button:focus-visible {
-  outline: 3px solid rgba(94, 234, 176, 0.7);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: #a8f0d6;
-  color: #132a3a;
+  background: var(--color-selection-bg);
+  color: var(--color-selection-text);
 }
 
 /* ---- Report builder form controls ---- */
 .input {
   width: 100%;
   border-radius: 12px;
-  border: 1px solid #e5e5e7;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   padding: 9px 12px;
   font-size: 13px;
-  color: #1d1d1f;
+  color: var(--color-text-primary);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .input:focus {
   outline: none;
-  border-color: #5eeab0;
-  box-shadow: 0 0 0 3px rgba(94, 234, 176, 0.25);
+  border-color: var(--color-focus-border);
+  box-shadow: 0 0 0 3px var(--color-focus-glow);
 }
-.input::placeholder { color: #a1a1a6; }
+.input::placeholder { color: var(--color-placeholder); }
 
 .filter-select, .filter-input {
   border-radius: 10px;
-  border: 1px solid #ececec;
-  background: #f7f8f9;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-50);
   padding: 7px 10px;
   font-size: 12px;
-  color: #132a3a;
+  color: var(--color-ink-900);
 }
 .filter-select:focus, .filter-input:focus {
   outline: none;
-  border-color: #5eeab0;
+  border-color: var(--color-focus-border);
 }
-.filter-input { background: #fff; }
+.filter-input { background: var(--color-surface); }
 
 /* ---- Modal entrance ---- */
 @keyframes rb-fade-in {
@@ -86,10 +88,10 @@ button:focus-visible {
   border-radius: 50%;
   background:
     conic-gradient(
-      #5d55dc 0% 42%,
-      #8178ea 42% 70%,
-      #afa9f4 70% 89%,
-      #e9e7fb 89% 100%
+      var(--color-chart-accent) 0% 42%,
+      var(--color-chart-accent-light) 42% 70%,
+      var(--color-chart-accent-lighter) 70% 89%,
+      var(--color-chart-accent-lightest) 89% 100%
     );
   -webkit-mask: radial-gradient(circle 16px at 50% 50%, transparent 98%, #000 100%);
   mask: radial-gradient(circle 16px at 50% 50%, transparent 98%, #000 100%);
@@ -99,7 +101,13 @@ button:focus-visible {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  margin-right: 4px;
+  margin-inline-end: 4px;  /* RTL-ready: was margin-right */
   vertical-align: middle;
 }
 
+/* ---- RTL support ---- */
+/* When the document direction is RTL, flip directional utilities
+   that can't be expressed with logical properties alone. */
+[dir="rtl"] .legend-dot {
+  margin-inline-end: 4px;
+}

@@ -1,4 +1,5 @@
 import { ChartBar as BarChart3 } from 'lucide-react';
+import { useT } from '@/providers/I18nProvider';
 
 export function LogoMark({ className = '' }: { className?: string }) {
   return (
@@ -12,13 +13,14 @@ export function LogoMark({ className = '' }: { className?: string }) {
 }
 
 export function Wordmark({ light = false }: { light?: boolean }) {
+  const t = useT();
   return (
     <span
       className={`font-display text-[19px] font-extrabold tracking-tight ${
         light ? 'text-white' : 'text-ink-900'
       }`}
     >
-      Report<span className="text-mint-400">IQ</span>
+      {t('logo.report')}<span className="text-mint-400">{t('logo.iq')}</span>
     </span>
   );
 }

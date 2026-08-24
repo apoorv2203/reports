@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { ChartBar as BarChart3, Eye, EyeOff, Lock, Mail, Sparkles } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { LogoMark, Wordmark } from './Logo';
+import { useT } from '@/providers/I18nProvider';
 
 export function LoginScreen() {
+  const t = useT();
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,16 +50,16 @@ export function LoginScreen() {
         </div>
         <div className="relative">
           <h1 className="font-display text-[34px] font-extrabold leading-[1.15] tracking-[-0.04em] text-white">
-            Talk to your banking data.<br />Get answers in seconds.
+            {t('login.tagline1')}<br />{t('login.tagline2')}
           </h1>
           <p className="mt-4 max-w-[380px] text-[15px] leading-relaxed text-white/60">
-            ReportIQ turns natural-language questions into instant insights — charts, tables, and reports your whole team can use.
+            {t('login.description')}
           </p>
           <div className="mt-8 flex flex-col gap-3">
             {[
-              { icon: Sparkles, text: 'Ask in plain English, get visual answers' },
-              { icon: BarChart3, text: 'Build reusable reports from any session' },
-              { icon: Sparkles, text: 'Pin widgets to your personal dashboard' },
+              { icon: Sparkles, text: t('login.feature1') },
+              { icon: BarChart3, text: t('login.feature2') },
+              { icon: Sparkles, text: t('login.feature3') },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 text-[13px] text-white/70">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-mint-400"><item.icon className="h-4 w-4" /></span>
@@ -66,7 +68,7 @@ export function LoginScreen() {
             ))}
           </div>
         </div>
-        <p className="relative text-[12px] text-white/40">© 2026 ReportIQ · Digital Banking Reporting Workspace</p>
+        <p className="relative text-[12px] text-white/40">{t('login.copyright')}</p>
       </div>
 
       {/* Right form panel */}
@@ -77,19 +79,19 @@ export function LoginScreen() {
             <Wordmark />
           </div>
 
-          <h2 className="font-display text-[24px] font-bold tracking-[-0.03em] text-navy-900">Welcome back</h2>
-          <p className="mt-1.5 text-[13px] text-ink-500">Sign in to your ReportIQ workspace.</p>
+          <h2 className="font-display text-[24px] font-bold tracking-[-0.03em] text-navy-900">{t('login.welcomeBack')}</h2>
+          <p className="mt-1.5 text-[13px] text-ink-500">{t('login.signInSubtitle')}</p>
 
           <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-[12px] font-bold text-ink-700">Email</span>
+              <span className="text-[12px] font-bold text-ink-700">{t('login.email')}</span>
               <div className="flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-3.5 py-3 text-ink-300 transition focus-within:border-mint-400 focus-within:ring-2 focus-within:ring-mint-100">
                 <Mail className="h-4 w-4 shrink-0" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com"
+                  placeholder={t('login.emailPlaceholder')}
                   className="min-w-0 flex-1 bg-transparent text-[13px] text-navy-900 outline-none placeholder:text-ink-300"
                   autoComplete="email"
                   required
@@ -98,19 +100,19 @@ export function LoginScreen() {
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-[12px] font-bold text-ink-700">Password</span>
+              <span className="text-[12px] font-bold text-ink-700">{t('login.password')}</span>
               <div className="flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-3.5 py-3 text-ink-300 transition focus-within:border-mint-400 focus-within:ring-2 focus-within:ring-mint-100">
                 <Lock className="h-4 w-4 shrink-0" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t('login.passwordPlaceholder')}
                   className="min-w-0 flex-1 bg-transparent text-[13px] text-navy-900 outline-none placeholder:text-ink-300"
                   autoComplete="current-password"
                   required
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-ink-500 hover:text-navy-900" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-ink-500 hover:text-navy-900" aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -127,13 +129,13 @@ export function LoginScreen() {
               disabled={loading}
               className="mt-1 inline-flex items-center justify-center gap-2 rounded-xl bg-navy-900 px-4 py-3 text-[13px] font-bold text-white transition hover:bg-navy-800 disabled:opacity-50"
             >
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? t('login.signingIn') : t('login.signIn')}
             </button>
           </form>
 
           <div className="my-6 flex items-center gap-3 text-[11px] font-medium text-ink-300">
             <span className="h-px flex-1 bg-surface-200" />
-            Try a demo account
+            {t('login.tryDemo')}
             <span className="h-px flex-1 bg-surface-200" />
           </div>
 
@@ -143,27 +145,27 @@ export function LoginScreen() {
               onClick={() => fillDemo('new')}
               className="rounded-xl border border-surface-200 bg-surface-50 px-3.5 py-3 text-left transition hover:border-mint-300 hover:bg-mint-50"
             >
-              <div className="text-[12px] font-bold text-navy-900">New user</div>
-              <div className="mt-0.5 text-[10px] text-ink-500">Rahul · empty dashboard</div>
+              <div className="text-[12px] font-bold text-navy-900">{t('login.demoNew')}</div>
+              <div className="mt-0.5 text-[10px] text-ink-500">{t('login.demoNewDesc')}</div>
             </button>
             <button
               type="button"
               onClick={() => fillDemo('admin')}
               className="rounded-xl border border-surface-200 bg-surface-50 px-3.5 py-3 text-left transition hover:border-mint-300 hover:bg-mint-50"
             >
-              <div className="text-[12px] font-bold text-navy-900">Admin user</div>
-              <div className="mt-0.5 text-[10px] text-ink-500">Admin · settings access</div>
+              <div className="text-[12px] font-bold text-navy-900">{t('login.demoAdmin')}</div>
+              <div className="mt-0.5 text-[10px] text-ink-500">{t('login.demoAdminDesc')}</div>
             </button>
             <button
               type="button"
               onClick={() => fillDemo('experienced')}
               className="rounded-xl border border-surface-200 bg-surface-50 px-3.5 py-3 text-left transition hover:border-mint-300 hover:bg-mint-50"
             >
-              <div className="text-[12px] font-bold text-navy-900">Experienced user</div>
-              <div className="mt-0.5 text-[10px] text-ink-500">Anita · full dashboard</div>
+              <div className="text-[12px] font-bold text-navy-900">{t('login.demoExperienced')}</div>
+              <div className="mt-0.5 text-[10px] text-ink-500">{t('login.demoExperiencedDesc')}</div>
             </button>
           </div>
-          <p className="mt-3 text-center text-[11px] text-ink-300">Password for both: welcome123</p>
+          <p className="mt-3 text-center text-[11px] text-ink-300">{t('login.passwordHint')}</p>
         </div>
       </div>
     </div>

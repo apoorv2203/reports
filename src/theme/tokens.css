@@ -1,0 +1,163 @@
+/**
+ * ReportIQ Semantic Design Tokens
+ *
+ * All color values that were previously hard-coded as hex/rgb in components
+ * are now defined here as CSS custom properties. Components reference these
+ * through Tailwind utility classes that map to these variables, enabling
+ * future theme switching (dark, custom brand themes) without changing
+ * component code.
+ *
+ * The values below exactly reproduce the current LTR English appearance.
+ */
+
+:root {
+  /* ---- Page-level ---- */
+  --color-background: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f5f5f7;
+  --color-surface-tertiary: #fafafa;
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6b7b87;
+  --color-text-muted: #a6b3bc;
+  --color-border: #e5e5e7;
+  --color-border-light: #d2d2d7;
+  --color-border-subtle: #ececec;
+  --color-border-strong: #dce5e1;
+
+  /* ---- Primary (mint accent — 400/500 ramp used for buttons, focus, etc.) ---- */
+  --color-primary: #3dd998;
+  --color-primary-hover: #1a8a61;
+  --color-primary-light: #e9fbf4;
+  --color-primary-lighter: #d0f7e8;
+  --color-primary-medium: #5eeab0;
+  --color-primary-accent: #a8f0d6;
+  --color-primary-300: #7be8c2;
+
+  /* ---- Success ---- */
+  --color-success: #23b27c;
+  --color-success-hover: #1a8a61;
+  --color-success-light: #dff8ef;
+  --color-success-medium: #08865f;
+  --color-success-bg: #d0f7e8;
+
+  /* ---- Warning ---- */
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-text: #92400e;
+
+  /* ---- Danger ---- */
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+  --color-danger-text: #dc2626;
+  --color-danger-text-dark: #b91c1c;
+  --color-danger-medium: #f87171;
+  --color-danger-400: #f87171;
+
+  /* ---- Navy (dark surfaces, buttons, table headers) ---- */
+  --color-navy-900: #0e2a3b;
+  --color-navy-800: #132a3a;
+  --color-navy-700: #1b3a4e;
+  --color-navy-600: #27506b;
+  --color-navy: #132a3a;
+  --color-navy-hover: #0d202d;
+  --color-navy-dark: #0e2a3b;
+
+  /* ---- Ink (text ramp) ---- */
+  --color-ink-900: #132a3a;
+  --color-ink-700: #2a4a5e;
+  --color-ink-500: #6b7b87;
+  --color-ink-300: #a6b3bc;
+  --color-ink-400: #8b9aa5;
+
+  /* ---- Surface ramps (light backgrounds) ---- */
+  --color-surface-50: #f7f8f9;
+  --color-surface-100: #eef1f3;
+  --color-surface-200: #e2e7ea;
+
+  /* ---- Blue (admin screens) ---- */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-900: #1e3a5f;
+
+  /* ---- Chart accents ---- */
+  --color-chart-accent: #5d55dc;
+  --color-chart-accent-light: #8178ea;
+  --color-chart-accent-lighter: #afa9f4;
+  --color-chart-accent-lightest: #e9e7fb;
+  --color-chart-purple-bg: #eeebff;
+  --color-chart-purple-text: #5e55ce;
+  --color-chart-blue: #9ba4ef;
+  --color-chart-blue-medium: #9589e9;
+  --color-chart-green-fill: #d8f7eb;
+  --color-chart-green-stroke: #0caf78;
+  --color-chart-green-accent: #05aa70;
+  --color-chart-green-hover: #04945f;
+
+  /* ---- Table accent ---- */
+  --color-table-accent: #132a3a;
+
+  /* ---- Badge / status ---- */
+  --color-badge-purple-bg: #eeebff;
+  --color-badge-purple-text: #5e55ce;
+  --color-badge-green-bg: #dff8ef;
+  --color-badge-green-text: #08865f;
+  --color-badge-blue-bg: #d9eaff;
+  --color-badge-blue-text: #174f91;
+  --color-badge-amber-bg: #fef3c7;
+  --color-badge-amber-text: #92400e;
+
+  /* ---- Link ---- */
+  --color-link: #174f91;
+
+  /* ---- Shadows ---- */
+  --shadow-soft: 0 1px 2px rgba(14, 42, 59, 0.06), 0 1px 3px rgba(14, 42, 59, 0.04);
+  --shadow-card: 0 2px 8px rgba(14, 42, 59, 0.03);
+  --shadow-card-alt: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-card-dark: 0 2px 8px rgba(19, 42, 58, 0.03);
+  --shadow-floaty: 0 4px 16px rgba(14, 42, 59, 0.08);
+  --shadow-drawer-left: -10px 0 30px rgba(15, 35, 55, 0.12);
+  --shadow-drawer-right: -8px 0 30px rgba(15, 35, 55, 0.08);
+  --shadow-textarea-focus: 0 8px 24px rgba(19, 42, 58, 0.08);
+  --shadow-result: 0 6px 20px rgba(19, 42, 58, 0.04);
+  --shadow-result-sub: 0 3px 12px rgba(19, 42, 58, 0.04);
+  --shadow-tab-active: 0 1px 2px rgba(19, 42, 58, 0.08);
+  --shadow-chat-detail: 0 8px 24px rgba(19, 42, 58, 0.05);
+
+  /* ---- Selection ---- */
+  --color-selection-bg: #a8f0d6;
+  --color-selection-text: #132a3a;
+
+  /* ---- Focus ---- */
+  --color-focus-ring: rgba(94, 234, 176, 0.7);
+  --color-focus-border: #5eeab0;
+  --color-focus-glow: rgba(94, 234, 176, 0.25);
+
+  /* ---- Overlay ---- */
+  --color-overlay-light: rgba(14, 42, 59, 0.3);
+  --color-overlay-medium: rgba(14, 42, 59, 0.55);
+
+  /* ---- Parameter runner ---- */
+  --color-param-bg: #f7fbf9;
+
+  /* ---- Dark button (#1d1d1f) ---- */
+  --color-button-dark: #1d1d1f;
+
+  /* ---- Placeholder ---- */
+  --color-placeholder: #a1a1a6;
+
+  /* ---- Dark theme (prepared for future — not active) ---- */
+}
+
+/*
+ * Dark theme placeholder — uncomment when ready to implement:
+ *
+ * [data-theme="dark"] {
+ *   --color-background: #1a1a1c;
+ *   --color-surface: #2c2c2e;
+ *   ...
+ * }
+ */
