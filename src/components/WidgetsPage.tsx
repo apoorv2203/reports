@@ -24,11 +24,14 @@ import {
   myWidgets,
   recommendedWidgets,
   type Widget,
-  type WidgetKind,
 } from "@/data/homeData";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
+import { AppBadge } from "@/components/app/AppBadge";
+import { AppCard } from "@/components/app/AppCard";
 import { AppInput } from "@/components/app/AppInput";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
+import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 
 type Props = {
   onBack: () => void;
@@ -136,10 +139,6 @@ const sharedWidgets: Widget[] = [
     accent: "violet",
   },
 ];
-const kindStyles: Record<WidgetKind, string> = {
-  TABLE: "bg-mint-100 text-mint-700",
-  CHART: "bg-badge-purple-bg text-badge-purple-text",
-};
 
 export function WidgetsPage({
   onBack,
@@ -196,14 +195,7 @@ export function WidgetsPage({
     >
       <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-          <div>
-            <h1 className="font-display text-[25px] font-bold tracking-[-0.04em] text-navy-900">
-              {t("widgets.title")}
-            </h1>
-            <p className="mt-1 text-[13px] text-ink-500">
-              {t("widgets.subtitle")}
-            </p>
-          </div>
+          <AppPageHeader title={t("widgets.title")} description={t("widgets.subtitle")} />
           <div className="flex items-center gap-3">
             <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-ink-300 md:flex">
               <Search className="h-4 w-4" />
@@ -222,50 +214,51 @@ export function WidgetsPage({
         </header>
         <div className="mt-6 border-b border-surface-200">
           <div className="flex gap-6">
-            <button
+            <AppButton
+              variant="ghost"
               type="button"
               onClick={() => setTab("mine")}
-              className={`border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "mine" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "mine" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
             >
               {t("widgets.myWidgets")}
-            </button>
-            <button
+            </AppButton>
+            <AppButton
+              variant="ghost"
               type="button"
               onClick={() => setTab("catalogue")}
-              className={`border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "catalogue" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "catalogue" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
             >
               {t("widgets.catalogue")}
-            </button>
-            <button
+            </AppButton>
+            <AppButton
+              variant="ghost"
               type="button"
               onClick={() => setTab("shared")}
-              className={`border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "shared" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
+              className={`h-auto rounded-none border-b-2 px-1 pb-3 text-[12px] font-bold transition ${tab === "shared" ? "border-mint-500 text-mint-700" : "border-transparent text-ink-500 hover:text-navy-900"}`}
             >
               {t("widgets.sharedWithMe")}
-            </button>
+            </AppButton>
           </div>
         </div>
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-4 py-2.5 text-[12px] font-bold text-navy-900 hover:bg-surface-50"
-          >
-            <SlidersHorizontal className="h-4 w-4" /> {t("common.filters")}
-          </button>
+          <AppButton variant="secondary" type="button" className="px-4 py-2.5 text-[12px] font-bold">
+            <SlidersHorizontal data-icon="inline-start" /> {t("common.filters")}
+          </AppButton>
           {[
             t("common.category"),
             t("common.owner"),
             t("common.created"),
             t("common.updated"),
           ].map((label) => (
-            <button
+            <AppButton
+              variant="secondary"
               type="button"
               key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-surface-200 px-4 py-2.5 text-[12px] font-semibold text-ink-700 hover:border-mint-300 hover:bg-mint-50"
+              className="h-auto rounded-full px-4 py-2.5 text-[12px] font-semibold text-ink-700"
             >
               {label}
-              <ChevronDown className="h-3.5 w-3.5 text-ink-400" />
-            </button>
+              <ChevronDown data-icon="inline-end" />
+            </AppButton>
           ))}
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
@@ -279,22 +272,12 @@ export function WidgetsPage({
               <option>{t("common.type")}</option>
             </select>
             <div className="flex rounded-lg border border-surface-200 p-0.5">
-              <button
-                type="button"
-                onClick={() => setList(false)}
-                className={`flex h-8 w-9 items-center justify-center rounded-md ${!list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`}
-                aria-label={t("widgets.gridView")}
-              >
-                <Grid2X2 className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setList(true)}
-                className={`flex h-8 w-9 items-center justify-center rounded-md ${list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`}
-                aria-label={t("widgets.listView")}
-              >
-                <LayoutList className="h-4 w-4" />
-              </button>
+              <AppButton variant="icon" type="button" onClick={() => setList(false)} className={`size-8 rounded-md ${!list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.gridView")}>
+                <Grid2X2 />
+              </AppButton>
+              <AppButton variant="icon" type="button" onClick={() => setList(true)} className={`size-8 rounded-md ${list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.listView")}>
+                <LayoutList />
+              </AppButton>
             </div>
           </div>
         </div>
@@ -327,19 +310,15 @@ export function WidgetsPage({
           ))}
         </div>
         {!widgets.length && (
-          <div className="mt-5 rounded-lg border border-dashed border-surface-200 px-6 py-16 text-center text-[13px] text-ink-500">
+          <AppCard variant="default" className="mt-5 rounded-lg border-dashed px-6 py-16 text-center text-[13px] text-ink-500">
             {t("widgets.noMatch")}
-          </div>
+          </AppCard>
         )}
         <div className="flex items-center justify-center gap-4 py-7 text-[11px] text-ink-500">
           {t("widgets.showingOf", { count: String(widgets.length) })}{" "}
-          <button
-            type="button"
-            className="rounded-lg border border-surface-200 px-4 py-2 font-bold text-navy-900 hover:bg-surface-50"
-          >
-            {t("common.loadMore")}{" "}
-            <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
-          </button>
+          <AppButton variant="secondary" type="button" className="px-4 py-2 font-bold text-navy-900">
+            {t("common.loadMore")} <ChevronDown data-icon="inline-end" />
+          </AppButton>
         </div>
       </div>
       {shareWidget && (
@@ -390,16 +369,15 @@ function WidgetCard({
 }) {
   const t = useT();
   return (
-    <article
+    <AppCard
+      variant="widget"
       onClick={onView}
-      className="group relative flex min-h-[300px] cursor-pointer flex-col rounded-lg border border-surface-200 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty"
+      className="cursor-pointer rounded-lg p-4"
     >
       <div className="flex items-start justify-between gap-2">
-        <span
-          className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wide ${kindStyles[widget.kind]}`}
-        >
+        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
           {widget.kind}
-        </span>
+        </AppBadge>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -422,9 +400,9 @@ function WidgetCard({
           </h2>
         </div>
         {added && (
-          <span className="rounded-full border border-mint-200 bg-mint-50 px-2 py-1 text-[9px] font-bold text-mint-700">
+          <AppBadge variant="success" className="rounded-full border border-mint-200 bg-mint-50 px-2 py-1 text-[9px] font-bold text-mint-700">
             {t("home.addedToHome")}
-          </span>
+          </AppBadge>
         )}
       </div>
       <p className="mt-1 min-h-8 text-[11px] leading-4 text-ink-500">
@@ -452,28 +430,15 @@ function WidgetCard({
         </span>
       </div>
       <div className="mt-3 flex items-center gap-2">
-        <button
-          type="button"
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-surface-200 py-2 text-[10px] font-bold text-navy-900 hover:border-mint-300 hover:bg-mint-50"
-        >
-          <Edit3 className="h-3 w-3" /> {t("common.edit")}
-        </button>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-surface-200 py-2 text-[10px] font-bold text-navy-900 hover:border-mint-300 hover:bg-mint-50"
-        >
-          <Bookmark className="h-3 w-3" />{" "}
-          {added ? t("home.addedToHome") : t("home.addToHome")}
-        </button>
-        <button
-          type="button"
-          onClick={onMenu}
-          className="flex h-8 w-8 items-center justify-center rounded-md border border-surface-200 text-navy-900 hover:bg-surface-50"
-          aria-label={t("widgets.openMenu")}
-        >
-          <Ellipsis className="h-4 w-4" />
-        </button>
+        <AppButton variant="secondary" type="button" className="flex-1 py-2 text-[10px] font-bold">
+          <Edit3 data-icon="inline-start" /> {t("common.edit")}
+        </AppButton>
+        <AppButton variant="secondary" type="button" onClick={onAdd} className="flex-1 py-2 text-[10px] font-bold">
+          <Bookmark data-icon="inline-start" /> {added ? t("home.addedToHome") : t("home.addToHome")}
+        </AppButton>
+        <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
+          <Ellipsis />
+        </AppButton>
       </div>
       {menuOpen && (
         <WidgetMenu
@@ -483,7 +448,7 @@ function WidgetCard({
           onRemove={onRemove}
         />
       )}
-    </article>
+    </AppCard>
   );
 }
 function WidgetMenu({
@@ -509,24 +474,14 @@ function WidgetMenu({
       onClick={(event) => event.stopPropagation()}
     >
       {items.map(([label, handler]) => (
-        <button
-          type="button"
-          key={label}
-          onClick={handler}
-          className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] font-semibold text-ink-700 hover:bg-mint-50"
-        >
-          <Edit3 className="h-3.5 w-3.5" />
-          {label}
-        </button>
+        <AppButton variant="ghost" type="button" key={label} onClick={handler} className="h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-ink-700">
+          <Edit3 data-icon="inline-start" /> {label}
+        </AppButton>
       ))}
       <div className="my-1 h-px bg-surface-100" />
-      <button
-        type="button"
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] font-semibold text-red-600 hover:bg-red-50"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-        {t("common.delete")}
-      </button>
+      <AppButton variant="danger" type="button" className="h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold">
+        <Trash2 data-icon="inline-start" /> {t("common.delete")}
+      </AppButton>
     </div>
   );
 }
@@ -550,11 +505,9 @@ function WidgetReadOnlyView({
       >
         <div className="flex items-start justify-between">
           <div>
-            <span
-              className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wide ${kindStyles[widget.kind]}`}
-            >
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
               {widget.kind}
-            </span>
+            </AppBadge>
             <h2
               id="widget-view-title"
               className="mt-3 font-display text-[24px] font-bold text-navy-900"
@@ -566,21 +519,12 @@ function WidgetReadOnlyView({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onEdit}
-              className="inline-flex items-center gap-2 rounded-lg border border-surface-200 px-3 py-2 text-[12px] font-bold text-navy-900 hover:bg-mint-50"
-            >
-              <Edit3 className="h-4 w-4" /> {t("home.editWidget")}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-surface-100"
-              aria-label={t("widgets.closeView")}
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
+              <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
+            </AppButton>
+            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("widgets.closeView")}>
+              <X />
+            </AppButton>
           </div>
         </div>
         <div className="mt-8 min-h-[360px] rounded-lg border border-surface-200 bg-surface-50 p-6">
@@ -649,15 +593,9 @@ function ShareWidgetModal({
             </h2>
             <p className="mt-1 text-[16px] text-ink-500">{widget.title}</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-[24px] leading-none text-ink-500 hover:text-navy-900"
-            aria-label={t("common.close")}
-            aria-hidden
-          >
-            ×
-          </button>
+          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
+            <X />
+          </AppButton>
         </div>
         <div className="mt-7">
           <h3 className="text-[15px] font-bold text-navy-900">
@@ -668,11 +606,11 @@ function ShareWidgetModal({
           </p>
           <div className="mt-3 flex items-center gap-2 rounded-lg border border-surface-200 px-3 py-3">
             <Search className="h-4 w-4 text-ink-400" />
-            <input
+            <AppInput
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder={t("widgets.searchPeople")}
-              className="min-w-0 flex-1 text-[13px] text-navy-900 outline-none placeholder:text-ink-400"
+              className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-400 focus-visible:ring-0"
             />
           </div>
           {search && suggestions.length > 0 && (
@@ -853,24 +791,16 @@ function ShareToCatalogueModal({
               {t("widgets.catalogueSubtitle")}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-[24px] leading-none text-ink-500 hover:text-navy-900"
-            aria-label={t("common.close")}
-            aria-hidden
-          >
-            ×
-          </button>
+          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
+            <X />
+          </AppButton>
         </div>
         <div className="mt-6">
           <h3 className="text-[14px] font-bold text-navy-900">
             {t("widgets.widget")}
           </h3>
           <div className="mt-2 flex items-center gap-3 rounded-lg border border-surface-200 bg-surface-50 p-3">
-            <span
-              className={`flex h-10 w-10 items-center justify-center rounded-md ${kindStyles[widget.kind]}`}
-            >
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="flex size-10 items-center justify-center rounded-md p-0">
               {widget.kind === "TABLE" ? (
                 <Grid2X2 className="h-5 w-5" />
               ) : widget.kind === "CHART" ? (
@@ -878,7 +808,7 @@ function ShareToCatalogueModal({
               ) : (
                 <Sparkles className="h-5 w-5" />
               )}
-            </span>
+            </AppBadge>
             <div>
               <div className="text-[14px] font-bold text-navy-900">
                 {widget.title}
