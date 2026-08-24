@@ -214,8 +214,8 @@ export function WidgetsPage({
             </AppButton>
           </div>
         </header>
-        <div className="mt-6 border-b border-surface-200">
-          <div className="flex gap-6">
+        <div className="mt-6 border-b border-border shadow-none">
+          <div className="flex items-end gap-7">
             <AppButton
               variant="ghost"
               type="button"
