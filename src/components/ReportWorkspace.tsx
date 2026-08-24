@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useT } from '@/providers/I18nProvider';
+import { AppButton } from '@/components/app/AppButton';
+import { AppBadge } from '@/components/app/AppBadge';
+import { AppCard } from '@/components/app/AppCard';
 import { ArrowDownToLine, ArrowLeft, ArrowUpRight, ChartBar as BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
 import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
@@ -56,18 +59,18 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-200 bg-surface px-5 text-navy-900 shadow-tab-active">
         <div className="flex min-w-0 items-center gap-3">
-          <button onClick={onBack} className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><ArrowLeft className="h-4 w-4" /></button>
+          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label="Back"><ArrowLeft /></AppButton>
           <span className="h-5 w-px bg-surface-200" />
           <span className="font-display text-[16px] font-bold text-navy-900">ReportIQ</span>
           <span className="text-ink-300">/</span>
           <span className="hidden text-[13px] text-ink-500 sm:inline">{t('workspace.myReports')}</span>
           <span className="hidden text-ink-300 sm:inline">/</span>
           <span className="truncate text-[13px] font-semibold text-navy-900">{title}</span>
-          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${publishedParameters ? 'bg-mint-100 text-mint-700' : 'bg-amber-100 text-amber-800'}`}>{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</span>
+          <AppBadge variant={publishedParameters ? 'success' : 'warning'} size="status">{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</AppBadge>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button type="button" onClick={onBrowseReports} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 sm:inline-flex"><BookOpen className="h-4 w-4" /> {t('workspace.reports')}</button>
-          <button onClick={onBack} className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><X className="h-4 w-4" /></button>
+          <AppButton variant="ghost" size="action-sm" type="button" onClick={onBrowseReports} className="hidden sm:inline-flex"><BookOpen /> {t('workspace.reports')}</AppButton>
+          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label="Close"><X /></AppButton>
         </div>
       </header>
 
@@ -85,7 +88,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
               <div className="mt-6 border-t border-surface-200 pt-4">
                 <div className="text-[12px] font-bold text-ink-500">Try next</div>
                 <div className="mt-2 flex flex-col gap-2">
-                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <button key={suggestion} onClick={() => applyPrompt(suggestion)} className="rounded-lg border border-border-light bg-white px-3 py-2.5 text-left text-[12px] font-medium text-ink-700 hover:border-mint-300 hover:bg-mint-50">{suggestion}</button>)}
+                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item">{suggestion}</AppButton>)}
                 </div>
               </div>
             </div>}
@@ -107,7 +110,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         right={
           <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-surface-200 bg-background p-4">
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700">Actions</div>
-            {!readOnly && <><button onClick={() => setShowPublishDialog(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-text-primary px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-black"><ArrowUpRight className="h-4 w-4" /> Publish report</button>
+            {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="action-md"><ArrowUpRight /> Publish report</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-ink-500">Publish this report to make it available in your reports library.</p></>}
             <div>
               <button type="button" onClick={() => setExportOpen((open) => !open)} className="flex w-full items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-3 text-[13px] font-semibold text-ink-700 transition hover:border-mint-300 hover:bg-mint-50 hover:text-mint-700">
