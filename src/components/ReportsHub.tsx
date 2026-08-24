@@ -356,16 +356,16 @@ function ReportCard({
           </AppButton>
         </div>
       </div>
-      <h2 className="mt-7 font-display text-[15px] font-bold tracking-[-0.02em] text-navy-900">
+      <h2 className="mt-3 text-[14px] font-bold tracking-[-0.02em] text-navy-900">
         {report.title}
       </h2>
-      <p className="mt-2 text-[13px] leading-5 text-ink-500">
+      <p className="mt-1 min-h-8 text-[11px] leading-4 text-ink-500">
         {report.description}
       </p>
-      <div className="mt-auto flex flex-col gap-4 pt-5 text-[11px] text-ink-500">
+      <div className="mt-auto flex flex-col gap-3 pt-3 text-[9px] text-ink-500">
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-surface-200 bg-surface-100 text-[11px] font-bold text-navy-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface-100 text-[8px] font-bold text-navy-900">
               {report.initials}
             </span>
             <span className="font-semibold text-ink-500">
@@ -373,7 +373,7 @@ function ReportCard({
               {t("reports.updatedMeta", { time: report.updated })}
             </span>
           </span>
-          <span className="inline-flex items-center gap-1.5 font-bold text-mint-700">
+          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-mint-700">
             <LockKeyhole className="h-3.5 w-3.5" /> {t("reports.private")}
           </span>
         </div>
