@@ -13,6 +13,7 @@ const styles: Record<AppBadgeVariant, string> = {
   danger: 'bg-badge-red-bg text-badge-red-text',
 };
 
-export function AppBadge({ variant = 'table', className, ...props }: Omit<React.ComponentProps<typeof Badge>, 'variant'> & { variant?: AppBadgeVariant }) {
-  return <Badge {...props} className={cn(styles[variant], className)} />;
+export function AppBadge({ variant = 'table', size, className, ...props }: Omit<React.ComponentProps<typeof Badge>, 'variant'> & { variant?: AppBadgeVariant; size?: 'default' | 'format' | 'status' }) {
+  const sizeClass = size === 'format' ? 'flex size-7 shrink-0 items-center justify-center p-0 text-[8px]' : size === 'status' ? 'rounded-md px-2 py-1 text-[9px] font-bold' : undefined;
+  return <Badge {...props} className={cn(styles[variant], sizeClass, className)} />;
 }

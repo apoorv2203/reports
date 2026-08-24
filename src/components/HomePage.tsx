@@ -109,10 +109,10 @@ export function HomePage({
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={t("home.askAnything")}
-              className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-500 focus-visible:ring-0"
+              size="inline"
               aria-label={t("home.askAnythingLabel")}
             />
-            <AppButton variant="primary" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg">
+            <AppButton variant="primary" type="submit" aria-label={t("home.submitQuestion")} size="icon-sm">
               <Send data-icon="inline-start" />
             </AppButton>
           </form>
@@ -131,7 +131,7 @@ export function HomePage({
                   setQuestion(example);
                   onNewSession(example);
                 }}
-                className="h-auto px-3 py-1.5 text-[11px] text-ink-500"
+                size="action-sm"
               >
                 {example}
               </AppButton>
@@ -160,7 +160,7 @@ export function HomePage({
                           key={delivery.name}
                           className="flex items-center gap-2.5 py-2.5"
                         >
-                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} className="flex size-7 shrink-0 items-center justify-center p-0 text-[8px]">
+                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} size="format">
                             {delivery.format === "PDF"
                               ? t("common.pdf")
                               : t("common.xlsx")}
@@ -173,7 +173,7 @@ export function HomePage({
                               {delivery.time}
                             </span>
                           </span>
-                          <AppBadge variant="success" className="rounded-md px-2 py-1 text-[9px] font-bold">
+                          <AppBadge variant="success" size="status">
                             {t("common.delivered")}
                           </AppBadge>
                         </div>
@@ -183,7 +183,7 @@ export function HomePage({
                       variant="ghost"
                       type="button"
                       onClick={onOpenReports}
-                      className="mt-2 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold"
+                      size="link-sm" className="mt-2 w-full justify-center border-t border-surface-100 pt-3"
                     >
                       <Plus data-icon="inline-start" /> {t("home.scheduleReport")}
                     </AppButton>
@@ -236,7 +236,7 @@ export function HomePage({
                     variant="ghost"
                     type="button"
                     onClick={() => setPinnedVisible((count) => Math.min(count + 5, pinnedReports.length))}
-                    className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
+                    size="link-sm" className="mt-3 w-full justify-center border-t border-surface-100 pt-3"
                   >
                     {t("common.viewMore")} <ChevronDown data-icon="inline-end" />
                   </AppButton>
@@ -245,7 +245,7 @@ export function HomePage({
                   variant="ghost"
                   type="button"
                   onClick={onCreateReport}
-                  className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
+                  size="link-sm" className="mt-3 w-full justify-center border-t border-surface-100 pt-3"
                 >
                   <Plus data-icon="inline-start" /> {t("home.createReportFromTemplate")}
                 </AppButton>
@@ -255,7 +255,7 @@ export function HomePage({
             <div className="min-w-0">
               <AppSectionHeader
                 title={t("home.myWidgets")}
-                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} className="h-auto px-0 text-[11px] font-bold text-mint-700">{t("home.addWidget")}</AppButton>}
+                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} size="link-sm">{t("home.addWidget")}</AppButton>}
               />
               {isNewUser ? (
                 <EmptyDashboard onAddWidget={onOpenWidgets} />
@@ -303,7 +303,7 @@ export function HomePage({
                   onViewAll={onOpenWidgets}
                 />
                 {isNewUser ? (
-                  <AppCard variant="recommendation" className="rounded-xl px-5 py-5">
+                  <AppCard variant="recommendation" density="recommendation">
                     <div className="flex items-center gap-3">
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 text-mint-700">
                         <Sparkles className="h-4 w-4" />
@@ -367,13 +367,13 @@ function SideCard({
 }) {
   const t = useT();
   return (
-    <AppCard variant="admin" className="rounded-xl px-4 py-3 shadow-card">
+    <AppCard variant="admin" density="compact">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-navy-900">
           {icon}
           <h2 className="font-display text-[12px] font-bold">{title}</h2>
         </div>
-        <AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[10px] font-bold text-mint-700">
+        <AppButton variant="ghost" type="button" onClick={onViewAll} size="link-xs">
           {t("common.viewAll")} <span aria-hidden>›</span>
         </AppButton>
       </div>
@@ -392,7 +392,7 @@ function SectionHeading({
   return (
     <AppSectionHeader
       title={title}
-      action={<AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[11px] font-bold text-mint-700 hover:text-mint-600">{t("common.viewAll")} <span aria-hidden>›</span></AppButton>}
+      action={<AppButton variant="ghost" type="button" onClick={onViewAll} size="link-sm">{t("common.viewAll")} <span aria-hidden>›</span></AppButton>}
     />
   );
 }
@@ -416,7 +416,7 @@ function EmptySideState({
       <p className="mt-1 max-w-[190px] text-[11px] leading-5 text-ink-500">
         {text}
       </p>
-      <AppButton variant="secondary" type="button" onClick={onAction} className="mt-3 px-3 py-2 text-[11px] font-bold text-mint-700">
+      <AppButton variant="secondary" type="button" onClick={onAction} size="action-sm" className="mt-3">
         {action}
       </AppButton>
     </div>
@@ -425,7 +425,7 @@ function EmptySideState({
 function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
   const t = useT();
   return (
-    <AppCard variant="recommendation" className="flex min-h-[430px] flex-col items-center justify-center px-6 text-center">
+    <AppCard variant="recommendation" density="empty">
       <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-mint-50 text-mint-600">
         <LineChart className="h-9 w-9" />
       </span>
@@ -435,7 +435,7 @@ function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
       <p className="mt-2 max-w-[320px] text-[12px] leading-5 text-ink-500">
         {t("home.emptyDashboardDesc")}
       </p>
-      <AppButton variant="primary" type="button" onClick={onAddWidget} className="mt-5 px-4 py-2.5 text-[12px] font-bold">
+      <AppButton variant="primary" type="button" onClick={onAddWidget} size="action-md" className="mt-5">
         <Plus data-icon="inline-start" /> {t("home.addFirstWidget")}
       </AppButton>
       <div className="my-4 flex w-full max-w-[280px] items-center gap-3 text-[11px] text-ink-300">
@@ -443,7 +443,7 @@ function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
         {t("home.or")}
         <span className="h-px flex-1 bg-surface-200" />
       </div>
-      <AppButton variant="secondary" type="button" onClick={onAddWidget} className="px-4 py-2.5 text-[11px] font-bold text-navy-900">
+      <AppButton variant="secondary" type="button" onClick={onAddWidget} size="action-sm">
         <BarChart3 data-icon="inline-start" /> {t("home.exploreWidgetCatalogue")}
       </AppButton>
     </AppCard>
@@ -491,7 +491,7 @@ function WidgetCard({
   return (
     <AppCard variant="widget">
       <div className="flex items-start justify-between gap-2">
-        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
+        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
           {widget.kind}
         </AppBadge>
         <div ref={menuRef} className="relative flex items-center gap-2">
@@ -578,7 +578,7 @@ function WidgetCard({
       ) : error ? (
         <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-2 text-center text-[11px] text-ink-500">
           <span>{t("home.unableToLoad")}</span>
-          <AppButton variant="ghost" type="button" onClick={onRetry} className="h-auto p-0 font-bold text-mint-700">
+          <AppButton variant="ghost" type="button" onClick={onRetry} size="retry">
             {t("common.retry")}
           </AppButton>
         </div>
@@ -646,7 +646,7 @@ function MaximizedWidget({
       >
         <div className="flex items-start justify-between">
           <div>
-            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
               {widget.kind}
             </AppBadge>
             <h2 className="mt-3 font-display text-[24px] font-bold text-navy-900">
@@ -657,10 +657,10 @@ function MaximizedWidget({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
+            <AppButton variant="secondary" type="button" onClick={onEdit} size="action-md">
               <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
             </AppButton>
-            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("home.close")}>
+            <AppButton variant="icon" type="button" onClick={onClose} size="icon-lg" aria-label={t("home.close")}>
               <X />
             </AppButton>
           </div>
