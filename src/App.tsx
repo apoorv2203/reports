@@ -9,6 +9,8 @@ import { ReportBuilder } from '@/components/ReportBuilder';
 import { ReportWorkspace } from '@/components/ReportWorkspace';
 import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
+import { I18nProvider, useI18n } from '@/providers/I18nProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import { LoginScreen } from '@/components/LoginScreen';
 import { WidgetsPage } from '@/components/WidgetsPage';
 import { AdminTablesPage } from '@/components/AdminTablesPage';
@@ -29,6 +31,13 @@ type View =
 
 function AppContent() {
   const { profile, signOut } = useAuth();
+  const { isRTL } = useI18n();
+
+  // Set document direction for RTL readiness
+  useEffect(() => {
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = isRTL ? 'ar' : 'en';
+  }, [isRTL]);
   const [view, setView] = useState<View>({ kind: 'home' });
   const [initialQuestion, setInitialQuestion] = useState('');
   const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>([]);
@@ -48,7 +57,7 @@ function AppContent() {
   const initials = profile.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('');
 
   return (
-    <div className="flex h-screen flex-col bg-[#f5f5f7] text-ink-900">
+    <div className="flex h-screen flex-col bg-background text-ink-900">
       <TopNav
         onOpenHome={() => setView({ kind: 'home' })}
         onOpenReports={() => setView({ kind: 'reports' })}
@@ -113,9 +122,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </I18nProvider>
+    </ThemeProvider>
   );
 }
 

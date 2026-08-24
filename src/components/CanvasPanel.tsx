@@ -14,42 +14,13 @@ import {
   TableProperties,
 } from 'lucide-react';
 import { reportRows, type ProductRow } from '@/data/reportData';
+import { useT } from '@/providers/I18nProvider';
 
 type SortKey = 'product' | 'rate';
 type SortDirection = 'asc' | 'desc';
 
-const resultDetails = [
-  {
-    label: 'Sources',
-    summary: 'Lending production data joined with product reference data',
-    count: '2 tables',
-    icon: Database,
-    items: ['Lending applications', 'Product catalogue'],
-  },
-  {
-    label: 'Columns',
-    summary: 'Product name, application outcome and calculated approval rate',
-    count: '3 of 18',
-    icon: TableProperties,
-    items: ['Product', 'Application outcome', 'Approval rate'],
-  },
-  {
-    label: 'Filters',
-    summary: 'Applications received during August 2026',
-    count: '1 rule',
-    icon: ListFilter,
-    items: ['Application date: 1–31 August 2026'],
-  },
-  {
-    label: 'Grouped by',
-    summary: 'Product, ranked by approval rate from highest to lowest',
-    count: '1 level',
-    icon: Layers3,
-    items: ['Product', 'Top 5 results', 'Highest approval rate first'],
-  },
-];
-
 export function CanvasPanel({ empty = false }: { empty?: boolean }) {
+  const t = useT();
   const [tab, setTab] = useState<'table' | 'chart'>('table');
   const [contextView, setContextView] = useState<'summary' | 'glance'>('glance');
   const [expandedDetail, setExpandedDetail] = useState<string | null>(null);
@@ -57,6 +28,37 @@ export function CanvasPanel({ empty = false }: { empty?: boolean }) {
     key: 'rate',
     direction: 'desc',
   });
+
+  const resultDetails = [
+    {
+      label: t('chat.sourcesDetail'),
+      summary: t('chat.sourcesDetailSummary'),
+      count: t('chat.2tables'),
+      icon: Database,
+      items: [t('canvas.lendingApplications'), t('canvas.productCatalogue')],
+    },
+    {
+      label: t('chat.columnsDetail'),
+      summary: t('chat.columnsDetailSummary'),
+      count: t('chat.3of18'),
+      icon: TableProperties,
+      items: [t('common.product'), t('canvas.applicationOutcome'), t('canvas.approvalRate')],
+    },
+    {
+      label: t('chat.filtersDetail'),
+      summary: t('chat.filtersDetailSummary'),
+      count: t('chat.1rule'),
+      icon: ListFilter,
+      items: [t('canvas.applicationDate')],
+    },
+    {
+      label: t('chat.groupedDetail'),
+      summary: t('chat.groupedDetailSummary'),
+      count: t('chat.1level'),
+      icon: Layers3,
+      items: [t('common.product'), t('canvas.top5Results'), t('canvas.highestFirst')],
+    },
+  ];
 
   const sortedRows = useMemo(() => {
     return [...reportRows].sort((a, b) => {
@@ -75,44 +77,44 @@ export function CanvasPanel({ empty = false }: { empty?: boolean }) {
     }));
   }
 
-  if (empty) return <section className="flex h-full items-center justify-center bg-white"><div className="text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-50 text-ink-300"><FileText className="h-5 w-5" /></div><p className="mt-3 text-[13px] font-semibold text-navy-900">Start building your widget</p><p className="mt-1 text-[12px] text-ink-500">Ask a question in the left pane to create a result.</p></div></section>;
+  if (empty) return <section className="flex h-full items-center justify-center bg-white"><div className="text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-50 text-ink-300"><FileText className="h-5 w-5" /></div><p className="mt-3 text-[13px] font-semibold text-navy-900">{t('canvas.startBuilding')}</p><p className="mt-1 text-[12px] text-ink-500">{t('canvas.emptyDesc')}</p></div></section>;
 
   return (
     <section className="flex h-full flex-col overflow-hidden bg-white">
       <div className="flex flex-1 flex-col overflow-hidden p-6">
-        <section className="overflow-hidden rounded-lg border border-mint-200 bg-white shadow-[0_6px_20px_rgba(19,42,58,0.04)]">
+        <section className="overflow-hidden rounded-lg border border-mint-200 bg-white shadow-result">
           <div className="flex flex-col gap-3 border-b border-mint-100 bg-mint-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-200 text-navy-900"><FileText className="h-4 w-4" /></span>
               <div>
-                <h2 className="font-display text-[14px] font-bold text-navy-900">What you’re looking at</h2>
-                <p className="mt-0.5 text-[11px] text-ink-500">A business-friendly explanation of this result</p>
+                <h2 className="font-display text-[14px] font-bold text-navy-900">{t('canvas.whatYouLookingAt')}</h2>
+                <p className="mt-0.5 text-[11px] text-ink-500">{t('canvas.resultSubtitle')}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setContextView(contextView === 'glance' ? 'summary' : 'glance')}
               className="inline-flex shrink-0 items-center gap-1 self-start rounded-lg px-1.5 py-1 text-[11px] font-medium text-ink-500 transition hover:bg-white/70 hover:text-navy-900 sm:self-auto"
-              aria-label={contextView === 'glance' ? 'Switch to summary view' : 'Switch to at a glance view'}
-              title={contextView === 'glance' ? 'Read as summary' : 'Show at a glance'}
+              aria-label={contextView === 'glance' ? t('chat.switchToSummary') : t('chat.switchToGlance')}
+              title={contextView === 'glance' ? t('chat.readAsSummary') : t('chat.showAtAGlance')}
             >
               {contextView === 'glance' ? <AlignLeft className="h-3.5 w-3.5" /> : <LayoutList className="h-3.5 w-3.5" />}
-              {contextView === 'glance' ? 'Summary' : 'At a glance'}
+              {contextView === 'glance' ? t('chat.summary') : t('chat.atAGlance')}
             </button>
           </div>
           {contextView === 'summary' ? (
             <div className="grid gap-4 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px]">
               <div>
                 <p className="max-w-3xl text-[13px] leading-6 text-ink-700">
-                  This result ranks the five best-performing products by approval rate for August 2026. It combines lending application records with the product catalogue, then calculates the share of approved applications for every product.
+                  {t('canvas.summaryText')}
                 </p>
                 <p className="mt-2 text-[12px] leading-5 text-ink-500">
-                  Each row represents one product. Results are ordered from the highest approval rate to the lowest, making it easy to compare conversion performance and identify the strongest products.
+                  {t('canvas.summarySecondary')}
                 </p>
               </div>
               <div className="rounded-xl border border-mint-200 bg-mint-50 px-3.5 py-3">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-mint-700">How to read it</p>
-                <p className="mt-1.5 text-[12px] font-medium leading-5 text-navy-900">Approval rate is approved applications divided by all applications received for that product.</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-mint-700">{t('canvas.howToReadIt')}</p>
+                <p className="mt-1.5 text-[12px] font-medium leading-5 text-navy-900">{t('canvas.howToReadText')}</p>
               </div>
             </div>
           ) : (
@@ -151,32 +153,32 @@ export function CanvasPanel({ empty = false }: { empty?: boolean }) {
         </section>
 
         <div className="mt-4 flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold text-ink-700">Results</h2>
+          <h2 className="text-[13px] font-semibold text-ink-700">{t('canvas.results')}</h2>
           <div className="inline-flex rounded-lg bg-surface-100 p-0.5">
             <button
               onClick={() => setTab('table')}
               className={`rounded-md px-3 py-1 text-[12px] font-semibold transition ${
                 tab === 'table'
-                  ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.08)]'
+                  ? 'bg-white text-navy-900 shadow-tab-active'
                   : 'text-ink-500 hover:text-navy-900'
               }`}
             >
-              Table
+              {t('canvas.table')}
             </button>
             <button
               onClick={() => setTab('chart')}
               className={`rounded-md px-3 py-1 text-[12px] font-semibold transition ${
                 tab === 'chart'
-                  ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.08)]'
+                  ? 'bg-white text-navy-900 shadow-tab-active'
                   : 'text-ink-500 hover:text-navy-900'
               }`}
             >
-              Chart
+              {t('canvas.chart')}
             </button>
           </div>
         </div>
 
-        <div className="mt-2.5 flex-1 overflow-auto rounded-lg border border-surface-200 bg-white shadow-[0_3px_12px_rgba(19,42,58,0.04)]">
+        <div className="mt-2.5 flex-1 overflow-auto rounded-lg border border-surface-200 bg-white shadow-result-sub">
           {tab === 'table' ? (
             <ReportTable rows={sortedRows} sort={sort} onSort={handleSort} />
           ) : (
@@ -197,19 +199,20 @@ function ReportTable({
   sort: { key: SortKey; direction: SortDirection };
   onSort: (key: SortKey) => void;
 }) {
+  const t = useT();
   return (
     <table className="w-full border-collapse text-[13px]">
       <thead>
         <tr className="border-b border-surface-200 bg-surface-50">
           <SortableHeader
-            label="Product"
+            label={t('common.product')}
             sortKey="product"
             sort={sort}
             onSort={onSort}
             align="left"
           />
           <SortableHeader
-            label="Approval rate (%)"
+            label={t('common.approvalRate')}
             sortKey="rate"
             sort={sort}
             onSort={onSort}
@@ -254,6 +257,7 @@ function SortableHeader({
   onSort: (key: SortKey) => void;
   align: 'left' | 'right';
 }) {
+  const t = useT();
   const active = sort.key === sortKey;
   const Icon = active ? (sort.direction === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown;
   return (
@@ -263,7 +267,7 @@ function SortableHeader({
         className={`inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint-300 ${
           active ? 'text-navy-900' : 'text-ink-500 hover:text-navy-900'
         } ${align === 'right' ? 'flex-row-reverse' : ''}`}
-        aria-label={`Sort by ${label}`}
+        aria-label={t('canvas.sortBy', { label })}
       >
         {label}
         <Icon className={`h-3.5 w-3.5 ${active ? 'text-mint-600' : 'text-ink-300'}`} />
