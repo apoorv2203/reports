@@ -29,10 +29,15 @@ import {
   recommendedWidgets,
   scheduledDeliveries,
   type Widget,
-  type WidgetKind,
 } from "@/data/homeData";
 import type { HomeWidget, WidgetData } from "@/services/widgetService";
 import { useFormat, useT } from "@/providers/I18nProvider";
+import { AppButton } from "@/components/app/AppButton";
+import { AppCard } from "@/components/app/AppCard";
+import { AppBadge } from "@/components/app/AppBadge";
+import { AppInput } from "@/components/app/AppInput";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
+import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 
 type HomePageProps = {
   onNewSession: (question?: string) => void;
@@ -87,21 +92,10 @@ export function HomePage({
     <>
       <main className="min-h-0 flex-1 overflow-y-auto bg-white">
         <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
-          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-            <div>
-              <h1 className="font-display text-[24px] font-bold tracking-[-0.04em] text-navy-900 sm:text-[27px]">
-                {isNewUser
-                  ? t("home.welcomeNew", { name: userName })
-                  : t("home.goodMorning", { name: userName })}
-              </h1>
-              <p className="mt-1.5 text-[13px] text-ink-500">
-                {isNewUser
-                  ? t("home.subtitleNew")
-                  : t("home.subtitleReturning")}
-              </p>
-            </div>
-            <div className="hidden" />
-          </div>
+          <AppPageHeader
+            title={isNewUser ? t("home.welcomeNew", { name: userName }) : t("home.goodMorning", { name: userName })}
+            description={isNewUser ? t("home.subtitleNew") : t("home.subtitleReturning")}
+          />
 
           <form
             onSubmit={(event) => {
@@ -111,20 +105,16 @@ export function HomePage({
             className="mt-6 flex h-10 w-[67.5%] items-center gap-2 rounded-lg border border-mint-300 bg-white px-3 shadow-card"
           >
             <Sparkles className="h-5 w-5 shrink-0 text-mint-600" />
-            <input
+            <AppInput
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={t("home.askAnything")}
-              className="min-w-0 flex-1 bg-transparent text-[13px] text-navy-900 outline-none placeholder:text-ink-500"
+              className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-500 focus-visible:ring-0"
               aria-label={t("home.askAnythingLabel")}
             />
-            <button
-              type="submit"
-              aria-label={t("home.submitQuestion")}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-mint-600 text-white hover:bg-mint-700"
-            >
-              <Send className="h-4 w-4" />
-            </button>
+            <AppButton variant="icon" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg bg-mint-600 text-white hover:bg-mint-700">
+              <Send data-icon="inline-start" />
+            </AppButton>
           </form>
           <div className="mt-2 flex flex-wrap gap-2">
             {[
@@ -267,20 +257,10 @@ export function HomePage({
             </aside>
 
             <div className="min-w-0">
-              <div className="mb-3 flex items-center">
-                <div className="flex items-center gap-4">
-                  <h2 className="font-display text-[17px] font-bold tracking-[-0.03em] text-navy-900">
-                    {t("home.myWidgets")}
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={onOpenWidgets}
-                    className="text-[11px] font-bold text-mint-700"
-                  >
-                    {t("home.addWidget")}
-                  </button>
-                </div>
-              </div>
+              <AppSectionHeader
+                title={t("home.myWidgets")}
+                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} className="h-auto px-0 text-[11px] font-bold text-mint-700">{t("home.addWidget")}</AppButton>}
+              />
               {isNewUser ? (
                 <EmptyDashboard onAddWidget={onOpenWidgets} />
               ) : (
@@ -391,7 +371,7 @@ function SideCard({
 }) {
   const t = useT();
   return (
-    <section className="rounded-xl border border-surface-200 bg-white px-4 py-3 shadow-card">
+    <AppCard variant="admin" className="rounded-xl px-4 py-3 shadow-card">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-navy-900">
           {icon}
@@ -405,8 +385,8 @@ function SideCard({
           {t("common.viewAll")} <span aria-hidden>›</span>
         </button>
       </div>
-      <div className="mt-2">{children}</div>
-    </section>
+      <div className="mt-2">{children}      </div>
+    </AppCard>
   );
 }
 function SectionHeading({
@@ -418,18 +398,10 @@ function SectionHeading({
 }) {
   const t = useT();
   return (
-    <div className="mb-3 flex items-center justify-between">
-      <h2 className="font-display text-[17px] font-bold tracking-[-0.03em] text-navy-900">
-        {title}
-      </h2>
-      <button
-        type="button"
-        onClick={onViewAll}
-        className="text-[11px] font-bold text-mint-700 hover:text-mint-600"
-      >
-        {t("common.viewAll")} <span aria-hidden>›</span>
-      </button>
-    </div>
+    <AppSectionHeader
+      title={title}
+      action={<AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[11px] font-bold text-mint-700 hover:text-mint-600">{t("common.viewAll")} <span aria-hidden>›</span></AppButton>}
+    />
   );
 }
 function EmptySideState({
@@ -537,13 +509,11 @@ function WidgetCard({
   }, [menuOpen]);
   const closeMenu = () => setMenuOpen(false);
   return (
-    <article className="group relative flex min-h-[300px] flex-col rounded-xl border border-surface-200 bg-white p-3.5 shadow-card transition hover:-translate-y-0.5 hover:border-mint-300 hover:shadow-floaty">
+    <AppCard variant="widget">
       <div className="flex items-start justify-between gap-2">
-        <span
-          className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wide ${kindStyles[widget.kind]}`}
-        >
+        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="rounded-md px-2 py-1 text-[9px] font-bold tracking-wide">
           {widget.kind}
-        </span>
+        </AppBadge>
         <div ref={menuRef} className="relative flex items-center gap-2">
           <>
             <button
@@ -669,7 +639,7 @@ function WidgetCard({
           {widget.privacy}
         </div>
       )}
-    </article>
+    </AppCard>
   );
 }
 
@@ -685,19 +655,18 @@ function MaximizedWidget({
   const t = useT();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay-light p-4">
-      <section
-        className="w-full max-w-5xl rounded-xl border border-surface-200 bg-white p-6 shadow-floaty"
+      <AppCard
+        variant="report"
+        className="w-full max-w-5xl rounded-xl p-6 shadow-floaty"
         role="dialog"
         aria-modal="true"
         aria-label={t("home.previewWidgetName", { name: widget.title })}
       >
         <div className="flex items-start justify-between">
           <div>
-            <span
-              className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wide ${kindStyles[widget.kind]}`}
-            >
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="rounded-md px-2 py-1 text-[9px] font-bold tracking-wide">
               {widget.kind}
-            </span>
+            </AppBadge>
             <h2 className="mt-3 font-display text-[24px] font-bold text-navy-900">
               {widget.title}
             </h2>
@@ -729,15 +698,11 @@ function MaximizedWidget({
         <div className="mt-4 text-[11px] text-ink-500">
           {widget.owner} · {widget.updated} · {t("common.readOnlyView")}
         </div>
-      </section>
+      </AppCard>
     </div>
   );
 }
 
-const kindStyles: Record<WidgetKind, string> = {
-  TABLE: "bg-mint-100 text-mint-700",
-  CHART: "bg-badge-purple-bg text-badge-purple-text",
-};
 
 function WidgetPreview({
   widget,
