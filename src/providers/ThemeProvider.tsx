@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { ThemeMode } from '@/theme/theme';
 
 interface ThemeContextValue {
@@ -24,12 +24,11 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children, defaultMode = 'light' }: ThemeProviderProps) {
   const [mode, setMode] = useState<ThemeMode>(defaultMode);
 
-  const value = useMemo<ThemeContextValue>(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', mode);
-    }
-    return { mode, setMode };
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
+
+  const value = useMemo<ThemeContextValue>(() => ({ mode, setMode }), [mode]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

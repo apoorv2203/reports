@@ -1,5 +1,5 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-import { setLocale, type Locale } from '@/utils/formatting';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { setLocale, type Locale, formatDate, formatDateTime, formatRelativeTime, formatNumber, formatCurrency, formatPercentage } from '@/utils/formatting';
 
 // Import the English translation resource
 import en from '@/i18n/en.json';
@@ -15,6 +15,10 @@ const resources: Partial<Record<Locale, Record<string, string>>> = {
   en: en as Record<string, string>,
 };
 
+export function registerLocale(locale: Locale, dictionary: Record<string, string>): void {
+  resources[locale] = dictionary;
+}
+
 export type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
 
 interface I18nContextValue {
@@ -23,6 +27,14 @@ interface I18nContextValue {
   t: TranslateFn;
   /** Whether the current locale is right-to-left */
   isRTL: boolean;
+  formatters: {
+    date: typeof formatDate;
+    dateTime: typeof formatDateTime;
+    relativeTime: typeof formatRelativeTime;
+    number: typeof formatNumber;
+    currency: typeof formatCurrency;
+    percentage: typeof formatPercentage;
+  };
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -65,8 +77,13 @@ interface I18nProviderProps {
 export function I18nProvider({ children, defaultLocale = 'en' }: I18nProviderProps) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
-  const value = useMemo<I18nContextValue>(() => {
+  useEffect(() => {
     setLocale(locale);
+    document.documentElement.lang = locale;
+    document.documentElement.dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
+  }, [locale]);
+
+  const value = useMemo<I18nContextValue>(() => {
     const isRTL = RTL_LOCALES.includes(locale);
     return {
       locale,
@@ -76,6 +93,14 @@ export function I18nProvider({ children, defaultLocale = 'en' }: I18nProviderPro
       },
       t: createTranslator(locale),
       isRTL,
+      formatters: {
+        date: (value) => formatDate(value, locale),
+        dateTime: (value) => formatDateTime(value, locale),
+        relativeTime: (value) => formatRelativeTime(value, locale),
+        number: (value) => formatNumber(value, locale),
+        currency: (value) => formatCurrency(value, locale),
+        percentage: (value, _locale, fractionDigits) => formatPercentage(value, locale, fractionDigits),
+      },
     };
   }, [locale]);
 
@@ -93,4 +118,8 @@ export function useI18n(): I18nContextValue {
  */
 export function useT(): TranslateFn {
   return useI18n().t;
+}
+
+export function useFormat() {
+  return useI18n().formatters;
 }
