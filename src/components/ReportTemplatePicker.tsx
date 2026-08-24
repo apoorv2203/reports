@@ -58,7 +58,7 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-surface-200 bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
+    <button onClick={() => onSelect(template)} className="group flex flex-col overflow-hidden rounded-lg border border-surface-200 bg-surface text-left shadow-card-alt transition hover:-translate-y-1 hover:border-mint-300 hover:shadow-floaty">
       <div className="relative aspect-[4/3] overflow-hidden border-b border-surface-200 bg-background">
         <img
           src={template.preview || "/placeholder.svg"}

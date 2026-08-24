@@ -52,7 +52,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-200 bg-white px-5 text-navy-900 shadow-[0_1px_2px_rgba(19,42,58,0.04)]">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-200 bg-surface px-5 text-navy-900 shadow-tab-active">
         <div className="flex min-w-0 items-center gap-3">
           <button onClick={onBack} className="flex h-8 w-8 items-center justify-center rounded-full text-ink-500 transition hover:bg-mint-50 hover:text-navy-900"><ArrowLeft className="h-4 w-4" /></button>
           <span className="h-5 w-px bg-surface-200" />
@@ -131,7 +131,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 function ReportSectionCard({ section, onEdit, readOnly = false }: { section: TemplateSection; onEdit: (value: string) => void; readOnly?: boolean }) {
   const [editing, setEditing] = useState(false);
   const Icon = section.kind === 'chart' ? BarChart3 : section.kind === 'table' ? Table2 : section.kind === 'kpi' ? Sparkles : FileText;
-  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-border-light bg-surface-tertiary' : 'border-surface-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]'}`}>
+  return <section className={`relative rounded-lg border p-5 ${section.kind === 'empty' ? 'border-dashed border-border-light bg-surface-tertiary' : 'border-surface-200 bg-surface shadow-card-alt'}`}>
     <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-ink-500"><Icon className="h-4 w-4 text-mint-600" /> {section.kind === 'empty' ? 'Empty section' : section.kind}</div>{!readOnly && <button onClick={() => setEditing(!editing)} className="text-ink-300 hover:text-ink-900"><Pencil className="h-3.5 w-3.5" /></button>}</div>
     {editing ? <input autoFocus defaultValue={section.title} onBlur={(e) => { onEdit(e.target.value); setEditing(false); }} onKeyDown={(e) => { if (e.key === 'Enter') { onEdit(e.currentTarget.value); setEditing(false); } }} className="input mt-3" /> : <h3 className="mt-3 font-display text-[18px] font-bold tracking-[-0.03em] text-ink-900">{section.title}</h3>}
     {section.kind === 'title' && <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This summary gives your team a clear view of what changed and where attention is needed.</p>}

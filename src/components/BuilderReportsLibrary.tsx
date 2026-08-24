@@ -115,7 +115,7 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
   };
 
   return (
-    <article className="flex min-h-[300px] flex-col rounded-[18px] border border-surface-200 bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:-translate-y-0.5 hover:shadow-floaty">
+    <article className="flex min-h-[300px] flex-col rounded-[18px] border border-surface-200 bg-surface p-5 shadow-card-alt transition hover:-translate-y-0.5 hover:shadow-floaty">
       <div><span className={`inline-flex rounded-full px-3 py-1 text-[12px] font-bold ${categoryStyles[report.category]}`}>{report.category}</span></div>
       <h2 className="mt-4 text-balance font-display text-[19px] font-bold tracking-[-0.03em] text-ink-900">{report.title}</h2>
       <p className="mt-2 flex-1 text-[14px] leading-relaxed text-ink-500">{report.description}</p>
