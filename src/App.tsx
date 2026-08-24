@@ -9,7 +9,7 @@ import { ReportBuilder } from '@/components/ReportBuilder';
 import { ReportWorkspace } from '@/components/ReportWorkspace';
 import { ReportsHub } from '@/components/ReportsHub';
 import { AuthProvider, useAuth } from '@/lib/auth';
-import { I18nProvider, useI18n } from '@/providers/I18nProvider';
+import { I18nProvider } from '@/providers/I18nProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { LoginScreen } from '@/components/LoginScreen';
 import { WidgetsPage } from '@/components/WidgetsPage';
@@ -31,13 +31,6 @@ type View =
 
 function AppContent() {
   const { profile, signOut } = useAuth();
-  const { isRTL } = useI18n();
-
-  // Set document direction for RTL readiness
-  useEffect(() => {
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = isRTL ? 'ar' : 'en';
-  }, [isRTL]);
   const [view, setView] = useState<View>({ kind: 'home' });
   const [initialQuestion, setInitialQuestion] = useState('');
   const [homeWidgetIds, setHomeWidgetIds] = useState<string[]>([]);
