@@ -32,6 +32,8 @@ import { AppCard } from "@/components/app/AppCard";
 import { AppInput } from "@/components/app/AppInput";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
+import { AppTextarea } from "@/components/app/AppForm";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type Props = {
   onBack: () => void;
@@ -668,13 +670,9 @@ function ShareWidgetModal({
           <p className="mt-1 text-[13px] text-ink-500">
             {t("widgets.permissionDesc")}
           </p>
-          <label className="mt-3 flex items-start gap-3">
-            <input
-              type="radio"
-              name="permission"
-              defaultChecked
-              className="mt-1 accent-chart-green"
-            />
+          <RadioGroup defaultValue="use" className="mt-3">
+          <label className="flex items-start gap-3">
+            <RadioGroupItem value="use" className="mt-1" />
             <span>
               <span className="block text-[13px] font-bold text-navy-900">
                 {t("widgets.canUseAdd")}
@@ -684,17 +682,18 @@ function ShareWidgetModal({
               </span>
             </span>
           </label>
+        </RadioGroup>
         </div>
         <label className="mt-6 block text-[15px] font-bold text-navy-900">
           {t("widgets.message")}{" "}
           <span className="font-normal text-ink-500">
             {t("common.optional")}
           </span>
-          <textarea
+          <AppTextarea
             value={message}
             onChange={(event) => setMessage(event.target.value.slice(0, 200))}
             placeholder={t("widgets.addMessage")}
-            className="mt-2 h-24 w-full resize-none rounded-lg border border-surface-200 px-3 py-3 text-[13px] font-normal text-navy-900 outline-none placeholder:text-ink-400 focus:border-mint-500"
+            className="mt-2 h-24 w-full resize-none text-[13px] font-normal"
           />
           <span className="block text-right text-[11px] font-normal text-ink-400">
             {t("widgets.charsCount", { count: String(message.length) })}
@@ -834,12 +833,12 @@ function ShareToCatalogueModal({
           <span className="font-normal text-ink-500">
             {t("common.optional")}
           </span>
-          <textarea
+          <AppTextarea
             value={description}
             onChange={(event) =>
               setDescription(event.target.value.slice(0, 200))
             }
-            className="mt-2 h-24 w-full resize-none rounded-lg border border-surface-200 px-3 py-3 text-[13px] font-normal text-navy-900 outline-none focus:border-mint-500"
+            className="mt-2 h-24 w-full resize-none text-[13px] font-normal"
           />
           <span className="block text-right text-[11px] font-normal text-ink-400">
             {t("widgets.charsCount", { count: String(description.length) })}
@@ -848,18 +847,13 @@ function ShareToCatalogueModal({
             {t("widgets.descriptionHelp")}
           </span>
         </label>
-        <fieldset className="mt-5">
+        <RadioGroup className="mt-5">
+          <fieldset>
           <legend className="text-[14px] font-bold text-navy-900">
             {t("widgets.permissions")}
           </legend>
           <label className="mt-3 flex cursor-pointer items-start gap-3">
-            <input
-              type="radio"
-              name="catalogue-permission"
-              checked={permission === "view"}
-              onChange={() => setPermission("view")}
-              className="mt-1 accent-chart-green"
-            />
+            <RadioGroupItem value="view" checked={permission === "view"} onChange={() => setPermission("view")} className="mt-1" />
             <span>
               <span className="block text-[13px] font-bold text-navy-900">
                 {t("widgets.canView")}
@@ -870,13 +864,7 @@ function ShareToCatalogueModal({
             </span>
           </label>
           <label className="mt-3 flex cursor-pointer items-start gap-3">
-            <input
-              type="radio"
-              name="catalogue-permission"
-              checked={permission === "use"}
-              onChange={() => setPermission("use")}
-              className="mt-1 accent-chart-green"
-            />
+            <RadioGroupItem value="use" checked={permission === "use"} onChange={() => setPermission("use")} className="mt-1" />
             <span>
               <span className="block text-[13px] font-bold text-navy-900">
                 {t("widgets.canUseAdd")}
@@ -886,7 +874,8 @@ function ShareToCatalogueModal({
               </span>
             </span>
           </label>
-        </fieldset>
+          </fieldset>
+        </RadioGroup>
         <div className="mt-5">
           <h3 className="text-[14px] font-bold text-navy-900">
             {t("common.preview")}

@@ -112,7 +112,7 @@ export function HomePage({
               className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-500 focus-visible:ring-0"
               aria-label={t("home.askAnythingLabel")}
             />
-            <AppButton variant="icon" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg bg-mint-600 text-surface hover:bg-mint-700">
+            <AppButton variant="primary" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg">
               <Send data-icon="inline-start" />
             </AppButton>
           </form>
