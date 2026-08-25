@@ -77,7 +77,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
               </div>
             </div>}
             <AppCard variant="report" density="report-layout" className="mt-4 shrink-0 rounded-[24px] border border-border bg-card p-4 shadow-none">
-              <Textarea className="min-h-24 resize-none border-0 bg-transparent p-0 text-[15px] leading-relaxed shadow-none focus-visible:ring-0" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
+              <Textarea className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
               <div className="mt-4 flex items-center justify-between px-1"><span className="text-[12px] text-muted-foreground">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" className="size-12 rounded-full" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
             </AppCard>
           </aside>
