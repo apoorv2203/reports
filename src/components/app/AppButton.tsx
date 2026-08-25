@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'success-outline' | 'ghost' | 'danger' | 'icon' | 'compact';
   active?: boolean;
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon';
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon' | 'report-back' | 'report-export' | 'report-designer';
 };
 
 type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
@@ -48,6 +48,9 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   'report-full': { size: 'default', className: 'mt-4 w-full' },
   'template-card': { variant: 'ghost', size: 'default', className: 'group flex min-w-0 flex-col overflow-hidden p-0 text-left' },
   'section-icon': { variant: 'icon', size: 'icon-sm', className: 'text-ink-300 hover:text-ink-900' },
+  'report-back': { variant: 'ghost', size: 'icon', className: 'mr-1 size-7 text-muted-foreground hover:bg-muted' },
+  'report-export': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold text-foreground' },
+  'report-designer': { size: 'default', className: 'mt-3 w-full' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
   pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
   'run-icon': { size: 'icon', className: 'size-8 text-foreground hover:text-primary' },

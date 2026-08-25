@@ -167,12 +167,14 @@ export function ReportsHub({
         <div className="flex items-start justify-between gap-6">
           <div>
             <div className="flex items-center gap-2">
-              <button
+              <AppButton
+                variant="ghost"
+                size="report-back"
                 onClick={onBack}
-                className="mr-1 flex h-7 w-7 items-center justify-center rounded-md text-ink-500 hover:bg-surface-100"
+                aria-label={t("common.back")}
               >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
+                <ArrowLeft />
+              </AppButton>
               <h1 className="font-display text-[25px] font-bold tracking-[-0.04em]">
                 {t("reports.browse")}
               </h1>

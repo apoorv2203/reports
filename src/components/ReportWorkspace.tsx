@@ -83,7 +83,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <aside className={`flex h-full min-h-0 flex-col border-r border-surface-200 bg-background p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
             {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
-              {messages.length === 0 && <AppCard variant="report" className="border-dashed p-4 text-[12px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</AppCard>}
+              {messages.length === 0 && <AppCard variant="report" density="report-composer">{t('workspace.askUpdate')}</AppCard>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-text-primary px-3.5 py-3 text-[13px] font-medium leading-relaxed text-white">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-badge-blue-text"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
@@ -94,7 +94,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
                 </div>
               </div>
             </div>}
-            <AppCard variant="report" className="mt-3 p-2">
+            <AppCard variant="report" density="report-layout" className="mt-3">
               <Textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
               <div className="flex items-center justify-between px-1"><span className="text-[10px] text-ink-300">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
             </AppCard>
@@ -115,7 +115,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="action-md"><ArrowUpRight /> Publish report</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-ink-500">{t('workspace.publishHelper')}</p></>}
             <div>
-              <AppButton type="button" onClick={() => setExportOpen((open) => !open)} variant="secondary" size="menu-item" className="py-3">
+              <AppButton type="button" onClick={() => setExportOpen((open) => !open)} variant="secondary" size="report-export">
                 <ArrowDownToLine className="h-4 w-4" />
                 Export
                 <ChevronDown className={`ml-auto h-4 w-4 text-ink-300 transition ${exportOpen ? 'rotate-180' : ''}`} />
@@ -126,7 +126,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             </div>
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-ink-500'}>Layout</div>
-            <AppCard variant="report" className={readOnly ? 'hidden' : 'p-3'}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><AppButton variant="secondary" size="action-sm" className="mt-3 w-full"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
+            <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}><div className="font-display text-[14px] font-bold text-ink-900">{template.name}</div><div className="mt-1 text-[12px] text-ink-500">{sections.length} sections · {template.category}</div><AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
           </aside>
         }
       />
