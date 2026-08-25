@@ -23,9 +23,7 @@ import {
   X,
 } from "lucide-react";
 import {
-  myWidgets,
   pinnedReports,
-  recentSessions,
   recommendedWidgets,
   scheduledDeliveries,
   type Widget,
@@ -38,15 +36,6 @@ import { AppBadge } from "@/components/app/AppBadge";
 import { AppInput } from "@/components/app/AppInput";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
-
-function toDisplayWidget(widget: HomeWidget): Widget {
-  const localPresentation = myWidgets.find((candidate) => candidate.id === widget.id) ?? recommendedWidgets.find((candidate) => candidate.id === widget.id);
-  return {
-    ...widget,
-    preview: localPresentation?.preview ?? (widget.kind === "TABLE" ? "table" : "line"),
-    accent: localPresentation?.accent ?? "mint",
-  };
-}
 
 type HomePageProps = {
   onNewSession: (question?: string) => void;
@@ -270,25 +259,13 @@ export function HomePage({
                 <EmptyDashboard onAddWidget={onOpenWidgets} />
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {(
-                    homeWidgets ??
-                    myWidgets
-                      .filter(
-                        (widget) =>
-                          homeWidgetIds.includes(widget.id) &&
-                          !removedWidgets.includes(widget.id),
-                      )
-                      .map((widget) => ({
-                        ...widget,
-                        isOnHome: true,
-                      }))
-                  )
-                    .filter((widget) => widget.isOnHome)
+                  {(homeWidgets ?? [])
+                    .filter((widget) => widget.isOnHome && !removedWidgets.includes(widget.id))
                     .map((widget) => (
                       <WidgetCard
                         key={widget.id}
-                        widget={toDisplayWidget(widget)}
-                        onEdit={() => onEditWidget(toDisplayWidget(widget))}
+                        widget={widget}
+                        onEdit={() => onEditWidget(widget as unknown as Widget)}
                         onRemove={() => {
                           onRemoveWidget(widget.id);
                           setRemovedWidgets((current) => [
@@ -296,7 +273,7 @@ export function HomePage({
                             widget.id,
                           ]);
                         }}
-                        onMaximize={() => setMaximizedWidget(toDisplayWidget(widget))}
+                        onMaximize={() => setMaximizedWidget(widget as unknown as Widget)}
                         data={widgetData[widget.id]}
                         loading={widgetLoading[widget.id]}
                         error={widgetErrors[widget.id]}
@@ -471,7 +448,7 @@ function WidgetCard({
   error,
   onRetry,
 }: {
-  widget: Widget;
+  widget: Widget | HomeWidget;
   recommended?: boolean;
   added?: boolean;
   onAdd?: () => void;
@@ -638,7 +615,7 @@ function MaximizedWidget({
   onClose,
   onEdit,
 }: {
-  widget: Widget;
+  widget: Widget | HomeWidget;
   onClose: () => void;
   onEdit: () => void;
 }) {
@@ -689,7 +666,7 @@ function WidgetPreview({
   widget,
   data,
 }: {
-  widget: Widget;
+  widget: Widget | HomeWidget;
   data?: WidgetData;
 }) {
   const t = useT();
@@ -730,7 +707,7 @@ function WidgetPreview({
         ))}
       </div>
     );
-  if (widget.preview === "table")
+  if (widget.kind === "TABLE")
     return (
       <div className="mt-3 overflow-hidden rounded-md border border-surface-100 text-[8px]">
         <div className="grid grid-cols-3 bg-surface-50 px-2 py-1 font-bold text-ink-500">
@@ -752,37 +729,6 @@ function WidgetPreview({
             <span>{percentage([83.6, 76.4, 72.1, 68.3][index])}</span>
             <span className="text-mint-600">{t("common.trendUp")}</span>
           </div>
-        ))}
-      </div>
-    );
-  if (widget.preview === "donut")
-    return (
-      <div className="mt-3 flex items-center justify-center gap-3">
-        <div className={`donut-chart ${widget.accent}`} />
-        <div className="space-y-1 text-[8px] text-ink-500">
-          <div>
-            <i className="legend-dot bg-chart-accent" /> {t("common.north42")}
-          </div>
-          <div>
-            <i className="legend-dot bg-chart-accent-light" />{" "}
-            {t("common.west28")}
-          </div>
-          <div>
-            <i className="legend-dot bg-chart-accent-lighter" />{" "}
-            {t("common.south19")}
-          </div>
-        </div>
-      </div>
-    );
-  if (widget.preview === "bars")
-    return (
-      <div className="mt-3 flex h-14 items-end gap-1.5 px-1">
-        {[20, 39, 28, 52, 64, 43, 31].map((height, index) => (
-          <span
-            key={index}
-            className="flex-1 rounded-t-sm bg-chart-blue"
-            style={{ height: `${height}%` }}
-          />
         ))}
       </div>
     );
