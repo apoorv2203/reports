@@ -171,18 +171,18 @@ export function WidgetsPage({
               <option>{t("common.type")}</option>
             </select>
             <div className="flex rounded-lg border border-surface-200 p-0.5">
-              <AppButton variant="icon" type="button" onClick={() => setList(false)} className={`size-8 rounded-md ${!list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.gridView")}>
+              <AppButton variant="icon" size="toggle" active={!list} type="button" onClick={() => setList(false)} aria-label={t("widgets.gridView")}>
                 <Grid2X2 />
               </AppButton>
-              <AppButton variant="icon" type="button" onClick={() => setList(true)} className={`size-8 rounded-md ${list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.listView")}>
+              <AppButton variant="icon" size="toggle" active={list} type="button" onClick={() => setList(true)} aria-label={t("widgets.listView")}>
                 <LayoutList />
               </AppButton>
             </div>
           </div>
         </div>
-        {loading && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Loading widgets…</AppCard>}
-        {error && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Unable to load widgets.</AppCard>}
-        {homeActionError && <p role="alert" className="mt-3 text-[11px] text-danger-600">Unable to update Home status. Please try again.</p>}
+        {loading && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">{t("widgets.loading")}</AppCard>}
+        {error && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">{t("widgets.loadError")}</AppCard>}
+        {homeActionError && <p role="alert" className="mt-3 text-[11px] text-danger-600">{t("widgets.homeUpdateError")}</p>}
         {!loading && !error && <div className={`mt-5 grid gap-4 ${list ? "grid-cols-1" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
           {widgets.map((widget) => (
             <WidgetCard
@@ -346,9 +346,9 @@ function WidgetCard({
             event.stopPropagation();
             onAdd();
           }}
-          className="flex-1 py-2 text-[10px] font-bold"
+          size="widget-home"
         >
-          <Bookmark data-icon="inline-start" /> {pending ? "Updating…" : added ? t("home.addedToHome") : t("home.addToHome")}
+          <Bookmark data-icon="inline-start" /> {pending ? t("widgets.updatingHome") : added ? t("home.addedToHome") : t("home.addToHome")}
         </AppButton>
         <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
           <Ellipsis />
