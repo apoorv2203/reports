@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'success-outline' | 'ghost' | 'danger' | 'icon' | 'compact';
   active?: boolean;
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger';
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full';
 };
 
 type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
@@ -45,6 +45,7 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   'widget-icon': { variant: 'icon', size: 'default', className: 'size-8 border border-surface-200 text-navy-900' },
   'modal-icon': { variant: 'icon', size: 'default', className: 'size-9 text-ink-500' },
   'menu-danger': { variant: 'danger', size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold' },
+  'report-full': { size: 'default', className: 'mt-4 w-full' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
   pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
   'run-icon': { size: 'icon', className: 'size-8 text-foreground hover:text-primary' },

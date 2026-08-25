@@ -335,7 +335,7 @@ function ReportCard({
       <FileText className="h-5 w-5" />
     );
   return (
-    <AppCard variant="report" className="relative min-h-[255px]">
+    <AppCard variant="report" density="report-empty">
       <div className="flex items-start justify-between">
         <AppBadge variant={report.icon === "chart" ? "chart" : "success"} size="format">
           {icon}

@@ -47,7 +47,7 @@ export function ReportTemplatePicker({
         <div className="mt-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
             <Search className="h-4 w-4" />
-            <AppInput size="inline" className="w-52" placeholder={t('reports.searchTemplates')} />
+            <AppInput size="report-search" placeholder={t('reports.searchTemplates')} />
           </div>
           <span className="text-[12px] font-medium text-ink-500">{reportTemplates.length} templates</span>
         </div>
@@ -65,7 +65,7 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button type="button" onClick={() => onSelect(template)} className="group flex min-w-0 flex-col overflow-hidden text-left"><AppCard variant="report" className="cursor-pointer overflow-hidden p-0 text-left transition hover:-translate-y-1">
+    <button type="button" onClick={() => onSelect(template)} className="group flex min-w-0 flex-col overflow-hidden text-left"><AppCard variant="report" density="template-card">
       <div className="relative aspect-[4/3] overflow-hidden border-b border-border bg-muted">
         <img
           src={template.preview || "/placeholder.svg"}
@@ -73,7 +73,7 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
           className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]"
           loading="lazy"
         />
-        <AppBadge variant="success" size="status" className="absolute left-3 top-3 bg-white/90 text-navy-900 shadow-soft backdrop-blur-sm">{template.category}</AppBadge>
+        <AppBadge variant="success" size="status" className="absolute left-3 top-3" >{template.category}</AppBadge>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-ink-900">{template.name}</h3>
