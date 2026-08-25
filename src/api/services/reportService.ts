@@ -1,5 +1,5 @@
 import { request } from '@/api/client/apiClient';
-import type { CreateReportPayload, CreateReportResponse, PinnedReportsResponse, ReportRecord, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
+import type { CreateReportPayload, CreateReportResponse, PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
 
 export type GetReportsOptions = { search?: string; scope?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 export const getReports = async (options: GetReportsOptions = {}): Promise<ReportsResponse> => {
@@ -16,6 +16,7 @@ export const getReportTemplates = async (options: GetReportTemplatesOptions = {}
   if (items.some((item) => typeof item.description !== 'string')) throw new Error('Invalid report template description');
   return response as ReportTemplatesResponse;
 };
+export const getReportParameterFields = async (reportId: string, search = ''): Promise<ReportParameterFieldsResponse> => request<ReportParameterFieldsResponse>('reportParameterFields', { reportId, search });
 export const createReport = async (payload: CreateReportPayload): Promise<CreateReportResponse> => request<CreateReportResponse>('reportCreate', {}, { body: payload });
 export const runReport = async (reportId: string, parameters: Record<string, unknown>) => request<unknown>('reportRun', { reportId }, { body: parameters });
 export const exportReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportExport', { reportId }, { body: payload });

@@ -20,6 +20,8 @@ export type ReportTemplateResponse = {
   sections: ReportTemplate['sections'];
 };
 export type ReportTemplatesResponse = { items: ReportTemplateResponse[]; page: number; pageSize: number; total: number };
+export type ReportParameterField = { id: string; displayName: string; dataType: 'DATE' | 'STRING' | 'NUMBER'; group: string };
+export type ReportParameterFieldsResponse = { items: ReportParameterField[] };
 export type CreateReportPayload = { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> };
 export type CreateReportResponse = { id: string; title: string; status: 'DRAFT'; createdAt: string };
 export type ReportApi = { getPinnedReports(): Promise<PinnedReportsResponse>; getReports(options?: Record<string, unknown>): Promise<ReportsResponse>; getReportTemplates(options?: Record<string, unknown>): Promise<ReportTemplatesResponse> };
