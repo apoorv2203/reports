@@ -4,14 +4,14 @@ import { PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from '
 type Props = { left: ReactNode; center: ReactNode; right: ReactNode; leftLabel?: string; rightLabel?: string };
 
 export function ResizableThreePane({ left, center, right, leftLabel = 'Left pane', rightLabel = 'Right pane' }: Props) {
-  const [leftWidth, setLeftWidth] = useState(280);
+  const [leftWidth, setLeftWidth] = useState(400);
   const [rightWidth, setRightWidth] = useState(220);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const resize = (side: 'left' | 'right', event: React.PointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
     const move = (e: PointerEvent) => side === 'left'
-      ? setLeftWidth(Math.min(380, Math.max(220, e.clientX)))
+      ? setLeftWidth(Math.min(520, Math.max(320, e.clientX)))
       : setRightWidth(Math.min(380, Math.max(180, window.innerWidth - e.clientX)));
     const stop = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', stop); };
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', stop);
