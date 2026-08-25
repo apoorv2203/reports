@@ -20,19 +20,6 @@ export const scheduledDeliveries = [
   { name: 'Delinquency Analysis', format: 'XLSX', time: '18 Aug 2025, 07:00 PM', status: 'Delivered' },
 ];
 
-export const pinnedReports = [
-  { name: 'Loan Portfolio Summary', updated: 'Updated 2h ago', pinned: true },
-  { name: 'Delinquency Analysis', updated: 'Updated 1d ago', pinned: true },
-  { name: 'Branch Performance', updated: 'Updated 3d ago', pinned: true },
-  { name: 'Collection Performance', updated: 'Updated 5d ago', pinned: false },
-  { name: 'Credit Risk Overview', updated: 'Updated 6d ago', pinned: false },
-  { name: 'Portfolio Vintage Analysis', updated: 'Updated 1w ago', pinned: false },
-  { name: 'Regional Disbursement', updated: 'Updated 9d ago', pinned: false },
-  { name: 'Loan Aging Summary', updated: 'Updated 12d ago', pinned: false },
-  { name: 'Branch Target Tracker', updated: 'Updated 2w ago', pinned: false },
-  { name: 'Customer Segmentation', updated: 'Updated 3w ago', pinned: false },
-];
-
 export const recentSessions = [
   { name: 'Top 5 products by approval rate', time: 'Just now', kind: 'TABLE' as const },
   { name: 'NPA trend over last 12 months', time: '15m ago', kind: 'CHART' as const },

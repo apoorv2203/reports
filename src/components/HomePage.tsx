@@ -23,12 +23,11 @@ import {
   X,
 } from "lucide-react";
 import {
-  pinnedReports,
-  recommendedWidgets,
   scheduledDeliveries,
   type Widget,
 } from "@/data/homeData";
-import type { HomeWidget, WidgetData } from "@/api/services/widgetService";
+import type { HomeWidget, WidgetData, WidgetRecommendation } from "@/api/services/widgetService";
+import type { PinnedReport } from "@/api/types/report";
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppCard } from "@/components/app/AppCard";
@@ -46,10 +45,13 @@ type HomePageProps = {
   onEditWidget: (widget: Widget) => void;
   homeWidgetIds: string[];
   homeWidgets?: HomeWidget[];
+  pinnedReports?: PinnedReport[];
+  recommendedWidgets?: WidgetRecommendation[];
   widgetData?: Record<string, WidgetData | undefined>;
   widgetLoading?: Record<string, boolean>;
   widgetErrors?: Record<string, boolean>;
   onRetryWidget?: (id: string) => void;
+  onPreviewWidget?: (id: string) => Promise<WidgetData>;
   onRemoveWidget: (id: string) => void;
   isNewUser?: boolean;
   userName?: string;
@@ -64,10 +66,13 @@ export function HomePage({
   onEditWidget,
   homeWidgetIds,
   homeWidgets,
+  pinnedReports = [],
+  recommendedWidgets = [],
   widgetData = {},
   widgetLoading = {},
   widgetErrors = {},
   onRetryWidget,
+  onPreviewWidget,
   onRemoveWidget,
   isNewUser = false,
   userName = "Rahul",
@@ -76,8 +81,15 @@ export function HomePage({
   const { relativeLabel } = useFormat();
   const [addedWidgets, setAddedWidgets] = useState<string[]>([]);
   const [removedWidgets, setRemovedWidgets] = useState<string[]>([]);
-  const [maximizedWidget, setMaximizedWidget] = useState<Widget | null>(null);
+  const [maximizedWidget, setMaximizedWidget] = useState<Widget | HomeWidget | WidgetRecommendation | null>(null);
+  const [maximizedWidgetData, setMaximizedWidgetData] = useState<WidgetData>();
   const [question, setQuestion] = useState("");
+  const openWidgetPreview = async (widget: Widget | HomeWidget | WidgetRecommendation) => {
+    setMaximizedWidget(widget);
+    if (onPreviewWidget) {
+      try { setMaximizedWidgetData(await onPreviewWidget(widget.id)); } catch { setMaximizedWidgetData(undefined); }
+    }
+  };
   const [pinnedVisible, setPinnedVisible] = useState(5);
 
   function addWidget(id: string) {
@@ -207,8 +219,8 @@ export function HomePage({
                       <AppButton
                         variant="ghost"
                         type="button"
-                        key={report.name}
-                        onClick={() => onRunPinnedReport(report.name)}
+                        key={report.id}
+                        onClick={() => onRunPinnedReport(report.title)}
                         size="list-row"
                       >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
@@ -216,14 +228,14 @@ export function HomePage({
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[11px] font-bold text-navy-900">
-                            {report.name}
+                            {report.title}
                           </span>
                           <span className="mt-0.5 block text-[10px] text-ink-500">
-                            {relativeLabel(report.updated)}
+                            {relativeLabel(report.updatedAt)}
                           </span>
                         </span>
                         <Star
-                          className={`h-3.5 w-3.5 shrink-0 ${report.pinned ? "fill-amber-400 text-amber-400" : "text-ink-300"}`}
+                          className={`h-3.5 w-3.5 shrink-0 ${report.isPinned ? "fill-amber-400 text-amber-400" : "text-ink-300"}`}
                         />
                       </AppButton>
                     ))}
@@ -273,7 +285,7 @@ export function HomePage({
                             widget.id,
                           ]);
                         }}
-                        onMaximize={() => setMaximizedWidget(widget as unknown as Widget)}
+                        onMaximize={() => void openWidgetPreview(widget)}
                         data={widgetData[widget.id]}
                         loading={widgetLoading[widget.id]}
                         error={widgetErrors[widget.id]}
@@ -315,7 +327,7 @@ export function HomePage({
                           addWidget(widget.id);
                           onRemoveWidget(widget.id);
                         }}
-                        onMaximize={() => setMaximizedWidget(widget)}
+                        onMaximize={() => void openWidgetPreview(widget)}
                       />
                     ))}
                   </div>
@@ -328,10 +340,11 @@ export function HomePage({
       {maximizedWidget && (
         <MaximizedWidget
           widget={maximizedWidget}
+          data={maximizedWidgetData}
           onClose={() => setMaximizedWidget(null)}
           onEdit={() => {
             setMaximizedWidget(null);
-            onEditWidget(maximizedWidget);
+            onEditWidget(maximizedWidget as unknown as Widget);
           }}
         />
       )}
@@ -448,7 +461,7 @@ function WidgetCard({
   error,
   onRetry,
 }: {
-  widget: Widget | HomeWidget;
+  widget: Widget | HomeWidget | WidgetRecommendation;
   recommended?: boolean;
   added?: boolean;
   onAdd?: () => void;
@@ -612,10 +625,12 @@ function WidgetCard({
 
 function MaximizedWidget({
   widget,
+  data,
   onClose,
   onEdit,
 }: {
-  widget: Widget | HomeWidget;
+  widget: Widget | HomeWidget | WidgetRecommendation;
+  data?: WidgetData;
   onClose: () => void;
   onEdit: () => void;
 }) {
@@ -651,7 +666,7 @@ variant="report"
           </div>
         </div>
         <div className="mt-7 rounded-lg border border-surface-200 bg-surface-50 p-6">
-          <WidgetPreview widget={widget} />
+          <WidgetPreview widget={widget} data={data} />
         </div>
         <div className="mt-4 text-[11px] text-ink-500">
           {widget.owner} · {widget.updated} · {t("common.readOnlyView")}
@@ -666,7 +681,7 @@ function WidgetPreview({
   widget,
   data,
 }: {
-  widget: Widget | HomeWidget;
+  widget: Widget | HomeWidget | WidgetRecommendation;
   data?: WidgetData;
 }) {
   const t = useT();

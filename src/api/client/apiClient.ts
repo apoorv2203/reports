@@ -1,13 +1,15 @@
 import { apiConfig, apiUrl, type ApiDefinition } from '@/api/config/apiConfig';
 import { widgetMockProvider } from '@/api/mocks/widgetMockProvider';
-import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse } from '@/api/types/widget';
+import { reportMockProvider } from '@/api/mocks/reportMockProvider';
+import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse, WidgetRecommendationsResponse } from '@/api/types/widget';
+import type { PinnedReportsResponse } from '@/api/types/report';
 
-type ApiName = 'homeWidgets' | 'widgetData' | 'widgetMutations';
-type ApiResult = HomeWidgetsResponse | WidgetData | WidgetMutationResponse;
-const providers = { homeWidgets: () => widgetMockProvider.getHomeWidgets(), widgetData: (params: Record<string, string>) => widgetMockProvider.getWidgetData(params.widgetId), widgetMutations: (params: Record<string, string>, body?: unknown) => body && (body as { action?: string }).action === 'remove' ? widgetMockProvider.removeWidgetFromHome(params.widgetId) : widgetMockProvider.addWidgetToHome(params.widgetId) };
+type ApiName = 'homeWidgets' | 'widgetData' | 'widgetMutations' | 'pinnedReports' | 'widgetRecommendations';
+type ApiResult = HomeWidgetsResponse | WidgetData | WidgetMutationResponse | PinnedReportsResponse | WidgetRecommendationsResponse;
+const providers = { homeWidgets: () => widgetMockProvider.getHomeWidgets(), widgetData: (params: Record<string, string>) => widgetMockProvider.getWidgetData(params.widgetId), widgetMutations: (params: Record<string, string>, body?: unknown) => body && (body as { action?: string }).action === 'remove' ? widgetMockProvider.removeWidgetFromHome(params.widgetId) : widgetMockProvider.addWidgetToHome(params.widgetId), pinnedReports: () => reportMockProvider.getPinnedReports(), widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations() };
 
 export class ApiError extends Error { constructor(message: string, public readonly status?: number) { super(message); this.name = 'ApiError'; } }
-function isValidResult(name: ApiName, value: unknown): value is ApiResult { if (!value || typeof value !== 'object') return false; if (name === 'widgetData') return 'type' in value; return 'widgets' in value && Array.isArray((value as { widgets?: unknown }).widgets); }
+function isValidResult(name: ApiName, value: unknown): value is ApiResult { if (!value || typeof value !== 'object') return false; if (name === 'widgetData') return 'type' in value; if (name === 'pinnedReports') return 'reports' in value && Array.isArray((value as { reports?: unknown }).reports); return 'widgets' in value && Array.isArray((value as { widgets?: unknown }).widgets); }
 function getDefinition(name: ApiName, params: Record<string, string>): ApiDefinition { const definition = apiConfig[name]; if (!definition.path) throw new ApiError(`Missing API path configuration: ${name}`); return definition; }
 export async function request<T extends ApiResult>(name: ApiName, params: Record<string, string> = {}, options: { body?: unknown; timeoutMs?: number } = {}): Promise<T> {
   const definition = getDefinition(name, params);

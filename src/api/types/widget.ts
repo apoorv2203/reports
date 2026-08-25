@@ -6,5 +6,7 @@ export type ChartWidgetData = { type: 'CHART'; chartType: 'LINE'; labels: string
 export type WidgetData = TableWidgetData | ChartWidgetData;
 export type HomeWidgetsResponse = { widgets: HomeWidget[] };
 export type WidgetMutationResponse = HomeWidgetsResponse;
-export type WidgetApi = { getHomeWidgets(): Promise<HomeWidgetsResponse>; getWidgetData(widgetId: string): Promise<WidgetData>; addWidgetToHome(widgetId: string): Promise<WidgetMutationResponse>; removeWidgetFromHome(widgetId: string): Promise<WidgetMutationResponse> };
+export type WidgetRecommendation = Omit<HomeWidget, 'isOnHome'>;
+export type WidgetRecommendationsResponse = { widgets: WidgetRecommendation[] };
+export type WidgetApi = { getHomeWidgets(): Promise<HomeWidgetsResponse>; getWidgetRecommendations(): Promise<WidgetRecommendationsResponse>; getWidgetData(widgetId: string): Promise<WidgetData>; addWidgetToHome(widgetId: string): Promise<WidgetMutationResponse>; removeWidgetFromHome(widgetId: string): Promise<WidgetMutationResponse> };
 export type { WidgetKind };

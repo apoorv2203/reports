@@ -12,6 +12,8 @@ export const apiConfig = {
   homeWidgets: api('homeWidgets'),
   widgetData: api('widgetData'),
   widgetMutations: api('widgetMutations'),
+  pinnedReports: api('pinnedReports'),
+  widgetRecommendations: api('widgetRecommendations'),
 };
 export function resolveApiPath(definition: ApiDefinition, params: Record<string, string> = {}) { return Object.entries(params).reduce((path, [key, value]) => path.replace(`{${key}}`, encodeURIComponent(value)), definition.path); }
 export function apiUrl(definition: ApiDefinition, params?: Record<string, string>) { const protocol = import.meta.env.VITE_API_PROTOCOL || (typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'https' : 'http'); return `${protocol}://${apiConfig.host}:${apiConfig.port}${apiConfig.basePath}${resolveApiPath(definition, params)}`; }

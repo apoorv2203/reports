@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { addWidgetToHome, getHomeWidgets, getWidgetData, removeWidgetFromHome, type HomeWidget, type WidgetData } from '@/api/services/widgetService';
+import { addWidgetToHome, getHomeWidgets, getWidgetData, getWidgetRecommendations, removeWidgetFromHome, type HomeWidget, type WidgetData, type WidgetRecommendation } from '@/api/services/widgetService';
+import { getPinnedReports } from '@/api/services/reportService';
+import type { PinnedReport } from '@/api/types/report';
 import { TopNav } from '@/components/TopNav';
 import { HomePage } from '@/components/HomePage';
 import { ChatPanel } from '@/components/ChatPanel';
@@ -38,7 +40,23 @@ function AppContent() {
   const [widgetData, setWidgetData] = useState<Record<string, WidgetData | undefined>>({});
   const [widgetLoading, setWidgetLoading] = useState<Record<string, boolean>>({});
   const [widgetErrors, setWidgetErrors] = useState<Record<string, boolean>>({});
-  useEffect(() => { getHomeWidgets().then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); Promise.allSettled(widgets.filter((widget) => widget.isOnHome).map(async (widget) => { setWidgetLoading((current) => ({ ...current, [widget.id]: true })); try { const data = await getWidgetData(widget.id); setWidgetData((current) => ({ ...current, [widget.id]: data })); } catch { setWidgetErrors((current) => ({ ...current, [widget.id]: true })); } finally { setWidgetLoading((current) => ({ ...current, [widget.id]: false })); } })); }); }, []);
+  const [pinnedReports, setPinnedReports] = useState<PinnedReport[]>([]);
+  const [recommendedWidgets, setRecommendedWidgets] = useState<WidgetRecommendation[]>([]);
+  useEffect(() => {
+    Promise.allSettled([getHomeWidgets(), getPinnedReports(), getWidgetRecommendations()]).then(([homeResult, pinnedResult, recommendationsResult]) => {
+      if (homeResult.status === 'fulfilled') {
+        const { widgets } = homeResult.value;
+        setHomeWidgets(widgets);
+        setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id));
+        Promise.allSettled(widgets.filter((widget) => widget.isOnHome).map(async (widget) => {
+          setWidgetLoading((current) => ({ ...current, [widget.id]: true }));
+          try { const data = await getWidgetData(widget.id); setWidgetData((current) => ({ ...current, [widget.id]: data })); } catch { setWidgetErrors((current) => ({ ...current, [widget.id]: true })); } finally { setWidgetLoading((current) => ({ ...current, [widget.id]: false })); }
+        }));
+      }
+      if (pinnedResult.status === 'fulfilled') setPinnedReports(pinnedResult.value.reports);
+      if (recommendationsResult.status === 'fulfilled') setRecommendedWidgets(recommendationsResult.value.widgets);
+    });
+  }, []);
   const toggleHomeWidget = (id: string) => { const removing = homeWidgetIds.includes(id); (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)).then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } }); };
 
   if (!profile) {
@@ -76,10 +94,13 @@ function AppContent() {
           onEditWidget={() => setView({ kind: 'workspace' })}
           homeWidgetIds={homeWidgetIds}
           homeWidgets={homeWidgets}
+          pinnedReports={pinnedReports}
+          recommendedWidgets={recommendedWidgets}
           widgetData={widgetData}
           widgetLoading={widgetLoading}
           widgetErrors={widgetErrors}
           onRetryWidget={(id) => getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data })))}
+          onPreviewWidget={getWidgetData}
           onRemoveWidget={toggleHomeWidget}
           isNewUser={isNewUser}
           userName={firstName}
