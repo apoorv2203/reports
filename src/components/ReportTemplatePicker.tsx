@@ -65,7 +65,7 @@ export function ReportTemplatePicker({
 
 function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
   return (
-    <button type="button" onClick={() => onSelect(template)} className="group flex min-w-0 flex-col overflow-hidden text-left"><AppCard variant="report" density="template-card">
+    <AppButton type="button" size="template-card" onClick={() => onSelect(template)}><AppCard variant="report" density="template-card">
       <div className="relative aspect-[4/3] overflow-hidden border-b border-border bg-muted">
         <img
           src={template.preview || "/placeholder.svg"}
@@ -73,7 +73,7 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
           className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]"
           loading="lazy"
         />
-        <AppBadge variant="success" size="status" className="absolute left-3 top-3" >{template.category}</AppBadge>
+        <span className="absolute left-3 top-3"><AppBadge variant="success" size="status">{template.category}</AppBadge></span>
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-ink-900">{template.name}</h3>
@@ -83,6 +83,6 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
           <ArrowRight className="h-4 w-4 text-ink-300 transition group-hover:translate-x-1 group-hover:text-mint-600" />
         </div>
       </div>
-    </AppCard></button>
+    </AppCard></AppButton>
   );
 }

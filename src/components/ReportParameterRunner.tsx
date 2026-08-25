@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useT } from '@/providers/I18nProvider';
 import { Check, Filter, Play, RefreshCw } from 'lucide-react';
 import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
@@ -9,6 +10,7 @@ import type { ReportParameter } from '@/data/reportTemplates';
 type ParameterValues = Record<string, string | string[]>;
 
 export function ReportParameterRunner({ parameters, reportTitle }: { parameters: ReportParameter[]; reportTitle: string }) {
+  const t = useT();
   const initialValues = useMemo(() => Object.fromEntries(parameters.map((parameter) => [parameter.id, parameter.defaultValue ?? (parameter.type === 'multi-select' || parameter.type === 'date-range' ? [] : '')])), [parameters]);
   const [values, setValues] = useState<ParameterValues>(initialValues);
   const [appliedValues, setAppliedValues] = useState<ParameterValues | null>(null);
@@ -18,7 +20,7 @@ export function ReportParameterRunner({ parameters, reportTitle }: { parameters:
     const nextErrors: Record<string, string> = {};
     parameters.forEach((parameter) => {
       const value = values[parameter.id];
-      if (parameter.required && (!value || (Array.isArray(value) && (value.length === 0 || value.some((item) => !item))))) nextErrors[parameter.id] = 'This parameter is required.';
+      if (parameter.required && (!value || (Array.isArray(value) && (value.length === 0 || value.some((item) => !item))))) nextErrors[parameter.id] = t('reports.requiredParameter');
     });
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) setAppliedValues({ ...values });
@@ -27,13 +29,13 @@ export function ReportParameterRunner({ parameters, reportTitle }: { parameters:
   return (
     <div className="mb-5 rounded-[16px] border border-border-strong bg-surface-secondary p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.12em] text-mint-700"><Filter className="h-4 w-4" /> Report parameters</div><p className="mt-1 text-[12px] text-ink-500">Set the inputs used to generate {reportTitle}.</p></div>
-        {appliedValues && <AppBadge variant="success" size="status"><Check className="h-3.5 w-3.5" /> Results generated</AppBadge>}
+        <div><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.12em] text-mint-700"><Filter className="h-4 w-4" /> {t('reports.reportParameters')}</div><p className="mt-1 text-[12px] text-ink-500">{t('reports.setInputs', { reportTitle })}</p></div>
+        {appliedValues && <AppBadge variant="success" size="status"><Check className="h-3.5 w-3.5" /> {t('reports.resultsGenerated')}</AppBadge>}
       </div>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         {parameters.map((parameter) => <ParameterField key={parameter.id} parameter={parameter} value={values[parameter.id]} error={errors[parameter.id]} onChange={(value) => setValues((current) => ({ ...current, [parameter.id]: value }))} />)}
       </div>
-      <AppButton onClick={runReport} variant="primary" size="action-md">{appliedValues ? <RefreshCw className="h-4 w-4" /> : <Play className="h-4 w-4" />}{appliedValues ? 'Run again' : 'Run report'}</AppButton>
+      <AppButton onClick={runReport} variant="primary" size="action-md">{appliedValues ? <RefreshCw className="h-4 w-4" /> : <Play className="h-4 w-4" />}{appliedValues ? t('reports.runAgain') : t('reports.runReport')}</AppButton>
       {appliedValues && <div className="mt-4 border-t border-border-strong pt-4"><div className="text-[11px] font-bold uppercase tracking-[0.1em] text-ink-500">Applied filters</div><div className="mt-2 flex flex-wrap gap-2">{parameters.map((parameter) => <span key={parameter.id} className="rounded-full border border-border-light bg-white px-3 py-1.5 text-[11px] text-ink-700"><strong>{parameter.label}:</strong> {formatValue(appliedValues[parameter.id])}</span>)}</div></div>}
     </div>
   );
