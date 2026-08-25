@@ -15,7 +15,9 @@ const records: ReportRecord[] = [
 export const reportMockProvider = {
   getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
     const search = (params.search ?? '').toLowerCase();
-    const items = reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
+    const items = reportTemplates
+      .filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))
+      .map((template) => ({ ...template, description: template.description }));
     return { items, page: Number(params.page ?? 0), pageSize: Number(params.pageSize ?? items.length), total: items.length };
   },
   createReport: async (payload: { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }) => ({ id: `rpt-${Date.now()}`, title: payload.title, status: 'DRAFT' as const, createdAt: new Date().toISOString() }),

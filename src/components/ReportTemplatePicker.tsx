@@ -21,7 +21,7 @@ export function ReportTemplatePicker({
   const [templates, setTemplates] = useState<ReportTemplate[]>(reportTemplates);
   const [search, setSearch] = useState('');
   useEffect(() => {
-    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates([]));
+    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates(reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))));
   }, [search]);
 
   return (

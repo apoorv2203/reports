@@ -9,7 +9,13 @@ export const getReports = async (options: GetReportsOptions = {}): Promise<Repor
 };
 export const getReport = async (reportId: string): Promise<ReportRecord> => request<ReportRecord>('reportDetails', { reportId });
 export type GetReportTemplatesOptions = { search?: string; page?: number; pageSize?: number };
-export const getReportTemplates = async (options: GetReportTemplatesOptions = {}): Promise<ReportTemplatesResponse> => request<ReportTemplatesResponse>('reportTemplates', Object.fromEntries(Object.entries(options).filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])));
+export const getReportTemplates = async (options: GetReportTemplatesOptions = {}): Promise<ReportTemplatesResponse> => {
+  const response = await request<unknown>('reportTemplates', Object.fromEntries(Object.entries(options).filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])));
+  if (!response || typeof response !== 'object' || !Array.isArray((response as { items?: unknown }).items)) throw new Error('Invalid report templates response');
+  const items = (response as { items: Array<{ description?: unknown }> }).items;
+  if (items.some((item) => typeof item.description !== 'string')) throw new Error('Invalid report template description');
+  return response as ReportTemplatesResponse;
+};
 export const createReport = async (payload: CreateReportPayload): Promise<CreateReportResponse> => request<CreateReportResponse>('reportCreate', {}, { body: payload });
 export const runReport = async (reportId: string, parameters: Record<string, unknown>) => request<unknown>('reportRun', { reportId }, { body: parameters });
 export const exportReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportExport', { reportId }, { body: payload });
