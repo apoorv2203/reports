@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addWidgetToHome, getHomeWidgets, getWidgetData, removeWidgetFromHome, type HomeWidget, type WidgetData } from '@/services/widgetService';
+import { addWidgetToHome, getHomeWidgets, getWidgetData, removeWidgetFromHome, type HomeWidget, type WidgetData } from '@/api/services/widgetService';
 import { TopNav } from '@/components/TopNav';
 import { HomePage } from '@/components/HomePage';
 import { ChatPanel } from '@/components/ChatPanel';

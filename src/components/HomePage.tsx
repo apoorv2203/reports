@@ -30,7 +30,7 @@ import {
   scheduledDeliveries,
   type Widget,
 } from "@/data/homeData";
-import type { HomeWidget, WidgetData } from "@/services/widgetService";
+import type { HomeWidget, WidgetData } from "@/api/services/widgetService";
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppCard } from "@/components/app/AppCard";
