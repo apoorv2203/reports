@@ -1,4 +1,4 @@
-import type { PinnedReportsResponse, ReportRecord, ReportsResponse } from '@/api/types/report';
+import type { PinnedReportsResponse, ReportRecord, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
 import { reportTemplates } from '@/data/reportTemplates';
 
 const records: ReportRecord[] = [
@@ -13,7 +13,7 @@ const records: ReportRecord[] = [
 ];
 
 export const reportMockProvider = {
-  getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}) => {
+  getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
     const search = (params.search ?? '').toLowerCase();
     const items = reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
     return { items, page: Number(params.page ?? 0), pageSize: Number(params.pageSize ?? items.length), total: items.length };

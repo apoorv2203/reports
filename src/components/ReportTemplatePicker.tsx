@@ -52,9 +52,9 @@ export function ReportTemplatePicker({
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
-            <Search className="h-4 w-4" />
-            <AppInput size="report-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('reports.searchTemplates')} />
+          <div className="flex w-80 items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
+            <Search className="h-4 w-4 shrink-0" />
+            <AppInput size="inline" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('reports.searchTemplates')} />
           </div>
           <span className="text-[12px] font-medium text-muted-foreground">{templates.length} templates</span>
         </div>
