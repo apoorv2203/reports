@@ -37,7 +37,7 @@ type Props = {
   onBack: () => void;
   onEditWidget: (widget: Widget) => void;
   onNewWidget: () => void;
-  onToggleHomeWidget: (id: string) => Promise<WidgetMutationResponse>;
+  onToggleHomeWidget: (id: string, isOnHome: boolean) => Promise<WidgetMutationResponse>;
 };
 type Category =
   "All" | "Lending" | "Risk" | "Collections" | "Sales" | "Operations";
@@ -97,7 +97,7 @@ export function WidgetsPage({
     if (homeActionId) return;
     setHomeActionId(widget.id); setHomeActionError(null);
     try {
-      const result = await onToggleHomeWidget(widget.id);
+      const result = await onToggleHomeWidget(widget.id, Boolean(widget.isOnHome));
       setApiWidgets((current) => current.map((item) => item.id === result.widgetId ? { ...item, isOnHome: result.isOnHome } : item));
     } catch { setHomeActionError(widget.id); } finally { setHomeActionId(null); }
   };
@@ -309,7 +309,7 @@ function WidgetCard({
             }}
             aria-label={t("home.previewWidgetName", { name: widget.title })}
             title={t("home.previewWidget")}
-            className="size-6 text-navy-900 transition hover:text-mint-700"
+            size="icon-sm"
           >
             <Eye aria-hidden="true" />
           </AppButton>
@@ -367,7 +367,7 @@ function WidgetCard({
         >
           <Bookmark data-icon="inline-start" /> {pending ? t("widgets.updatingHome") : added ? t("home.addedToHome") : t("home.addToHome")}
         </AppButton>
-        <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
+        <AppButton variant="icon" size="widget-icon" type="button" onClick={onMenu} aria-label={t("widgets.openMenu")}>
           <Ellipsis />
         </AppButton>
       </div>
@@ -410,7 +410,7 @@ function WidgetMenu({
         </AppButton>
       ))}
       <div className="my-1 h-px bg-surface-100" />
-      <AppButton variant="danger" type="button" className="h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold">
+      <AppButton variant="danger" size="menu-danger" type="button">
         <Trash2 data-icon="inline-start" /> {t("common.delete")}
       </AppButton>
     </div>
@@ -450,10 +450,10 @@ function WidgetReadOnlyView({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
+            <AppButton variant="secondary" size="action-sm" type="button" onClick={onEdit}>
               <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
             </AppButton>
-            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("widgets.closeView")}>
+            <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("widgets.closeView")}>
               <X />
             </AppButton>
           </div>
@@ -524,7 +524,7 @@ function ShareWidgetModal({
             </h2>
             <p className="mt-1 text-[16px] text-ink-500">{widget.title}</p>
           </div>
-          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
+          <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("common.close")}>
             <X />
           </AppButton>
         </div>
@@ -712,7 +712,7 @@ function ShareToCatalogueModal({
               {t("widgets.catalogueSubtitle")}
             </p>
           </div>
-          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
+          <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("common.close")}>
             <X />
           </AppButton>
         </div>

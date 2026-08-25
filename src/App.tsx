@@ -75,7 +75,7 @@ function AppContent() {
       const anchor = document.createElement('a'); anchor.href = url; anchor.download = result.fileName || scheduledDeliveries.find((item) => item.id === deliveryId)?.fileName || 'scheduled-delivery'; anchor.click(); URL.revokeObjectURL(url);
     } catch { setDeliveryDownloadError(true); } finally { setDownloadingDeliveryId(undefined); }
   };
-  const toggleHomeWidget = async (id: string) => { const removing = homeWidgetIds.includes(id); const result = await (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)); if (result.widgetId !== id) throw new Error('Unexpected widget mutation response'); setHomeWidgetIds((current) => result.isOnHome ? Array.from(new Set([...current, result.widgetId])) : current.filter((widgetId) => widgetId !== result.widgetId)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } return result; };
+  const toggleHomeWidget = async (id: string, isOnHome: boolean) => { const result = await (isOnHome ? removeWidgetFromHome(id) : addWidgetToHome(id)); if (result.widgetId !== id) throw new Error('Unexpected widget mutation response'); setHomeWidgetIds((current) => result.isOnHome ? Array.from(new Set([...current, result.widgetId])) : current.filter((widgetId) => widgetId !== result.widgetId)); setHomeWidgets((current) => result.isOnHome ? (current.some((widget) => widget.id === id) ? current.map((widget) => widget.id === id ? { ...widget, isOnHome: true } : widget) : [...current, { id, isOnHome: true } as typeof current[number]]) : current.filter((widget) => widget.id !== id)); if (!isOnHome) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } return result; };
 
   if (!profile) {
     return <LoginScreen />;
@@ -125,7 +125,7 @@ function AppContent() {
           widgetErrors={widgetErrors}
           onRetryWidget={(id) => getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data })))}
           onPreviewWidget={getWidgetData}
-          onRemoveWidget={toggleHomeWidget}
+          onRemoveWidget={(id) => { void toggleHomeWidget(id, true); }}
           isNewUser={isNewUser}
           userName={firstName}
         />
