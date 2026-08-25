@@ -8,7 +8,7 @@ const providers = { homeWidgets: () => widgetMockProvider.getHomeWidgets(), widg
 
 export class ApiError extends Error { constructor(message: string, public readonly status?: number) { super(message); this.name = 'ApiError'; } }
 function isValidResult(name: ApiName, value: unknown): value is ApiResult { if (!value || typeof value !== 'object') return false; if (name === 'widgetData') return 'type' in value; return 'widgets' in value && Array.isArray((value as { widgets?: unknown }).widgets); }
-function getDefinition(name: ApiName, params: Record<string, string>): ApiDefinition { const definition = name === 'widgetData' ? apiConfig.widgetDataFor(params.widgetId) : apiConfig[name]; if (!definition.path) throw new ApiError(`Missing API path configuration: ${name}`); return definition; }
+function getDefinition(name: ApiName, params: Record<string, string>): ApiDefinition { const definition = apiConfig[name]; if (!definition.path) throw new ApiError(`Missing API path configuration: ${name}`); return definition; }
 export async function request<T extends ApiResult>(name: ApiName, params: Record<string, string> = {}, options: { body?: unknown; timeoutMs?: number } = {}): Promise<T> {
   const definition = getDefinition(name, params);
   const controller = new AbortController();

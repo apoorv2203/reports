@@ -11,5 +11,5 @@ const dataById: Record<string, WidgetData> = {
 };
 const readState = () => [...homeWidgetIds];
 const writeState = (ids: string[]) => { homeWidgetIds = [...ids]; };
-const response = (): HomeWidgetsResponse => { const ids = readState(); return { widgets: myWidgets.map((widget) => ({ ...widget, isOnHome: ids.includes(widget.id), dataApi: `/api/widgets/${widget.id}/data` })) }; };
+const response = (): HomeWidgetsResponse => { const ids = readState(); return { widgets: myWidgets.map(({ accent: _accent, preview: _preview, ...widget }) => ({ ...widget, isOnHome: ids.includes(widget.id) })) }; };
 export const widgetMockProvider = { getHomeWidgets: async () => response(), getWidgetData: async (widgetId: string) => { await new Promise((resolve) => setTimeout(resolve, 180 + Math.random() * 260)); const data = dataById[widgetId]; if (!data) throw new Error('Widget data unavailable'); return data; }, addWidgetToHome: async (widgetId: string): Promise<WidgetMutationResponse> => { const ids = readState(); if (!ids.includes(widgetId)) writeState([...ids, widgetId]); return response(); }, removeWidgetFromHome: async (widgetId: string): Promise<WidgetMutationResponse> => { writeState(readState().filter((id) => id !== widgetId)); return response(); } };

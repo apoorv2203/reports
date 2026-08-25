@@ -39,6 +39,15 @@ import { AppInput } from "@/components/app/AppInput";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 
+function toDisplayWidget(widget: HomeWidget): Widget {
+  const localPresentation = myWidgets.find((candidate) => candidate.id === widget.id) ?? recommendedWidgets.find((candidate) => candidate.id === widget.id);
+  return {
+    ...widget,
+    preview: localPresentation?.preview ?? (widget.kind === "TABLE" ? "table" : "line"),
+    accent: localPresentation?.accent ?? "mint",
+  };
+}
+
 type HomePageProps = {
   onNewSession: (question?: string) => void;
   onRunPinnedReport: (reportName: string) => void;
@@ -272,15 +281,14 @@ export function HomePage({
                       .map((widget) => ({
                         ...widget,
                         isOnHome: true,
-                        dataApi: `/api/widgets/${widget.id}/data`,
                       }))
                   )
                     .filter((widget) => widget.isOnHome)
                     .map((widget) => (
                       <WidgetCard
                         key={widget.id}
-                        widget={widget}
-                        onEdit={() => onEditWidget(widget)}
+                        widget={toDisplayWidget(widget)}
+                        onEdit={() => onEditWidget(toDisplayWidget(widget))}
                         onRemove={() => {
                           onRemoveWidget(widget.id);
                           setRemovedWidgets((current) => [
@@ -288,7 +296,7 @@ export function HomePage({
                             widget.id,
                           ]);
                         }}
-                        onMaximize={() => setMaximizedWidget(widget)}
+                        onMaximize={() => setMaximizedWidget(toDisplayWidget(widget))}
                         data={widgetData[widget.id]}
                         loading={widgetLoading[widget.id]}
                         error={widgetErrors[widget.id]}
