@@ -35,7 +35,6 @@ type Props = {
   onBack: () => void;
   onEditWidget: (widget: Widget) => void;
   onNewWidget: () => void;
-  homeWidgetIds: string[];
   onToggleHomeWidget: (id: string) => Promise<void>;
 };
 type Category =
@@ -53,7 +52,6 @@ export function WidgetsPage({
   onBack,
   onEditWidget,
   onNewWidget,
-  homeWidgetIds,
   onToggleHomeWidget,
 }: Props) {
   const t = useT();
@@ -84,9 +82,7 @@ export function WidgetsPage({
     setHomeActionId(widget.id); setHomeActionError(null);
     try {
       await onToggleHomeWidget(widget.id);
-      const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
-      const { items } = await getWidgets(scope, { search: query || undefined });
-      setApiWidgets(items);
+      setApiWidgets((current) => current.map((item) => item.id === widget.id ? { ...item, isOnHome: !Boolean(widget.isOnHome) } : item));
     } catch { setHomeActionError(widget.id); } finally { setHomeActionId(null); }
   };
   const widgets = useMemo(() => source, [source]);
@@ -210,7 +206,7 @@ export function WidgetsPage({
               }}
               onView={() => { setViewWidget(widget); setViewLoading(true); getWidgetData(widget.id).then(setViewData).finally(() => setViewLoading(false)); }}
               onEdit={() => onEditWidget(widget)}
-              onRemove={() => onToggleHomeWidget(widget.id)}
+              onRemove={() => toggleWidgetHome(widget)}
             />
           ))}
         </div>}

@@ -8,6 +8,7 @@ export type Widget = {
   initials: string;
   updated: string;
   privacy: 'Private' | 'Shared' | 'Catalogue';
+  source?: 'MY_WIDGET' | 'CATALOGUE' | 'SHARED_WITH_ME';
   isOnHome?: boolean;
 };
 export type WidgetScope = 'MY_WIDGETS' | 'CATALOGUE' | 'SHARED_WITH_ME';
