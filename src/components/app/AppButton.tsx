@@ -46,7 +46,7 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   'modal-icon': { variant: 'icon', size: 'default', className: 'size-9 text-ink-500' },
   'menu-danger': { variant: 'danger', size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold' },
   'report-full': { size: 'default', className: 'mt-4 w-full' },
-  'template-card': { variant: 'ghost', size: 'default', className: 'group flex min-w-0 flex-col overflow-hidden p-0 text-left' },
+  'template-card': { variant: 'ghost', size: 'default', className: 'group flex h-auto min-w-0 w-full flex-col items-stretch overflow-hidden p-0 text-left' },
   'section-icon': { variant: 'icon', size: 'icon-sm', className: 'text-ink-300 hover:text-ink-900' },
   'report-back': { variant: 'ghost', size: 'icon', className: 'mr-1 size-7 text-muted-foreground hover:bg-muted' },
   'report-export': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold text-foreground' },

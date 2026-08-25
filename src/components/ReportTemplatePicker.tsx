@@ -4,7 +4,7 @@ import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
 import { AppCard } from '@/components/app/AppCard';
 import { AppBadge } from '@/components/app/AppBadge';
-import type { ReportTemplate } from '@/data/reportTemplates';
+import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
 import { getReportTemplates } from '@/api/services/reportService';
 import { useT } from '@/providers/I18nProvider';
 
@@ -18,7 +18,7 @@ export function ReportTemplatePicker({
   onBrowseReports: () => void;
 }) {
   const t = useT();
-  const [templates, setTemplates] = useState<ReportTemplate[]>([]);
+  const [templates, setTemplates] = useState<ReportTemplate[]>(reportTemplates);
   const [search, setSearch] = useState('');
   useEffect(() => {
     getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates([]));
@@ -59,7 +59,7 @@ export function ReportTemplatePicker({
           <span className="text-[12px] font-medium text-muted-foreground">{templates.length} templates</span>
         </div>
 
-        <div className="mt-5 grid grid-cols-4 gap-5">
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {templates.map((template) => (
             <TemplateCard key={template.id} template={template} onSelect={onSelect} />
           ))}
