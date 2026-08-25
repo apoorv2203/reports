@@ -25,6 +25,7 @@ import {
 import { scheduledDeliveries } from "@/data/homeData";
 import type { HomeWidget, Widget, WidgetData, WidgetRecommendation } from "@/api/services/widgetService";
 import type { PinnedReport } from "@/api/types/report";
+import type { ScheduledDelivery } from "@/api/types/scheduledDelivery";
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppCard } from "@/components/app/AppCard";
@@ -44,6 +45,12 @@ type HomePageProps = {
   homeWidgets?: HomeWidget[];
   pinnedReports?: PinnedReport[];
   recommendedWidgets?: WidgetRecommendation[];
+  scheduledDeliveries?: ScheduledDelivery[];
+  scheduledDeliveriesLoading?: boolean;
+  scheduledDeliveriesError?: boolean;
+  downloadingDeliveryId?: string;
+  deliveryDownloadError?: boolean;
+  onDownloadDelivery?: (id: string) => void;
   widgetData?: Record<string, WidgetData | undefined>;
   widgetLoading?: Record<string, boolean>;
   widgetErrors?: Record<string, boolean>;
@@ -65,6 +72,12 @@ export function HomePage({
   homeWidgets,
   pinnedReports = [],
   recommendedWidgets = [],
+  scheduledDeliveries = [],
+  scheduledDeliveriesLoading = false,
+  scheduledDeliveriesError = false,
+  downloadingDeliveryId,
+  deliveryDownloadError = false,
+  onDownloadDelivery,
   widgetData = {},
   widgetLoading = {},
   widgetErrors = {},
@@ -159,33 +172,24 @@ export function HomePage({
                     action={t("home.scheduleReport")}
                     onAction={onOpenReports}
                   />
+                ) : scheduledDeliveriesLoading ? (
+                  <div className="py-4 text-center text-[11px] text-ink-500">Loading…</div>
+                ) : scheduledDeliveriesError ? (
+                  <div className="py-4 text-center text-[11px] text-ink-500">Unable to load scheduled deliveries.</div>
+                ) : scheduledDeliveries.length === 0 ? (
+                  <EmptySideState icon={<Clock3 className="h-9 w-9" />} title={t("home.noScheduledDeliveries")} text={t("home.scheduledEmpty")} action={t("home.scheduleReport")} onAction={onOpenReports} />
                 ) : (
                   <>
                     <div className="divide-y divide-surface-100">
                       {scheduledDeliveries.map((delivery) => (
-                        <div
-                          key={delivery.name}
-                          className="flex items-center gap-2.5 py-2.5"
-                        >
-                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} size="format">
-                            {delivery.format === "PDF"
-                              ? t("common.pdf")
-                              : t("common.xlsx")}
-                          </AppBadge>
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-[11px] font-bold text-navy-900">
-                              {delivery.name}
-                            </span>
-                            <span className="mt-0.5 block text-[10px] text-ink-500">
-                              {delivery.time}
-                            </span>
-                          </span>
-                          <AppBadge variant="success" size="status">
-                            {t("common.delivered")}
-                          </AppBadge>
-                        </div>
+                        <button key={delivery.id} type="button" onClick={() => onDownloadDelivery?.(delivery.id)} disabled={downloadingDeliveryId === delivery.id} className="flex w-full items-center gap-2.5 py-2.5 text-left disabled:opacity-60">
+                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} size="format">{delivery.format === "PDF" ? t("common.pdf") : t("common.xlsx")}</AppBadge>
+                          <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-bold text-navy-900">{delivery.reportName}</span><span className="mt-0.5 block text-[10px] text-ink-500">{relativeLabel(delivery.generatedAt)}</span></span>
+                          <AppBadge variant="success" size="status">{downloadingDeliveryId === delivery.id ? "Downloading" : t("common.delivered")}</AppBadge>
+                        </button>
                       ))}
                     </div>
+                    {deliveryDownloadError && <p className="pt-2 text-[10px] text-danger-600">Unable to download the scheduled delivery.</p>}
                     <AppButton
                       variant="ghost"
                       type="button"

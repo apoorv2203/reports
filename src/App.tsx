@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { addWidgetToHome, getHomeWidgets, getWidgetData, getWidgetRecommendations, removeWidgetFromHome, type HomeWidget, type WidgetData, type WidgetRecommendation } from '@/api/services/widgetService';
 import { getPinnedReports } from '@/api/services/reportService';
 import type { PinnedReport } from '@/api/types/report';
+import { getScheduledDeliveries, downloadScheduledDelivery } from '@/api/services/scheduledDeliveryService';
+import type { ScheduledDelivery } from '@/api/types/scheduledDelivery';
 import { TopNav } from '@/components/TopNav';
 import { HomePage } from '@/components/HomePage';
 import { ChatPanel } from '@/components/ChatPanel';
@@ -42,6 +44,11 @@ function AppContent() {
   const [widgetErrors, setWidgetErrors] = useState<Record<string, boolean>>({});
   const [pinnedReports, setPinnedReports] = useState<PinnedReport[]>([]);
   const [recommendedWidgets, setRecommendedWidgets] = useState<WidgetRecommendation[]>([]);
+  const [scheduledDeliveries, setScheduledDeliveries] = useState<ScheduledDelivery[]>([]);
+  const [scheduledDeliveriesLoading, setScheduledDeliveriesLoading] = useState(true);
+  const [scheduledDeliveriesError, setScheduledDeliveriesError] = useState(false);
+  const [downloadingDeliveryId, setDownloadingDeliveryId] = useState<string>();
+  const [deliveryDownloadError, setDeliveryDownloadError] = useState(false);
   useEffect(() => {
     Promise.allSettled([getHomeWidgets(), getPinnedReports(), getWidgetRecommendations()]).then(([homeResult, pinnedResult, recommendationsResult]) => {
       if (homeResult.status === 'fulfilled') {
@@ -57,6 +64,17 @@ function AppContent() {
       if (recommendationsResult.status === 'fulfilled') setRecommendedWidgets(recommendationsResult.value.widgets);
     });
   }, []);
+  useEffect(() => {
+    getScheduledDeliveries().then(({ deliveries }) => setScheduledDeliveries(deliveries)).catch(() => setScheduledDeliveriesError(true)).finally(() => setScheduledDeliveriesLoading(false));
+  }, []);
+  const handleDownloadDelivery = async (deliveryId: string) => {
+    setDownloadingDeliveryId(deliveryId); setDeliveryDownloadError(false);
+    try {
+      const result = await downloadScheduledDelivery(deliveryId);
+      const url = URL.createObjectURL(result.blob);
+      const anchor = document.createElement('a'); anchor.href = url; anchor.download = result.fileName || scheduledDeliveries.find((item) => item.id === deliveryId)?.fileName || 'scheduled-delivery'; anchor.click(); URL.revokeObjectURL(url);
+    } catch { setDeliveryDownloadError(true); } finally { setDownloadingDeliveryId(undefined); }
+  };
   const toggleHomeWidget = (id: string) => { const removing = homeWidgetIds.includes(id); (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)).then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } }); };
 
   if (!profile) {
@@ -96,6 +114,12 @@ function AppContent() {
           homeWidgets={homeWidgets}
           pinnedReports={pinnedReports}
           recommendedWidgets={recommendedWidgets}
+          scheduledDeliveries={scheduledDeliveries}
+          scheduledDeliveriesLoading={scheduledDeliveriesLoading}
+          scheduledDeliveriesError={scheduledDeliveriesError}
+          downloadingDeliveryId={downloadingDeliveryId}
+          deliveryDownloadError={deliveryDownloadError}
+          onDownloadDelivery={handleDownloadDelivery}
           widgetData={widgetData}
           widgetLoading={widgetLoading}
           widgetErrors={widgetErrors}

@@ -1,5 +1,6 @@
 import { reportMockProvider } from '@/api/mocks/reportMockProvider';
 import { widgetMockProvider } from '@/api/mocks/widgetMockProvider';
+import { scheduledDeliveryMockProvider } from '@/api/mocks/scheduledDeliveryMockProvider';
 
 export type ApiRequestContext = {
   params: Record<string, string>;
@@ -17,4 +18,6 @@ export const mockProviderRegistry: Record<string, MockProvider> = {
       : widgetMockProvider.addWidgetToHome(params.widgetId),
   pinnedReports: () => reportMockProvider.getPinnedReports(),
   widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations(),
+  scheduledDeliveries: () => scheduledDeliveryMockProvider.getScheduledDeliveries(),
+  scheduledDeliveryDownload: ({ params }) => scheduledDeliveryMockProvider.downloadScheduledDelivery(params.deliveryId),
 };

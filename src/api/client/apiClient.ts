@@ -17,7 +17,7 @@ function getDefinition(name: string): ApiDefinition {
 export async function request<T>(
   name: string,
   params: Record<string, string> = {},
-  options: { body?: unknown; timeoutMs?: number } = {},
+  options: { body?: unknown; timeoutMs?: number; responseType?: 'json' | 'file' } = {},
 ): Promise<T> {
   const definition = getDefinition(name);
   const controller = new AbortController();
@@ -35,6 +35,11 @@ export async function request<T>(
       signal: controller.signal,
     });
     if (!response.ok) throw new ApiError(`API request failed with status ${response.status}`, response.status);
+    if (options.responseType === 'file') {
+      const disposition = response.headers.get('content-disposition') ?? '';
+      const match = disposition.match(/filename="?([^";]+)"?/i);
+      return { blob: await response.blob(), fileName: match?.[1] ?? '', contentType: response.headers.get('content-type') ?? 'application/octet-stream' } as T;
+    }
     return (await response.json()) as T;
   } catch (error) {
     if (error instanceof ApiError) throw error;
