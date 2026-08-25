@@ -18,6 +18,7 @@ export const mockProviderRegistry: Record<string, MockProvider> = {
       ? widgetMockProvider.removeWidgetFromHome(params.widgetId)
       : widgetMockProvider.addWidgetToHome(params.widgetId),
   pinnedReports: () => reportMockProvider.getPinnedReports(),
+  reports: ({ params }) => reportMockProvider.getReports({ params }),
   widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations(),
   scheduledDeliveries: () => scheduledDeliveryMockProvider.getScheduledDeliveries(),
   scheduledDeliveryDownload: ({ params }) => scheduledDeliveryMockProvider.downloadScheduledDelivery(params.deliveryId),

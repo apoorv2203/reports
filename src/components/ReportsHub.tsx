@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getReports } from "@/api/services/reportService";
+import type { ReportRecord } from "@/api/types/report";
 import {
   ArrowLeft,
   ArrowRight,
@@ -137,16 +139,22 @@ export function ReportsHub({
   const [tab, setTab] = useState<"mine" | "catalogue" | "shared">("mine");
   const [query, setQuery] = useState("");
   const [menu, setMenu] = useState<string | null>(null);
+  const [apiReports, setApiReports] = useState<ReportRecord[]>([]);
   const [homeReports, setHomeReports] = useState<string[]>([]);
-  const filtered = useMemo(
-    () =>
-      reports.filter((report) =>
-        `${report.title} ${report.owner} ${report.description}`
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      ),
-    [query],
-  );
+  const [total, setTotal] = useState(0);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    const scope = tab === "mine" ? "MY_REPORTS" : tab === "shared" ? "SHARED_WITH_ME" : undefined;
+    getReports({ search: query || undefined, scope, page: 0, pageSize: 20, sortBy: "updatedAt", sortOrder: "desc" })
+      .then((response) => { setApiReports(response.items); setTotal(response.total); setError(false); })
+      .catch(() => { setApiReports([]); setTotal(0); setError(true); });
+  }, [tab, query]);
+  const filtered = useMemo(() => apiReports.map((report, index) => ({
+    ...report,
+    updated: new Date(report.updatedAt).toLocaleDateString(),
+    status: report.status === "PUBLISHED" ? "Published" as const : "Draft" as const,
+    icon: index % 3 === 1 ? "chart" as const : index % 3 === 2 ? "grid" as const : "file" as const,
+  })), [apiReports]);
   const categoryLabels = [
     t("common.category"),
     t("common.owner"),
