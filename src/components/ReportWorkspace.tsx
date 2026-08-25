@@ -64,15 +64,15 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-border bg-muted p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
-            {!readOnly && <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden">
+            {!readOnly && <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto">
               {messages.length === 0 && <div className="rounded-[24px] border border-dashed border-border bg-transparent px-8 py-8 text-[15px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</div>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-foreground px-3.5 py-3 text-[13px] font-medium leading-relaxed text-background">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-primary"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
-              <div className="mt-6 border-t border-border pt-6">
-                <div className="text-[15px] font-bold text-muted-foreground">{t('workspace.tryNext')}</div>
-                <div className="mt-5 flex flex-col gap-4">
-                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item" className="min-h-20 rounded-[16px] border border-border bg-card px-6 py-4 text-[15px] leading-relaxed text-foreground shadow-none">{suggestion}</AppButton>)}
+              <div className="mt-6 border-t border-border pt-4">
+                <div className="text-[12px] font-bold text-muted-foreground">{t('workspace.tryNext')}</div>
+                <div className="mt-2 flex flex-col gap-2">
+                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item" className="rounded-lg border border-border bg-card px-3 py-2.5 text-left text-[12px] font-medium leading-relaxed text-foreground shadow-none hover:border-primary hover:bg-accent">{suggestion}</AppButton>)}
                 </div>
               </div>
             </div>}
