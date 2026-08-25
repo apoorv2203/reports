@@ -162,8 +162,8 @@ export function ReportsHub({
     t("common.updated"),
   ];
   return (
-    <div className="flex h-full flex-col bg-white text-navy-900">
-      <header className="border-b border-surface-200 bg-white px-6 pb-0 pt-5 lg:px-8">
+    <div className="flex h-full flex-col bg-card text-foreground">
+      <header className="border-b border-border bg-card px-6 pb-0 pt-5 lg:px-8">
         <div className="flex items-start justify-between gap-6">
           <div>
             <div className="flex items-center gap-2">
@@ -179,12 +179,12 @@ export function ReportsHub({
                 {t("reports.browse")}
               </h1>
             </div>
-            <p className="mt-1 pl-9 text-[13px] text-ink-500">
+            <p className="mt-1 pl-9 text-[13px] text-muted-foreground">
               {t("reports.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2.5 text-ink-300 md:flex">
+            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-muted-foreground md:flex">
               <Search className="h-4 w-4" />
               <span className="sr-only">{t("reports.searchLabel")}</span>
 <AppInput
@@ -227,10 +227,10 @@ export function ReportsHub({
             size="pill"
           >
               {label}
-              <ChevronDown className="h-3.5 w-3.5 text-ink-400" />
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             </AppButton>
           ))}
-          <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
+          <div className="ml-auto flex items-center gap-2 text-[12px] text-muted-foreground">
             {t("common.sortBy")}
             <AppButton variant="secondary" size="filter">
               {t("common.recentlyUpdated")}
@@ -244,7 +244,7 @@ export function ReportsHub({
             </AppButton>
           </div>
         </div>
-        <p className="mt-5 text-[13px] text-ink-500">
+        <p className="mt-5 text-[13px] text-muted-foreground">
           {t("reports.reportCount")}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -274,7 +274,7 @@ export function ReportsHub({
             />
           ))}
         </div>
-        <div className="flex items-center justify-between py-7 text-[12px] text-ink-500">
+        <div className="flex items-center justify-between py-7 text-[12px] text-muted-foreground">
           <span>{t("reports.showingRange")}</span>
           <div className="flex items-center gap-2">
             <AppButton variant="secondary" size="pagination">
@@ -366,24 +366,24 @@ function ReportCard({
           </AppButton>
         </div>
       </div>
-      <h2 className="mt-3 text-[14px] font-bold tracking-[-0.02em] text-navy-900">
+      <h2 className="mt-3 text-[14px] font-bold tracking-[-0.02em] text-foreground">
         {report.title}
       </h2>
-      <p className="mt-1 min-h-8 text-[11px] leading-4 text-ink-500">
+      <p className="mt-1 min-h-8 text-[11px] leading-4 text-muted-foreground">
         {report.description}
       </p>
-      <div className="mt-auto flex flex-col gap-3 pt-3 text-[9px] text-ink-500">
+      <div className="mt-auto flex flex-col gap-3 pt-3 text-[9px] text-muted-foreground">
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface-100 text-[8px] font-bold text-navy-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold text-foreground">
               {report.initials}
             </span>
-            <span className="font-semibold text-ink-500">
+            <span className="font-semibold text-muted-foreground">
               {report.owner} ·{" "}
               {t("reports.updatedMeta", { time: report.updated })}
             </span>
           </span>
-          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-mint-700">
+          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-primary">
             <LockKeyhole className="h-3.5 w-3.5" /> {t("reports.private")}
           </span>
         </div>
@@ -427,7 +427,7 @@ function ReportMenu({ onOpen }: { onOpen: () => void }) {
     [t("common.delete"), Trash2],
   ];
   return (
-    <div className="absolute bottom-14 right-4 z-20 w-44 overflow-hidden rounded-lg border border-surface-200 bg-white py-1 shadow-floaty">
+    <div className="absolute bottom-14 right-4 z-20 w-44 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-floaty">
       {items.map(([label, Icon]) => (
         <AppButton
           key={String(label)}

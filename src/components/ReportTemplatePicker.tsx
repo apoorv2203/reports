@@ -49,7 +49,7 @@ export function ReportTemplatePicker({
             <Search className="h-4 w-4" />
             <AppInput size="report-search" placeholder={t('reports.searchTemplates')} />
           </div>
-          <span className="text-[12px] font-medium text-ink-500">{reportTemplates.length} templates</span>
+          <span className="text-[12px] font-medium text-muted-foreground">{reportTemplates.length} templates</span>
         </div>
 
         <div className="mt-5 grid grid-cols-4 gap-5">
@@ -76,11 +76,11 @@ function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSele
         <span className="absolute left-3 top-3"><AppBadge variant="success" size="status">{template.category}</AppBadge></span>
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-ink-900">{template.name}</h3>
-        <p className="mt-1.5 flex-1 text-[12px] leading-relaxed text-ink-500">{template.description}</p>
-        <div className="mt-4 flex items-center justify-between text-[11px] font-medium text-ink-300">
+        <h3 className="font-display text-[15px] font-bold tracking-[-0.02em] text-foreground">{template.name}</h3>
+        <p className="mt-1.5 flex-1 text-[12px] leading-relaxed text-muted-foreground">{template.description}</p>
+        <div className="mt-4 flex items-center justify-between text-[11px] font-medium text-muted-foreground">
           <span>{template.updated}</span>
-          <ArrowRight className="h-4 w-4 text-ink-300 transition group-hover:translate-x-1 group-hover:text-mint-600" />
+          <ArrowRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
         </div>
       </div>
     </AppCard></AppButton>

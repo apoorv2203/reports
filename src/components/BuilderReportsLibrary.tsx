@@ -118,9 +118,9 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
   return (
     <AppCard variant="report" density="builder-report">
       <div><AppBadge variant={report.category === 'Delinquency' ? 'danger' : report.category === 'Compliance' ? 'warning' : report.category === 'Operations' ? 'chart' : 'success'} size="category">{report.category}</AppBadge></div>
-      <h2 className="mt-4 text-balance font-display text-[19px] font-bold tracking-[-0.03em] text-ink-900">{report.title}</h2>
-      <p className="mt-2 flex-1 text-[14px] leading-relaxed text-ink-500">{report.description}</p>
-      <div className="mt-5 flex items-center gap-2 text-[12px] font-medium text-ink-300"><CalendarDays className="h-4 w-4" /><span>{report.cadence} · {t('reports.publishedBy')} {report.publisher}</span></div>
+      <h2 className="mt-4 text-balance font-display text-[19px] font-bold tracking-[-0.03em] text-foreground">{report.title}</h2>
+      <p className="mt-2 flex-1 text-[14px] leading-relaxed text-muted-foreground">{report.description}</p>
+      <div className="mt-5 flex items-center gap-2 text-[12px] font-medium text-muted-foreground"><CalendarDays className="h-4 w-4" /><span>{report.cadence} · {t('reports.publishedBy')} {report.publisher}</span></div>
       <div className="mt-5 flex items-center gap-2">
         {report.ownedByYou ? (
           <>
@@ -134,7 +134,7 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
           </>
         )}
       </div>
-      {report.ownedByYou && <p className="mt-3 text-center text-[11px] font-semibold text-ink-300">{report.published ? t('reports.publishedByYou') : t('reports.privateDraft')}</p>}
+      {report.ownedByYou && <p className="mt-3 text-center text-[11px] font-semibold text-muted-foreground">{report.published ? t('reports.publishedByYou') : t('reports.privateDraft')}</p>}
     </AppCard>
   );
 }
