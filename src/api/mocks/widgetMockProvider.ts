@@ -1,4 +1,4 @@
-import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse, WidgetRecommendationsResponse } from '@/api/types/widget';
+import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse, WidgetRecommendationsResponse, WidgetsResponse, WidgetScope, Widget } from '@/api/types/widget';
 
 const homeWidgets = [
   { id: 'approval', kind: 'TABLE' as const, title: 'Approval performance', description: 'This month', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated today', privacy: 'Private' as const },
@@ -14,6 +14,15 @@ const dataById: Record<string, WidgetData> = {
   'npa-trend': { type: 'CHART', chartType: 'LINE', labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], series: [{ name: 'NPA %', data: [3.2, 3.4, 3.1, 3.6, 3.3, 3.8, 3.5] }] },
   'loan-region': { type: 'CHART', chartType: 'LINE', labels: ['North', 'West', 'South', 'East'], series: [{ name: 'Loan book', data: [42, 28, 19, 11] }] },
 };
+const libraryWidgets: Widget[] = [
+  { id: 'approval', kind: 'TABLE', title: 'Approval performance', description: 'This month', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated today', privacy: 'Private' },
+  { id: 'branch-performance', kind: 'TABLE', title: 'Branch performance summary', description: 'This month', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated today', privacy: 'Private' },
+  { id: 'npa-trend', kind: 'CHART', title: 'NPA trend', description: 'Last 7 months', owner: 'Risk analytics', initials: 'RA', updated: 'Updated today', privacy: 'Shared' },
+  { id: 'loan-region', kind: 'CHART', title: 'Loan book by region', description: 'Current portfolio', owner: 'Finance team', initials: 'FT', updated: 'Updated today', privacy: 'Shared' },
+  { id: 'catalogue-approval', kind: 'TABLE', title: 'Approval rate by product', description: 'Approval rate (%) by product and customer segment.', owner: 'You', initials: 'RA', updated: 'Updated 2h ago', privacy: 'Catalogue' },
+  { id: 'catalogue-npa', kind: 'CHART', title: 'NPA trend over time', description: 'Gross NPA (%) trend over the last 12 months.', owner: 'Anita Gupta', initials: 'AG', updated: 'Updated 1d ago', privacy: 'Catalogue' },
+  { id: 'shared-collection', kind: 'CHART', title: 'Collection efficiency trend', description: 'Collection efficiency (%) trend over time.', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated 2d ago', privacy: 'Shared' },
+];
 const recommendations: WidgetRecommendationsResponse = { widgets: [
   { id: 'emi-bucket', kind: 'CHART', title: 'EMI collection by bucket', description: 'Collection distribution by bucket.', owner: 'Risk analytics', initials: 'RA', updated: 'Updated today', privacy: 'Catalogue' },
   { id: 'recommended-region', kind: 'CHART', title: 'Loan book by region', description: 'Loan book distribution across regions.', owner: 'Finance team', initials: 'FT', updated: 'Updated today', privacy: 'Catalogue' },
@@ -21,5 +30,11 @@ const recommendations: WidgetRecommendationsResponse = { widgets: [
 ] };
 const readState = () => [...homeWidgetIds];
 const writeState = (ids: string[]) => { homeWidgetIds = [...ids]; };
+const getWidgets = async (scope: WidgetScope, options: { search?: string; page?: number; pageSize?: number } = {}): Promise<WidgetsResponse> => {
+  const items = libraryWidgets.filter((widget) => scope === 'MY_WIDGETS' ? homeWidgetIds.includes(widget.id) : scope === 'SHARED_WITH_ME' ? widget.privacy === 'Shared' : widget.privacy === 'Catalogue');
+  const filtered = options.search ? items.filter((widget) => `${widget.title} ${widget.description} ${widget.owner}`.toLowerCase().includes(options.search!.toLowerCase())) : items;
+  const page = options.page ?? 0; const pageSize = options.pageSize ?? 20;
+  return { items: filtered.slice(page * pageSize, (page + 1) * pageSize).map((widget) => ({ ...widget, isOnHome: undefined } as Widget)), page, pageSize, total: filtered.length };
+};
 const response = (): HomeWidgetsResponse => ({ widgets: homeWidgets.map((widget) => ({ ...widget, isOnHome: homeWidgetIds.includes(widget.id) })) });
-export const widgetMockProvider = { getHomeWidgets: async () => response(), getWidgetRecommendations: async () => recommendations, getWidgetData: async (widgetId: string) => { await new Promise((resolve) => setTimeout(resolve, 180 + Math.random() * 260)); const data = dataById[widgetId]; if (!data) throw new Error('Widget data unavailable'); return data; }, addWidgetToHome: async (widgetId: string): Promise<WidgetMutationResponse> => { const ids = readState(); if (!ids.includes(widgetId)) writeState([...ids, widgetId]); return response(); }, removeWidgetFromHome: async (widgetId: string): Promise<WidgetMutationResponse> => { writeState(readState().filter((id) => id !== widgetId)); return response(); } };
+export const widgetMockProvider = { getWidgets, getHomeWidgets: async () => response(), getWidgetRecommendations: async () => recommendations, getWidgetData: async (widgetId: string) => { await new Promise((resolve) => setTimeout(resolve, 180 + Math.random() * 260)); const data = dataById[widgetId]; if (!data) throw new Error('Widget data unavailable'); return data; }, addWidgetToHome: async (widgetId: string): Promise<WidgetMutationResponse> => { const ids = readState(); if (!ids.includes(widgetId)) writeState([...ids, widgetId]); return response(); }, removeWidgetFromHome: async (widgetId: string): Promise<WidgetMutationResponse> => { writeState(readState().filter((id) => id !== widgetId)); return response(); } };

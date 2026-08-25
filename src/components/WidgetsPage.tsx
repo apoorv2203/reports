@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ChartBar as BarChart3,
   Bookmark,
@@ -20,11 +20,7 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import {
-  myWidgets,
-  recommendedWidgets,
-  type Widget,
-} from "@/data/homeData";
+import { getWidgetData, getWidgets, type Widget } from "@/api/services/widgetService";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppBadge } from "@/components/app/AppBadge";
@@ -52,7 +48,8 @@ const categories: Category[] = [
   "Sales",
   "Operations",
 ];
-const catalogueWidgets: Widget[] = [
+/* legacy catalogue fixtures removed; API is the source of truth */
+/*
   {
     id: "catalogue-approval",
     kind: "TABLE",
@@ -103,44 +100,8 @@ const catalogueWidgets: Widget[] = [
   },
   ...recommendedWidgets,
 ];
-const sharedWidgets: Widget[] = [
-  {
-    id: "shared-npa",
-    kind: "CHART",
-    title: "NPA trend over time",
-    description: "Gross NPA (%) trend over the last 12 months.",
-    owner: "Anita Gupta",
-    initials: "AG",
-    updated: "Updated 1d ago",
-    privacy: "Shared",
-    preview: "line",
-    accent: "blue",
-  },
-  {
-    id: "shared-collection",
-    kind: "CHART",
-    title: "Collection efficiency trend",
-    description: "Collection efficiency (%) trend over time.",
-    owner: "Rohit Mehta",
-    initials: "RM",
-    updated: "Updated 2d ago",
-    privacy: "Shared",
-    preview: "bars",
-    accent: "violet",
-  },
-  {
-    id: "shared-loan-book",
-    kind: "CHART",
-    title: "Loan book by region",
-    description: "Loan book (%) distribution across regions.",
-    owner: "Anita Gupta",
-    initials: "AG",
-    updated: "Updated 6d ago",
-    privacy: "Shared",
-    preview: "donut",
-    accent: "violet",
-  },
-];
+*/
+/* shared fixtures removed; API is the source of truth */
 
 export function WidgetsPage({
   onBack,
@@ -151,6 +112,9 @@ export function WidgetsPage({
 }: Props) {
   const t = useT();
   const [tab, setTab] = useState<"mine" | "catalogue" | "shared">("mine");
+  const [apiWidgets, setApiWidgets] = useState<Widget[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [category, setCategory] = useState<Category>("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState(t("common.recentlyUpdated"));
@@ -159,28 +123,21 @@ export function WidgetsPage({
   const [shareWidget, setShareWidget] = useState<Widget | null>(null);
   const [publishWidget, setPublishWidget] = useState<Widget | null>(null);
   const [viewWidget, setViewWidget] = useState<Widget | null>(null);
+  const [viewData, setViewData] = useState<import('@/api/types/widget').WidgetData>();
+  const [viewLoading, setViewLoading] = useState(false);
   const [added, setAdded] = useState<string[]>([
     "disbursed",
     "approval",
     "npa-trend",
   ]);
   const [removedFromHome, setRemovedFromHome] = useState<string[]>([]);
-  const source = (
-    tab === "mine"
-      ? myWidgets
-      : tab === "catalogue"
-        ? catalogueWidgets
-        : sharedWidgets
-  ).filter((widget) => tab !== "mine" || !removedFromHome.includes(widget.id));
-  const widgets = useMemo(
-    () =>
-      source.filter((widget) =>
-        `${widget.title} ${widget.description} ${widget.owner}`
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      ),
-    [source, query],
-  );
+  useEffect(() => {
+    const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
+    setLoading(true); setError(false);
+    getWidgets(scope, { search: query || undefined }).then(({ items }) => setApiWidgets(items)).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
+  }, [tab, query]);
+  const source = apiWidgets;
+  const widgets = useMemo(() => source, [source]);
 
   function addToHome(id: string) {
     setAdded((current) =>
@@ -283,9 +240,9 @@ export function WidgetsPage({
             </div>
           </div>
         </div>
-        <div
-          className={`mt-5 grid gap-4 ${list ? "grid-cols-1" : "sm:grid-cols-2 xl:grid-cols-4"}`}
-        >
+        {loading && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Loading widgets…</AppCard>}
+        {error && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Unable to load widgets.</AppCard>}
+        {!loading && !error && <div className={`mt-5 grid gap-4 ${list ? "grid-cols-1" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
           {widgets.map((widget) => (
             <WidgetCard
               key={widget.id}
@@ -305,13 +262,13 @@ export function WidgetsPage({
                 setMenuId(null);
                 setPublishWidget(widget);
               }}
-              onView={() => setViewWidget(widget)}
+              onView={() => { setViewWidget(widget); setViewLoading(true); getWidgetData(widget.id).then(setViewData).finally(() => setViewLoading(false)); }}
               onEdit={() => onEditWidget(widget)}
               onRemove={() => onToggleHomeWidget(widget.id)}
             />
           ))}
-        </div>
-        {!widgets.length && (
+        </div>}
+        {!loading && !error && !widgets.length && (
           <AppCard variant="default" className="mt-5 rounded-lg border-dashed px-6 py-16 text-center text-[13px] text-ink-500">
             {t("widgets.noMatch")}
           </AppCard>
@@ -906,7 +863,7 @@ function ShareToCatalogueModal({
 
 function Preview({ widget }: { widget: Widget }) {
   const t = useT();
-  if (widget.preview === "table")
+  if (widget.kind === "TABLE")
     return (
       <div className="mt-3 overflow-hidden rounded-md border border-surface-100 text-[8px]">
         <div className="grid grid-cols-2 bg-surface-50 px-2 py-1 font-bold text-ink-500">
@@ -931,7 +888,7 @@ function Preview({ widget }: { widget: Widget }) {
         ))}
       </div>
     );
-  if (widget.preview === "donut")
+  if (widget.kind === "CHART")
     return (
       <div className="mt-3 flex h-[74px] items-center justify-center gap-3">
         <div className="donut-chart violet" />
@@ -944,7 +901,7 @@ function Preview({ widget }: { widget: Widget }) {
         </div>
       </div>
     );
-  if (widget.preview === "bars")
+  if (widget.kind === "CHART")
     return (
       <div className="mt-3 flex h-[74px] items-end gap-2 border-b border-surface-200 px-3">
         {[42, 60, 48, 76, 66, 71].map((height) => (

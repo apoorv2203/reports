@@ -10,6 +10,7 @@ export type ApiRequestContext = {
 export type MockProvider = (context: ApiRequestContext) => Promise<unknown>;
 
 export const mockProviderRegistry: Record<string, MockProvider> = {
+  widgets: ({ params }) => widgetMockProvider.getWidgets(params.scope as import('@/api/types/widget').WidgetScope, params),
   homeWidgets: () => widgetMockProvider.getHomeWidgets(),
   widgetData: ({ params }) => widgetMockProvider.getWidgetData(params.widgetId),
   widgetMutations: ({ params, body }) =>

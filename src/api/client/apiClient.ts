@@ -17,7 +17,7 @@ function getDefinition(name: string): ApiDefinition {
 export async function request<T>(
   name: string,
   params: Record<string, string> = {},
-  options: { body?: unknown; timeoutMs?: number; responseType?: 'json' | 'file' } = {},
+  options: { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown; timeoutMs?: number; responseType?: 'json' | 'file' } = {},
 ): Promise<T> {
   const definition = getDefinition(name);
   const controller = new AbortController();
@@ -29,7 +29,7 @@ export async function request<T>(
       return (await provider({ params, body: options.body })) as T;
     }
     const response = await fetch(apiUrl(definition, params), {
-      method: options.body ? 'POST' : 'GET',
+      method: options.method ?? (options.body ? 'POST' : 'GET'),
       headers: { 'Content-Type': 'application/json' },
       body: options.body ? JSON.stringify(options.body) : undefined,
       signal: controller.signal,

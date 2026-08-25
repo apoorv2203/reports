@@ -8,7 +8,10 @@ export type Widget = {
   initials: string;
   updated: string;
   privacy: 'Private' | 'Shared' | 'Catalogue';
+  isOnHome?: boolean;
 };
+export type WidgetScope = 'MY_WIDGETS' | 'CATALOGUE' | 'SHARED_WITH_ME';
+export type WidgetsResponse = { items: Widget[]; page: number; pageSize: number; total: number };
 export type HomeWidget = Widget & { isOnHome: boolean };
 export type TableWidgetData = { type: 'TABLE'; columns: string[]; rows: (string | number)[][] };
 export type ChartWidgetData = { type: 'CHART'; chartType: 'LINE'; labels: string[]; series: { name: string; data: number[] }[] };
@@ -17,4 +20,5 @@ export type HomeWidgetsResponse = { widgets: HomeWidget[] };
 export type WidgetMutationResponse = HomeWidgetsResponse;
 export type WidgetRecommendation = Widget;
 export type WidgetRecommendationsResponse = { widgets: WidgetRecommendation[] };
-export type WidgetApi = { getHomeWidgets(): Promise<HomeWidgetsResponse>; getWidgetRecommendations(): Promise<WidgetRecommendationsResponse>; getWidgetData(widgetId: string): Promise<WidgetData>; addWidgetToHome(widgetId: string): Promise<WidgetMutationResponse>; removeWidgetFromHome(widgetId: string): Promise<WidgetMutationResponse> };
+export type WidgetApi = { getWidgets(scope: WidgetScope, options?: { search?: string; page?: number; pageSize?: number }): Promise<WidgetsResponse>; getHomeWidgets(): Promise<HomeWidgetsResponse>; getWidgetRecommendations(): Promise<WidgetRecommendationsResponse>; getWidgetData(widgetId: string): Promise<WidgetData>; addWidgetToHome(widgetId: string): Promise<WidgetMutationResponse>; removeWidgetFromHome(widgetId: string): Promise<WidgetMutationResponse> };
+export type { Widget as LibraryWidget };
