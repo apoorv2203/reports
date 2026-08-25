@@ -64,10 +64,6 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <AppButton variant="primary" size="icon-sm" onClick={onBack} aria-label={t('common.back')}><ArrowLeft /></AppButton>
           <span className="h-5 w-px bg-border" />
           <span className="font-display text-[16px] font-bold text-foreground">ReportIQ</span>
-          <span className="text-muted-foreground">/</span>
-          <span className="hidden text-[13px] text-muted-foreground sm:inline">{t('workspace.myReports')}</span>
-          <span className="hidden text-muted-foreground sm:inline">/</span>
-          <span className="truncate text-[13px] font-semibold text-foreground">{title}</span>
           <AppBadge variant={publishedParameters ? 'success' : 'warning'} size="status">{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</AppBadge>
         </div>
         <div className="flex shrink-0 items-center gap-2">
