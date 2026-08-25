@@ -255,7 +255,7 @@ export function HomePage({
                   variant="ghost"
                   type="button"
                   onClick={onCreateReport}
-                  size="action-md" className="mt-3 w-full justify-center border-t border-surface-100 bg-foreground pt-3 text-background hover:bg-foreground/90"
+                  size="link-sm" className="mt-3 w-full justify-center border-t border-surface-100 pt-3"
                 >
                   <Plus data-icon="inline-start" /> {t("home.createReportFromTemplate")}
                 </AppButton>
