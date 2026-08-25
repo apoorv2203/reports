@@ -1,4 +1,3 @@
-import { myWidgets } from '@/data/homeData';
 import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse, WidgetRecommendationsResponse } from '@/api/types/widget';
 
 const homeDefaults = new Set(['approval', 'npa-trend', 'loan-region', 'branch-performance']);
