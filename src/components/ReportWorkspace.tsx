@@ -4,7 +4,7 @@ import { AppButton } from '@/components/app/AppButton';
 import { AppCard } from '@/components/app/AppCard';
 import { AppInput } from '@/components/app/AppInput';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDownToLine, ArrowLeft, ArrowUpRight, ChartBar as BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpRight, ChartBar as BarChart3, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2 } from 'lucide-react';
 import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
@@ -57,19 +57,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-card">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-5 text-foreground shadow-sm">
-        <div className="flex min-w-0 items-center gap-3">
-          <AppButton variant="primary" size="icon-sm" onClick={onBack} aria-label={t('common.back')}><ArrowLeft /></AppButton>
-          <span className="h-5 w-px bg-border" />
-          <span className="font-display text-[16px] font-bold text-foreground">ReportIQ</span>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <AppButton variant="primary" size="report-header" type="button" onClick={onBrowseReports} className="hidden sm:inline-flex"><BookOpen /> {t('workspace.reports')}</AppButton>
-          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label={t('common.close')}><X /></AppButton>
-        </div>
-      </header>
-
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-card">
       <ResizableThreePane
         leftLabel={t('workspace.editingReport')}
         rightLabel={t('workspace.actions')}
