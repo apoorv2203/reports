@@ -63,7 +63,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         rightLabel={t('workspace.actions')}
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-border bg-muted p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
-            {!readOnly && <div className="flex min-h-8 items-center gap-3 pr-12 font-display text-[14px] font-bold uppercase tracking-[0.12em] text-foreground"><MessageSquare className="size-6 shrink-0 text-primary" /> {t('workspace.editing')}</div>}
+            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
             {!readOnly && <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden">
               {messages.length === 0 && <div className="rounded-[24px] border border-dashed border-border bg-transparent px-8 py-8 text-[15px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</div>}
               <div className="flex flex-col gap-3">
