@@ -45,7 +45,7 @@ export function BuilderReportsLibrary({
       const matchesSearch = !query || `${report.title} ${report.description} ${report.publisher}`.toLowerCase().includes(query);
       return matchesTab && matchesCategory && matchesSearch;
     });
-  }, [category, reports, search, tab]);
+  }, [allCategory, category, reports, search, tab]);
 
   function openReport(report: LibraryReport) {
     onOpenReport(reportTemplates.find((template) => template.id === report.templateId) ?? reportTemplates[0], report);
