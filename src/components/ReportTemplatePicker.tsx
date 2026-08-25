@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { ArrowRight, BookOpen, Search } from 'lucide-react';
 import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
 import { AppCard } from '@/components/app/AppCard';
 import { AppBadge } from '@/components/app/AppBadge';
-import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
+import type { ReportTemplate } from '@/data/reportTemplates';
+import { getReportTemplates } from '@/api/services/reportService';
 import { useT } from '@/providers/I18nProvider';
 
 export function ReportTemplatePicker({
@@ -16,6 +18,11 @@ export function ReportTemplatePicker({
   onBrowseReports: () => void;
 }) {
   const t = useT();
+  const [templates, setTemplates] = useState<ReportTemplate[]>([]);
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates([]));
+  }, [search]);
 
   return (
     <div className="rb-overlay fixed inset-0 z-50 overflow-y-auto bg-background" role="dialog" aria-modal="true">
@@ -47,13 +54,13 @@ export function ReportTemplatePicker({
         <div className="mt-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
             <Search className="h-4 w-4" />
-            <AppInput size="report-search" placeholder={t('reports.searchTemplates')} />
+            <AppInput size="report-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('reports.searchTemplates')} />
           </div>
-          <span className="text-[12px] font-medium text-muted-foreground">{reportTemplates.length} templates</span>
+          <span className="text-[12px] font-medium text-muted-foreground">{templates.length} templates</span>
         </div>
 
         <div className="mt-5 grid grid-cols-4 gap-5">
-          {reportTemplates.map((template) => (
+          {templates.map((template) => (
             <TemplateCard key={template.id} template={template} onSelect={onSelect} />
           ))}
         </div>

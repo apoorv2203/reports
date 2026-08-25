@@ -1,6 +1,5 @@
-import type { PinnedReportsResponse } from '@/api/types/report';
-
-import type { ReportRecord, ReportsResponse } from '@/api/types/report';
+import type { PinnedReportsResponse, ReportRecord, ReportsResponse } from '@/api/types/report';
+import { reportTemplates } from '@/data/reportTemplates';
 
 const records: ReportRecord[] = [
   { id: 'q2', title: 'Q2 branch review', description: 'Comprehensive review of branch performance and key metrics for Q2.', owner: 'You', initials: 'RA', status: 'PUBLISHED', privacy: 'PRIVATE', updatedAt: '2026-08-25T07:00:00Z', templateId: 'branch' },
@@ -14,6 +13,11 @@ const records: ReportRecord[] = [
 ];
 
 export const reportMockProvider = {
+  getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}) => {
+    const search = (params.search ?? '').toLowerCase();
+    const items = reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
+    return { items, page: Number(params.page ?? 0), pageSize: Number(params.pageSize ?? items.length), total: items.length };
+  },
   createReport: async (payload: { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }) => ({ id: `rpt-${Date.now()}`, title: payload.title, status: 'DRAFT' as const, createdAt: new Date().toISOString() }),
   getReports: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportsResponse> => {
     const search = (params.search ?? '').toLowerCase();
