@@ -22,11 +22,8 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import {
-  scheduledDeliveries,
-  type Widget,
-} from "@/data/homeData";
-import type { HomeWidget, WidgetData, WidgetRecommendation } from "@/api/services/widgetService";
+import { scheduledDeliveries } from "@/data/homeData";
+import type { HomeWidget, Widget, WidgetData, WidgetRecommendation } from "@/api/services/widgetService";
 import type { PinnedReport } from "@/api/types/report";
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";

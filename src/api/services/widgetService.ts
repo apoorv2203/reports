@@ -12,4 +12,4 @@ export const getWidgetData = async (widgetId: string) => requireResponse<WidgetD
 export const addWidgetToHome = (widgetId: string) => request<HomeWidgetsResponse>('widgetMutations', { widgetId }, { body: { action: 'add' } });
 export const removeWidgetFromHome = (widgetId: string) => request<HomeWidgetsResponse>('widgetMutations', { widgetId }, { body: { action: 'remove' } });
 export const isWidgetOnHome = async (widgetId: string) => (await getHomeWidgets()).widgets.some((widget) => widget.id === widgetId && widget.isOnHome);
-export type { HomeWidget, WidgetData, WidgetKind, WidgetRecommendation } from '@/api/types/widget';
+export type { HomeWidget, Widget, WidgetData, WidgetKind, WidgetRecommendation } from '@/api/types/widget';
