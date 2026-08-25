@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useT } from '@/providers/I18nProvider';
 import { AppButton } from '@/components/app/AppButton';
-import { AppBadge } from '@/components/app/AppBadge';
 import { AppCard } from '@/components/app/AppCard';
 import { AppInput } from '@/components/app/AppInput';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,7 +63,6 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <AppButton variant="primary" size="icon-sm" onClick={onBack} aria-label={t('common.back')}><ArrowLeft /></AppButton>
           <span className="h-5 w-px bg-border" />
           <span className="font-display text-[16px] font-bold text-foreground">ReportIQ</span>
-          <AppBadge variant={publishedParameters ? 'success' : 'warning'} size="status">{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</AppBadge>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <AppButton variant="primary" size="report-header" type="button" onClick={onBrowseReports} className="hidden sm:inline-flex"><BookOpen /> {t('workspace.reports')}</AppButton>
