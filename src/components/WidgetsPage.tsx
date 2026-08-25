@@ -36,7 +36,7 @@ type Props = {
   onEditWidget: (widget: Widget) => void;
   onNewWidget: () => void;
   homeWidgetIds: string[];
-  onToggleHomeWidget: (id: string) => void;
+  onToggleHomeWidget: (id: string) => Promise<void>;
 };
 type Category =
   "All" | "Lending" | "Risk" | "Collections" | "Sales" | "Operations";
@@ -71,12 +71,24 @@ export function WidgetsPage({
   const [viewWidget, setViewWidget] = useState<Widget | null>(null);
   const [viewData, setViewData] = useState<import('@/api/types/widget').WidgetData>();
   const [viewLoading, setViewLoading] = useState(false);
+  const [homeActionId, setHomeActionId] = useState<string | null>(null);
+  const [homeActionError, setHomeActionError] = useState<string | null>(null);
   useEffect(() => {
     const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
     setLoading(true); setError(false);
     getWidgets(scope, { search: query || undefined }).then(({ items }) => setApiWidgets(items)).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
   }, [tab, query]);
   const source = apiWidgets;
+  const toggleWidgetHome = async (widget: Widget) => {
+    if (homeActionId) return;
+    setHomeActionId(widget.id); setHomeActionError(null);
+    try {
+      await onToggleHomeWidget(widget.id);
+      const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
+      const { items } = await getWidgets(scope, { search: query || undefined });
+      setApiWidgets(items);
+    } catch { setHomeActionError(widget.id); } finally { setHomeActionId(null); }
+  };
   const widgets = useMemo(() => source, [source]);
 
   return (
@@ -174,6 +186,7 @@ export function WidgetsPage({
         </div>
         {loading && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Loading widgets…</AppCard>}
         {error && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">Unable to load widgets.</AppCard>}
+        {homeActionError && <p role="alert" className="mt-3 text-[11px] text-danger-600">Unable to update Home status. Please try again.</p>}
         {!loading && !error && <div className={`mt-5 grid gap-4 ${list ? "grid-cols-1" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
           {widgets.map((widget) => (
             <WidgetCard
@@ -184,8 +197,9 @@ export function WidgetsPage({
                 event.stopPropagation();
                 setMenuId(menuId === widget.id ? null : widget.id);
               }}
-              added={widget.isOnHome ?? homeWidgetIds.includes(widget.id)}
-              onAdd={() => onToggleHomeWidget(widget.id)}
+              added={Boolean(widget.isOnHome)}
+              pending={homeActionId === widget.id}
+              onAdd={() => toggleWidgetHome(widget)}
               onShare={() => {
                 setMenuId(null);
                 setShareWidget(widget);
@@ -246,6 +260,7 @@ function WidgetCard({
   onEdit,
   onRemove,
   added,
+  pending,
 }: {
   widget: Widget;
   menuOpen: boolean;
@@ -257,6 +272,7 @@ function WidgetCard({
   onEdit: () => void;
   onRemove: () => void;
   added: boolean;
+  pending: boolean;
 }) {
   const t = useT();
   return (
@@ -327,15 +343,16 @@ function WidgetCard({
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
         <AppButton
-          variant={added ? "primary" : "secondary"}
+          variant={added ? "success-outline" : "secondary"}
           type="button"
+          disabled={pending}
           onClick={(event) => {
             event.stopPropagation();
             onAdd();
           }}
           className="flex-1 py-2 text-[10px] font-bold"
         >
-          <Bookmark data-icon="inline-start" /> {added ? t("home.addedToHome") : t("home.addToHome")}
+          <Bookmark data-icon="inline-start" /> {pending ? "Updating…" : added ? t("home.addedToHome") : t("home.addToHome")}
         </AppButton>
         <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
           <Ellipsis />

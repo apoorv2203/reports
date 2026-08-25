@@ -14,7 +14,7 @@ export const mockProviderRegistry: Record<string, MockProvider> = {
   homeWidgets: () => widgetMockProvider.getHomeWidgets(),
   widgetData: ({ params }) => widgetMockProvider.getWidgetData(params.widgetId),
   widgetMutations: ({ params, body }) =>
-    body && (body as { action?: string }).action === 'remove'
+    body && (body as { action?: string }).action === 'REMOVE'
       ? widgetMockProvider.removeWidgetFromHome(params.widgetId)
       : widgetMockProvider.addWidgetToHome(params.widgetId),
   pinnedReports: () => reportMockProvider.getPinnedReports(),

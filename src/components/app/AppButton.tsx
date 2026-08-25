@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'icon' | 'compact';
+  variant?: 'primary' | 'secondary' | 'success-outline' | 'ghost' | 'danger' | 'icon' | 'compact';
   active?: boolean;
   size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action';
 };
@@ -13,6 +13,7 @@ type PrimitiveButtonSize = 'default' | 'sm' | 'icon';
 const variants: Record<NonNullable<AppButtonProps['variant']>, { variant: PrimitiveButtonVariant; size: PrimitiveButtonSize; className?: string }> = {
   primary: { variant: 'default', size: 'default', className: 'bg-primary text-primary-foreground hover:bg-primary/80' },
   secondary: { variant: 'outline', size: 'default', className: 'border-border text-foreground hover:bg-muted' },
+  'success-outline': { variant: 'outline', size: 'default', className: 'border-success bg-success-bg text-success hover:bg-success-light' },
   ghost: { variant: 'ghost', size: 'default', className: 'text-foreground hover:text-primary' },
   danger: { variant: 'destructive', size: 'default' },
   icon: { variant: 'ghost', size: 'icon' },

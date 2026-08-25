@@ -75,7 +75,7 @@ function AppContent() {
       const anchor = document.createElement('a'); anchor.href = url; anchor.download = result.fileName || scheduledDeliveries.find((item) => item.id === deliveryId)?.fileName || 'scheduled-delivery'; anchor.click(); URL.revokeObjectURL(url);
     } catch { setDeliveryDownloadError(true); } finally { setDownloadingDeliveryId(undefined); }
   };
-  const toggleHomeWidget = (id: string) => { const removing = homeWidgetIds.includes(id); (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)).then(({ widgets }) => { setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } }); };
+  const toggleHomeWidget = async (id: string) => { const removing = homeWidgetIds.includes(id); const { widgets } = await (removing ? removeWidgetFromHome(id) : addWidgetToHome(id)); setHomeWidgets(widgets); setHomeWidgetIds(widgets.filter((widget) => widget.isOnHome).map((widget) => widget.id)); if (!removing) { setWidgetLoading((current) => ({ ...current, [id]: true })); getWidgetData(id).then((data) => setWidgetData((current) => ({ ...current, [id]: data }))).catch(() => setWidgetErrors((current) => ({ ...current, [id]: true }))).finally(() => setWidgetLoading((current) => ({ ...current, [id]: false }))); } };
 
   if (!profile) {
     return <LoginScreen />;
