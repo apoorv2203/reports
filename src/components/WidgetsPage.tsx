@@ -326,7 +326,15 @@ function WidgetCard({
         <AppButton variant="secondary" type="button" size="card-action">
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
-        <AppButton variant="secondary" type="button" onClick={onAdd} className="flex-1 py-2 text-[10px] font-bold">
+        <AppButton
+          variant="secondary"
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (!added) onAdd();
+          }}
+          className="flex-1 py-2 text-[10px] font-bold"
+        >
           <Bookmark data-icon="inline-start" /> {added ? t("home.addedToHome") : t("home.addToHome")}
         </AppButton>
         <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
