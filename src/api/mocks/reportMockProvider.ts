@@ -14,6 +14,7 @@ const records: ReportRecord[] = [
 ];
 
 export const reportMockProvider = {
+  createReport: async (payload: { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }) => ({ id: `rpt-${Date.now()}`, title: payload.title, status: 'DRAFT' as const, createdAt: new Date().toISOString() }),
   getReports: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportsResponse> => {
     const search = (params.search ?? '').toLowerCase();
     const scope = params.scope;

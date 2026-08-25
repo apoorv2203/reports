@@ -1,5 +1,5 @@
 import { request } from '@/api/client/apiClient';
-import type { PinnedReportsResponse, ReportRecord, ReportsResponse } from '@/api/types/report';
+import type { CreateReportPayload, CreateReportResponse, PinnedReportsResponse, ReportRecord, ReportsResponse } from '@/api/types/report';
 
 export type GetReportsOptions = { search?: string; scope?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 export const getReports = async (options: GetReportsOptions = {}): Promise<ReportsResponse> => {
@@ -8,6 +8,7 @@ export const getReports = async (options: GetReportsOptions = {}): Promise<Repor
   return response as ReportsResponse;
 };
 export const getReport = async (reportId: string): Promise<ReportRecord> => request<ReportRecord>('reportDetails', { reportId });
+export const createReport = async (payload: CreateReportPayload): Promise<CreateReportResponse> => request<CreateReportResponse>('reportCreate', {}, { body: payload });
 export const runReport = async (reportId: string, parameters: Record<string, unknown>) => request<unknown>('reportRun', { reportId }, { body: parameters });
 export const exportReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportExport', { reportId }, { body: payload });
 
