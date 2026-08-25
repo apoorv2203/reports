@@ -1,0 +1,20 @@
+import { reportMockProvider } from '@/api/mocks/reportMockProvider';
+import { widgetMockProvider } from '@/api/mocks/widgetMockProvider';
+
+export type ApiRequestContext = {
+  params: Record<string, string>;
+  body?: unknown;
+};
+
+export type MockProvider = (context: ApiRequestContext) => Promise<unknown>;
+
+export const mockProviderRegistry: Record<string, MockProvider> = {
+  homeWidgets: () => widgetMockProvider.getHomeWidgets(),
+  widgetData: ({ params }) => widgetMockProvider.getWidgetData(params.widgetId),
+  widgetMutations: ({ params, body }) =>
+    body && (body as { action?: string }).action === 'remove'
+      ? widgetMockProvider.removeWidgetFromHome(params.widgetId)
+      : widgetMockProvider.addWidgetToHome(params.widgetId),
+  pinnedReports: () => reportMockProvider.getPinnedReports(),
+  widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations(),
+};

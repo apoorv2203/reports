@@ -1,6 +1,12 @@
 import type { HomeWidgetsResponse, WidgetData, WidgetMutationResponse, WidgetRecommendationsResponse } from '@/api/types/widget';
 
-const homeDefaults = new Set(['approval', 'npa-trend', 'loan-region', 'branch-performance']);
+const homeWidgets = [
+  { id: 'approval', kind: 'TABLE' as const, title: 'Approval performance', description: 'This month', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated today', privacy: 'Private' as const },
+  { id: 'branch-performance', kind: 'TABLE' as const, title: 'Branch performance summary', description: 'This month', owner: 'Rohit Mehta', initials: 'RM', updated: 'Updated today', privacy: 'Private' as const },
+  { id: 'npa-trend', kind: 'CHART' as const, title: 'NPA trend', description: 'Last 7 months', owner: 'Risk analytics', initials: 'RA', updated: 'Updated today', privacy: 'Shared' as const },
+  { id: 'loan-region', kind: 'CHART' as const, title: 'Loan book by region', description: 'Current portfolio', owner: 'Finance team', initials: 'FT', updated: 'Updated today', privacy: 'Shared' as const },
+];
+const homeDefaults = new Set(homeWidgets.map((widget) => widget.id));
 let homeWidgetIds = [...homeDefaults];
 const dataById: Record<string, WidgetData> = {
   approval: { type: 'TABLE', columns: ['Product', 'Approval', 'Trend'], rows: [['Personal Loan', '83.6%', '↗'], ['Home Loan', '76.4%', '↗'], ['Vehicle Loan', '72.1%', '↗'], ['Business Loan', '68.3%', '↗'], ['Loan Against Property', '55.2%', '↗']] },
@@ -15,5 +21,5 @@ const recommendations: WidgetRecommendationsResponse = { widgets: [
 ] };
 const readState = () => [...homeWidgetIds];
 const writeState = (ids: string[]) => { homeWidgetIds = [...ids]; };
-const response = (): HomeWidgetsResponse => { const ids = readState(); return { widgets: myWidgets.map(({ accent: _accent, preview: _preview, ...widget }) => ({ ...widget, isOnHome: ids.includes(widget.id) })) }; };
+const response = (): HomeWidgetsResponse => ({ widgets: homeWidgets.map((widget) => ({ ...widget, isOnHome: homeWidgetIds.includes(widget.id) })) });
 export const widgetMockProvider = { getHomeWidgets: async () => response(), getWidgetRecommendations: async () => recommendations, getWidgetData: async (widgetId: string) => { await new Promise((resolve) => setTimeout(resolve, 180 + Math.random() * 260)); const data = dataById[widgetId]; if (!data) throw new Error('Widget data unavailable'); return data; }, addWidgetToHome: async (widgetId: string): Promise<WidgetMutationResponse> => { const ids = readState(); if (!ids.includes(widgetId)) writeState([...ids, widgetId]); return response(); }, removeWidgetFromHome: async (widgetId: string): Promise<WidgetMutationResponse> => { writeState(readState().filter((id) => id !== widgetId)); return response(); } };
