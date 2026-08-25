@@ -178,7 +178,7 @@ export function WidgetsPage({
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
             <Select value={sort} onValueChange={(value) => value && setSort(value)}>
-              <SelectTrigger className="w-[220px]">
+              <SelectTrigger size="sort">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
