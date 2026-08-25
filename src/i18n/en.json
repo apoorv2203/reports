@@ -429,6 +429,11 @@
   "workspace.43_2Cr": "43.2 Cr",
   "workspace.31_8Cr": "31.8 Cr",
   "workspace.22_9Cr": "22.9 Cr",
+  "workspace.titleSection": "Title",
+  "workspace.kpiSection": "KPI",
+  "workspace.chartSection": "Chart",
+  "workspace.tableSection": "Table",
+  "workspace.emptySectionHelp": "Empty — ask ReportIQ to add a chart, table, or metric here",
 
   "templatePicker.buildReport": "Build a report",
   "templatePicker.chooseStartingPoint": "Choose a starting point",
