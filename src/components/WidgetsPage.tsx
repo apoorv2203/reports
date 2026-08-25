@@ -327,11 +327,11 @@ function WidgetCard({
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
         <AppButton
-          variant="secondary"
+          variant={added ? "primary" : "secondary"}
           type="button"
           onClick={(event) => {
             event.stopPropagation();
-            if (!added) onAdd();
+            onAdd();
           }}
           className="flex-1 py-2 text-[10px] font-bold"
         >
