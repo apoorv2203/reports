@@ -31,6 +31,7 @@ import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 import { AppTextarea } from "@/components/app/AppForm";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Props = {
   onBack: () => void;
@@ -176,15 +177,16 @@ export function WidgetsPage({
           ))}
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="rounded-lg border border-surface-200 bg-surface px-3 py-2.5 font-bold text-navy-900 outline-none"
-            >
-              <option>{t("common.recentlyUpdated")}</option>
-              <option>{t("common.nameAZ")}</option>
-              <option>{t("common.type")}</option>
-            </select>
+            <Select value={sort} onValueChange={(value) => value && setSort(value)}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={t("common.recentlyUpdated")}>{t("common.recentlyUpdated")}</SelectItem>
+                <SelectItem value={t("common.nameAZ")}>{t("common.nameAZ")}</SelectItem>
+                <SelectItem value={t("common.type")}>{t("common.type")}</SelectItem>
+              </SelectContent>
+            </Select>
             <div className="flex rounded-lg border border-surface-200 p-0.5">
               <AppButton variant="icon" size="toggle" active={!list} type="button" onClick={() => setList(false)} aria-label={t("widgets.gridView")}>
                 <Grid2X2 />
@@ -741,15 +743,14 @@ function ShareToCatalogueModal({
         </div>
         <label className="mt-5 block text-[14px] font-bold text-navy-900">
           {t("common.category")}
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-surface-200 bg-surface px-3 py-3 text-[13px] font-semibold text-navy-900 outline-none focus:border-mint-500"
-          >
-            {cats.map((item) => (
-              <option key={item}>{item}</option>
-            ))}
-          </select>
+          <Select value={category} onValueChange={(value) => value && setCategory(value as Category)}>
+            <SelectTrigger className="mt-2 w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {cats.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <span className="mt-1 block text-[11px] font-normal text-ink-500">
             {t("widgets.categoryHelp")}
           </span>
