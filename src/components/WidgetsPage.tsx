@@ -48,60 +48,6 @@ const categories: Category[] = [
   "Sales",
   "Operations",
 ];
-/* legacy catalogue fixtures removed; API is the source of truth */
-/*
-  {
-    id: "catalogue-approval",
-    kind: "TABLE",
-    title: "Approval rate by product",
-    description: "Approval rate (%) by product and customer segment.",
-    owner: "You",
-    initials: "RA",
-    updated: "Updated 2h ago",
-    privacy: "Catalogue",
-    preview: "table",
-    accent: "mint",
-  },
-  {
-    id: "catalogue-npa",
-    kind: "CHART",
-    title: "NPA trend over time",
-    description: "Gross NPA (%) trend over the last 12 months.",
-    owner: "Anita Gupta",
-    initials: "AG",
-    updated: "Updated 1d ago",
-    privacy: "Catalogue",
-    preview: "line",
-    accent: "blue",
-  },
-  {
-    id: "catalogue-collection",
-    kind: "CHART",
-    title: "Collection efficiency trend",
-    description: "Collection efficiency (%) trend over time.",
-    owner: "S. Banerjee",
-    initials: "SB",
-    updated: "Updated 5d ago",
-    privacy: "Catalogue",
-    preview: "bars",
-    accent: "violet",
-  },
-  {
-    id: "catalogue-overdue",
-    kind: "TABLE",
-    title: "Top overdue accounts",
-    description: "Top 20 overdue accounts by outstanding amount.",
-    owner: "You",
-    initials: "RA",
-    updated: "Updated 5d ago",
-    privacy: "Private",
-    preview: "table",
-    accent: "mint",
-  },
-  ...recommendedWidgets,
-];
-*/
-/* shared fixtures removed; API is the source of truth */
 
 export function WidgetsPage({
   onBack,
@@ -125,12 +71,6 @@ export function WidgetsPage({
   const [viewWidget, setViewWidget] = useState<Widget | null>(null);
   const [viewData, setViewData] = useState<import('@/api/types/widget').WidgetData>();
   const [viewLoading, setViewLoading] = useState(false);
-  const [added, setAdded] = useState<string[]>([
-    "disbursed",
-    "approval",
-    "npa-trend",
-  ]);
-  const [removedFromHome, setRemovedFromHome] = useState<string[]>([]);
   useEffect(() => {
     const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
     setLoading(true); setError(false);
@@ -138,14 +78,6 @@ export function WidgetsPage({
   }, [tab, query]);
   const source = apiWidgets;
   const widgets = useMemo(() => source, [source]);
-
-  function addToHome(id: string) {
-    setAdded((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
-    );
-  }
 
   return (
     <main
@@ -252,7 +184,7 @@ export function WidgetsPage({
                 event.stopPropagation();
                 setMenuId(menuId === widget.id ? null : widget.id);
               }}
-              added={homeWidgetIds.includes(widget.id)}
+              added={widget.isOnHome ?? homeWidgetIds.includes(widget.id)}
               onAdd={() => onToggleHomeWidget(widget.id)}
               onShare={() => {
                 setMenuId(null);
