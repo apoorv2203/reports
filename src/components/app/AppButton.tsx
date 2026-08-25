@@ -18,7 +18,7 @@ const variants: Record<NonNullable<AppButtonProps['variant']>, { variant: Primit
   'success-outline': { variant: 'outline', size: 'default', className: 'border-border bg-success-bg text-success hover:bg-success-light' },
   ghost: { variant: 'default', size: 'default', className: 'bg-foreground text-background hover:bg-foreground/90' },
   danger: { variant: 'destructive', size: 'default' },
-  icon: { variant: 'default', size: 'icon', className: 'bg-foreground text-background hover:bg-foreground/90' },
+  icon: { variant: 'ghost', size: 'icon', className: 'text-foreground hover:text-foreground' },
   compact: { variant: 'default', size: 'sm', className: 'bg-primary text-primary-foreground hover:bg-primary/80' },
 };
 
@@ -26,7 +26,7 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   default: { size: 'default' },
   sm: { size: 'sm' },
   icon: { size: 'icon' },
-  'icon-sm': { size: 'icon', className: 'size-8 rounded-lg' },
+  'icon-sm': { size: 'icon', className: 'size-8 rounded-lg text-foreground' },
   'link-sm': { size: 'default', className: 'h-auto px-0 text-[11px] font-bold text-primary' },
   'link-xs': { size: 'default', className: 'h-auto px-0 text-[10px] font-bold text-primary' },
   'action-sm': { size: 'default', className: 'px-3 py-2 text-[11px] font-bold text-primary' },
