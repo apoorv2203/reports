@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { getWidgetData, getWidgets, type Widget } from "@/api/services/widgetService";
+import type { WidgetMutationResponse } from "@/api/types/widget";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppBadge } from "@/components/app/AppBadge";
@@ -35,7 +36,7 @@ type Props = {
   onBack: () => void;
   onEditWidget: (widget: Widget) => void;
   onNewWidget: () => void;
-  onToggleHomeWidget: (id: string) => Promise<void>;
+  onToggleHomeWidget: (id: string) => Promise<WidgetMutationResponse>;
 };
 type Category =
   "All" | "Lending" | "Risk" | "Collections" | "Sales" | "Operations";
@@ -57,7 +58,11 @@ export function WidgetsPage({
   const t = useT();
   const [tab, setTab] = useState<"mine" | "catalogue" | "shared">("mine");
   const [apiWidgets, setApiWidgets] = useState<Widget[]>([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const [category, setCategory] = useState<Category>("All");
   const [query, setQuery] = useState("");
@@ -73,16 +78,26 @@ export function WidgetsPage({
   const [homeActionError, setHomeActionError] = useState<string | null>(null);
   useEffect(() => {
     const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
-    setLoading(true); setError(false);
-    getWidgets(scope, { search: query || undefined }).then(({ items }) => setApiWidgets(items)).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
+    setLoading(true); setError(false); setPage(0);
+    getWidgets(scope, { search: query || undefined, page: 0, pageSize: 20 }).then(({ items, page: responsePage, pageSize: responsePageSize, total: responseTotal }) => { setApiWidgets(items); setPage(responsePage); setPageSize(responsePageSize); setTotal(responseTotal); }).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
   }, [tab, query]);
+  const loadMore = async () => {
+    if (loadingMore || apiWidgets.length >= total) return;
+    setLoadingMore(true);
+    try {
+      const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
+      const response = await getWidgets(scope, { search: query || undefined, page: page + 1, pageSize });
+      setApiWidgets((current) => [...current, ...response.items.filter((item) => !current.some((existing) => existing.id === item.id))]);
+      setPage(response.page); setTotal(response.total);
+    } catch { setError(true); } finally { setLoadingMore(false); }
+  };
   const source = apiWidgets;
   const toggleWidgetHome = async (widget: Widget) => {
     if (homeActionId) return;
     setHomeActionId(widget.id); setHomeActionError(null);
     try {
-      await onToggleHomeWidget(widget.id);
-      setApiWidgets((current) => current.map((item) => item.id === widget.id ? { ...item, isOnHome: !Boolean(widget.isOnHome) } : item));
+      const result = await onToggleHomeWidget(widget.id);
+      setApiWidgets((current) => current.map((item) => item.id === result.widgetId ? { ...item, isOnHome: result.isOnHome } : item));
     } catch { setHomeActionError(widget.id); } finally { setHomeActionId(null); }
   };
   const widgets = useMemo(() => source, [source]);
@@ -217,9 +232,9 @@ export function WidgetsPage({
         )}
         <div className="flex items-center justify-center gap-4 py-7 text-[11px] text-ink-500">
           {t("widgets.showingOf", { count: String(widgets.length) })}{" "}
-          <AppButton variant="secondary" type="button" className="px-4 py-2 font-bold text-navy-900">
-            {t("common.loadMore")} <ChevronDown data-icon="inline-end" />
-          </AppButton>
+          {widgets.length < total && <AppButton variant="secondary" type="button" onClick={loadMore} disabled={loadingMore}>
+            {loadingMore ? t("widgets.loading") : t("common.loadMore")} <ChevronDown data-icon="inline-end" />
+          </AppButton>}
         </div>
       </div>
       {shareWidget && (
