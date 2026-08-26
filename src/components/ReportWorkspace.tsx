@@ -31,16 +31,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
   function applyPrompt(value: string) {
     const text = value.trim();
     if (!text) return;
-    const titleMatch = text.match(/(?:title|section 1)[^\"]*[\"]([^\"]+)[\"]/i);
-    const chartMatch = text.match(/chart[^\d]*(\d+)/i);
-    const tableMatch = text.match(/table[^\d]*(\d+)/i);
-    let result = 'I added that to the report shell.';
-    if (titleMatch?.[1]) {
-      setTitle(titleMatch[1]);
-      result = 'Section 1 title updated';
-    } else if (chartMatch?.[1] || tableMatch?.[1] || /kpi|metric|number|add|create|include/i.test(text)) {
-      result = 'The Jasper report preview will update with this request.';
-    }
+    const result = 'The Jasper report preview will update with this request.';
     setMessages((current) => [...current, { prompt: text, result }]);
     setPrompt('');
   }
