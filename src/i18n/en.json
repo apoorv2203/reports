@@ -92,6 +92,8 @@
   "reports.searchFields": "Search fields...",
   "reports.addSelected": "Add selected",
   "reports.fieldsSelected": "fields selected",
+  "reports.alreadyAdded": "Already added",
+  "reports.closeFieldPicker": "Close field picker",
   "reports.noFieldsFound": "No fields found",
   "reports.fieldsError": "Unable to load fields.",
   "reports.setInputs": "Set the inputs used to generate {reportTitle}.",
