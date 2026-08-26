@@ -78,8 +78,8 @@ export function BuilderReportsLibrary({
       <main className="min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
         <div className="mx-auto max-w-7xl">
           <div className="flex items-end gap-7 border-b border-border shadow-none" aria-label={t('reports.library')}>
-            <AppButton size="tab" active={tab === 'mine'} onClick={() => { setTab('mine'); setCategory('All'); }}>{t('builderLibrary.myReports')}</AppButton>
-            <AppButton size="tab" active={tab === 'catalogue'} onClick={() => { setTab('catalogue'); setCategory('All'); }}>{t('builderLibrary.catalogue')}</AppButton>
+            <AppButton variant="primary" size="tab" active={tab === 'mine'} onClick={() => { setTab('mine'); setCategory('All'); }}>{t('builderLibrary.myReports')}</AppButton>
+            <AppButton variant="primary" size="tab" active={tab === 'catalogue'} onClick={() => { setTab('catalogue'); setCategory('All'); }}>{t('builderLibrary.catalogue')}</AppButton>
           </div>
 
           <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -90,7 +90,7 @@ export function BuilderReportsLibrary({
             </label>
             <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Report categories">
               {categories.map((item) => (
-                <AppButton key={item} size="pill" active={category === item} onClick={() => setCategory(item)}>{item}</AppButton>
+                <AppButton variant="primary" key={item} size="pill" active={category === item} onClick={() => setCategory(item)}>{item}</AppButton>
               ))}
             </div>
           </div>

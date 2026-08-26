@@ -1,5 +1,12 @@
-import { apiConfig, apiUrl, type ApiDefinition } from '@/api/config/apiConfig';
+import { apiConfig, apiDefinitions, apiUrl, type ApiDefinition } from '@/api/config/apiConfig';
 import { mockProviderRegistry } from '@/api/client/apiProviders';
+
+type SessionExpiredHandler = (error: ApiError) => void;
+let sessionExpiredHandler: SessionExpiredHandler | undefined;
+
+export function setSessionExpiredHandler(handler?: SessionExpiredHandler) {
+  sessionExpiredHandler = handler;
+}
 
 export class ApiError extends Error {
   constructor(message: string, public readonly status?: number) {
@@ -9,7 +16,7 @@ export class ApiError extends Error {
 }
 
 function getDefinition(name: string): ApiDefinition {
-  const definition = apiConfig[name];
+  const definition = apiDefinitions[name];
   if (!definition) throw new ApiError(`Missing API configuration: ${name}`);
   return definition;
 }
@@ -17,7 +24,7 @@ function getDefinition(name: string): ApiDefinition {
 export async function request<T>(
   name: string,
   params: Record<string, string> = {},
-  options: { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown; timeoutMs?: number; responseType?: 'json' | 'file' } = {},
+  options: { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown; timeoutMs?: number; responseType?: 'json' | 'file'; headers?: Record<string, string> } = {},
 ): Promise<T> {
   const definition = getDefinition(name);
   const controller = new AbortController();
@@ -30,16 +37,23 @@ export async function request<T>(
     }
     const response = await fetch(apiUrl(definition, params), {
       method: options.method ?? (options.body ? 'POST' : 'GET'),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(options.headers ?? {}) },
       body: options.body ? JSON.stringify(options.body) : undefined,
       signal: controller.signal,
     });
-    if (!response.ok) throw new ApiError(`API request failed with status ${response.status}`, response.status);
+    if (!response.ok) {
+      const apiError = new ApiError(`API request failed with status ${response.status}`, response.status);
+      if ([401, 403, 419, 440].includes(response.status)) {
+        sessionExpiredHandler?.(apiError);
+      }
+      throw apiError;
+    }
     if (options.responseType === 'file') {
       const disposition = response.headers.get('content-disposition') ?? '';
       const match = disposition.match(/filename="?([^";]+)"?/i);
       return { blob: await response.blob(), fileName: match?.[1] ?? '', contentType: response.headers.get('content-type') ?? 'application/octet-stream' } as T;
     }
+    if (response.status === 204) return undefined as T;
     return (await response.json()) as T;
   } catch (error) {
     if (error instanceof ApiError) throw error;

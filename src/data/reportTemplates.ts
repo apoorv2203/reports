@@ -126,6 +126,7 @@ export const defaultReportParameters: ReportParameter[] = [
   { id: 'period', table: 'loans', column: 'disbursed_at', label: 'Reporting period', type: 'date-range', required: true, defaultValue: ['2026-07-01', '2026-07-31'] },
   { id: 'region', table: 'branches', column: 'region', label: 'Regions', type: 'multi-select', required: false, defaultValue: ['North', 'West'], options: ['North', 'South', 'East', 'West', 'Central'] },
   { id: 'risk', table: 'loans', column: 'risk_level', label: 'Risk level', type: 'single-select', required: false, defaultValue: 'High', options: ['Low', 'Medium', 'High', 'Critical'] },
+  { id: 'branchType', table: 'branches', column: 'branch_name', label: 'Branch type', type: 'single-select', required: false, defaultValue: 'All', options: ['All', 'Metro', 'Urban', 'Rural'] },
 ];
 
 export type LibraryReport = {

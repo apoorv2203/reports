@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChartBar as BarChart3, Eye, EyeOff, Lock, Mail, Sparkles } from 'lucide-react';
+import { ChartBar as BarChart3, Eye, EyeOff, Lock, Sparkles, User } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { LogoMark, Wordmark } from './Logo';
 import { useT } from '@/providers/I18nProvider';
@@ -7,7 +7,7 @@ import { useT } from '@/providers/I18nProvider';
 export function LoginScreen() {
   const t = useT();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export function LoginScreen() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error } = await signIn(email.trim(), password);
+    const { error } = await signIn(userId.trim(), password);
     if (error) {
       setError(error);
       setLoading(false);
@@ -26,13 +26,13 @@ export function LoginScreen() {
 
   function fillDemo(user: 'new' | 'experienced' | 'admin') {
     if (user === 'new') {
-      setEmail('rahul.new@reportiq.dev');
+      setUserId('rahul.new@reportiq.dev');
       setPassword('welcome123');
     } else if (user === 'experienced') {
-      setEmail('anita.experienced@reportiq.dev');
+      setUserId('anita.experienced@reportiq.dev');
       setPassword('welcome123');
     } else {
-      setEmail('admin@reportiq.dev');
+      setUserId('admin@reportiq.dev');
       setPassword('welcome123');
     }
     setError(null);
@@ -86,14 +86,14 @@ export function LoginScreen() {
             <label className="flex flex-col gap-1.5">
               <span className="text-[12px] font-bold text-ink-700">{t('login.email')}</span>
               <div className="flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-3.5 py-3 text-ink-300 transition focus-within:border-mint-400 focus-within:ring-2 focus-within:ring-mint-100">
-                <Mail className="h-4 w-4 shrink-0" />
+                <User className="h-4 w-4 shrink-0" />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
                   placeholder={t('login.emailPlaceholder')}
                   className="min-w-0 flex-1 bg-transparent text-[13px] text-navy-900 outline-none placeholder:text-ink-300"
-                  autoComplete="email"
+                  autoComplete="username"
                   required
                 />
               </div>

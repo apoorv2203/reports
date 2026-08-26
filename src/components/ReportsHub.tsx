@@ -139,16 +139,19 @@ export function ReportsHub({
   const [tab, setTab] = useState<"mine" | "catalogue" | "shared">("mine");
   const [query, setQuery] = useState("");
   const [menu, setMenu] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [apiReports, setApiReports] = useState<ReportRecord[]>([]);
   const [homeReports, setHomeReports] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState(false);
+  
   useEffect(() => {
     const scope = tab === "mine" ? "MY_REPORTS" : tab === "shared" ? "SHARED_WITH_ME" : undefined;
     getReports({ search: query || undefined, scope, page: 0, pageSize: 20, sortBy: "updatedAt", sortOrder: "desc" })
       .then((response) => { setApiReports(response.items); setTotal(response.total); setError(false); })
       .catch(() => { setApiReports([]); setTotal(0); setError(true); });
   }, [tab, query]);
+  
   const filtered = useMemo(() => apiReports.map((report, index) => ({
     ...report,
     updated: new Date(report.updatedAt).toLocaleDateString(),
@@ -162,29 +165,19 @@ export function ReportsHub({
     t("common.updated"),
   ];
   return (
-    <div className="flex h-full flex-col bg-card text-foreground">
-      <header className="border-b border-border bg-card px-6 pb-0 pt-5 lg:px-8">
+    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
+      <header className="border-b border-border bg-surface px-4 pb-0 pt-5 sm:px-5">
         <div className="flex items-start justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2">
-              <AppButton
-                variant="ghost"
-                size="report-back"
-                onClick={onBack}
-                aria-label={t("common.back")}
-              >
-                <ArrowLeft />
-              </AppButton>
-              <h1 className="font-display text-[25px] font-bold tracking-[-0.04em]">
-                {t("reports.browse")}
-              </h1>
-            </div>
-            <p className="mt-1 pl-9 text-[13px] text-muted-foreground">
+            <h1 className="font-display text-[25px] font-bold tracking-[-0.04em] text-foreground">
+              {t("reports.browse")}
+            </h1>
+            <p className="mt-1 text-[13px] text-muted-foreground">
               {t("reports.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-muted-foreground md:flex">
+            <label className="hidden w-[380px] items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2.5 text-muted-foreground md:flex">
               <Search className="h-4 w-4" />
               <span className="sr-only">{t("reports.searchLabel")}</span>
 <AppInput
@@ -215,7 +208,7 @@ export function ReportsHub({
           </Tab>
         </nav>
       </header>
-      <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8">
+      <main className="flex-1 overflow-y-auto bg-background px-4 py-5 sm:px-5">
         <div className="flex flex-wrap items-center gap-3">
           <AppButton variant="secondary" size="filter">
               <Filter className="h-4 w-4" /> {t("common.filters")}
@@ -236,22 +229,46 @@ export function ReportsHub({
               {t("common.recentlyUpdated")}
               <ChevronDown />
             </AppButton>
-            <AppButton variant="secondary" size="toggle" active>
+            <AppButton
+              variant="secondary"
+              size="toggle"
+              active={viewMode === "grid"}
+              onClick={() => setViewMode("grid")}
+              aria-label={t("widgets.gridView")}
+            >
               <Grid2X2 />
             </AppButton>
-            <AppButton variant="secondary" size="toggle">
+            <AppButton
+              variant="secondary"
+              size="toggle"
+              active={viewMode === "list"}
+              onClick={() => setViewMode("list")}
+              aria-label={t("widgets.listView")}
+            >
               <List />
             </AppButton>
           </div>
         </div>
+        {error && (
+          <AppCard variant="default" className="mt-5 border border-alert-error-border bg-alert-error-bg px-6 py-3 text-[12px] text-alert-error-text">
+            {t("widgets.loadError")}
+          </AppCard>
+        )}
         <p className="mt-5 text-[13px] text-muted-foreground">
           {t("reports.reportCount")}
         </p>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div
+          className={
+            viewMode === "grid"
+              ? "mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+              : "mt-4 flex flex-col gap-3"
+          }
+        >
           {filtered.map((report, index) => (
             <ReportCard
               key={report.id}
               report={report}
+              listView={viewMode === "list"}
               menuOpen={menu === report.id}
               onMenu={() => setMenu(menu === report.id ? null : report.id)}
               onOpen={() =>
@@ -311,7 +328,7 @@ function Tab({
   children: React.ReactNode;
 }) {
   return (
-    <AppButton size="tab" active={active} onClick={onClick}>
+    <AppButton variant="primary" size="tab" active={active} onClick={onClick}>
       {children}
     </AppButton>
   );
@@ -325,6 +342,7 @@ function ReportCard({
   onEdit,
   added,
   onAdd,
+  listView = false,
 }: {
   report: Report;
   menuOpen: boolean;
@@ -334,6 +352,7 @@ function ReportCard({
   onEdit: () => void;
   added: boolean;
   onAdd: () => void;
+  listView?: boolean;
 }) {
   const t = useT();
   const icon =
@@ -344,8 +363,55 @@ function ReportCard({
     ) : (
       <FileText className="h-5 w-5" />
     );
+  if (listView) {
+    return (
+      <AppCard variant="report" className="relative flex flex-row items-center gap-4 py-3">
+        <AppBadge variant={report.icon === "chart" ? "chart" : "success"} size="format">
+          {icon}
+        </AppBadge>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h2 className="truncate text-[14px] font-bold tracking-[-0.02em] text-navy-900">
+              {report.title}
+            </h2>
+            <AppBadge variant={report.status === "Published" ? "success" : "warning"} size="status">
+              {report.status === "Published" ? t("reports.published") : t("reports.draft")}
+            </AppBadge>
+          </div>
+          <p className="mt-0.5 truncate text-[11px] text-ink-500">
+            {report.owner} · {t("reports.updatedMeta", { time: report.updated })}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <AppButton
+            onClick={onRun}
+            aria-label={t("reports.runReportName", { name: report.title })}
+            size="run-icon"
+            title={t("reports.runReport")}
+          >
+            <Play />
+          </AppButton>
+          <AppButton type="button" onClick={onEdit} variant="secondary" size="report-action">
+            <Pencil /> {t("common.edit")}
+          </AppButton>
+          <AppButton type="button" onClick={onAdd} variant="secondary" size="report-action" active={added}>
+            <Bookmark className="h-5 w-5" /> {added ? t("reports.added") : t("reports.addToHome")}
+          </AppButton>
+          <AppButton
+            type="button"
+            onClick={onMenu}
+            aria-label={t("reports.moreOptions", { name: report.title })}
+            size="toggle"
+          >
+            <MoreHorizontal />
+          </AppButton>
+        </div>
+        {menuOpen && <ReportMenu onOpen={onOpen} />}
+      </AppCard>
+    );
+  }
   return (
-    <AppCard variant="report" density="report-empty">
+    <AppCard variant="report" className="relative min-h-[255px]">
       <div className="flex items-start justify-between">
         <AppBadge variant={report.icon === "chart" ? "chart" : "success"} size="format">
           {icon}
@@ -366,24 +432,24 @@ function ReportCard({
           </AppButton>
         </div>
       </div>
-      <h2 className="mt-3 text-[14px] font-bold tracking-[-0.02em] text-foreground">
+      <h2 className="mt-3 text-[14px] font-bold tracking-[-0.02em] text-navy-900">
         {report.title}
       </h2>
-      <p className="mt-1 min-h-8 text-[11px] leading-4 text-muted-foreground">
+      <p className="mt-1 min-h-8 text-[11px] leading-4 text-ink-500">
         {report.description}
       </p>
-      <div className="mt-auto flex flex-col gap-3 pt-3 text-[9px] text-muted-foreground">
+      <div className="mt-auto flex flex-col gap-3 pt-3 text-[9px] text-ink-500">
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold text-foreground">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface-100 text-[8px] font-bold text-navy-900">
               {report.initials}
             </span>
-            <span className="font-semibold text-muted-foreground">
+            <span className="font-semibold text-ink-500">
               {report.owner} ·{" "}
               {t("reports.updatedMeta", { time: report.updated })}
             </span>
           </span>
-          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-primary">
+          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-mint-700">
             <LockKeyhole className="h-3.5 w-3.5" /> {t("reports.private")}
           </span>
         </div>
@@ -427,7 +493,7 @@ function ReportMenu({ onOpen }: { onOpen: () => void }) {
     [t("common.delete"), Trash2],
   ];
   return (
-    <div className="absolute bottom-14 right-4 z-20 w-44 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-floaty">
+    <div className="absolute bottom-14 right-4 z-20 w-44 overflow-hidden rounded-lg border border-surface-200 bg-white py-1 shadow-floaty">
       {items.map(([label, Icon]) => (
         <AppButton
           key={String(label)}

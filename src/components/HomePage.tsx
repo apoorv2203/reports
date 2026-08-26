@@ -58,6 +58,7 @@ type HomePageProps = {
   onRemoveWidget: (id: string) => void;
   isNewUser?: boolean;
   userName?: string;
+  greeting?: string;
 };
 
 export function HomePage({
@@ -85,6 +86,7 @@ export function HomePage({
   onRemoveWidget,
   isNewUser = false,
   userName = "Rahul",
+  greeting = "Good morning",
 }: HomePageProps) {
   const t = useT();
   const { relativeLabel } = useFormat();
@@ -110,9 +112,9 @@ export function HomePage({
   return (
     <>
       <main className="min-h-0 flex-1 overflow-y-auto bg-surface">
-        <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-[1480px] px-4 py-6 sm:px-5">
           <AppPageHeader
-            title={isNewUser ? t("home.welcomeNew", { name: userName }) : t("home.goodMorning", { name: userName })}
+            title={isNewUser ? t("home.welcomeNew", { name: userName }) : `${greeting}, ${userName}!`}
             description={isNewUser ? t("home.subtitleNew") : t("home.subtitleReturning")}
           />
 
@@ -636,7 +638,7 @@ function MaximizedWidget({
 }) {
   const t = useT();
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay-light p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <AppCard
 variant="report"
             density="modal"

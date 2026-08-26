@@ -21,7 +21,6 @@ import {
   X,
 } from "lucide-react";
 import { getWidgetData, getWidgets, type Widget } from "@/api/services/widgetService";
-import type { WidgetMutationResponse } from "@/api/types/widget";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppBadge } from "@/components/app/AppBadge";
@@ -31,13 +30,13 @@ import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 import { AppTextarea } from "@/components/app/AppForm";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Props = {
   onBack: () => void;
   onEditWidget: (widget: Widget) => void;
   onNewWidget: () => void;
-  onToggleHomeWidget: (id: string, isOnHome: boolean) => Promise<WidgetMutationResponse>;
+  homeWidgetIds: string[];
+  onToggleHomeWidget: (id: string) => void | Promise<void>;
 };
 type Category =
   "All" | "Lending" | "Risk" | "Collections" | "Sales" | "Operations";
@@ -49,21 +48,72 @@ const categories: Category[] = [
   "Sales",
   "Operations",
 ];
+/* legacy catalogue fixtures removed; API is the source of truth */
+/*
+  {
+    id: "catalogue-approval",
+    kind: "TABLE",
+    title: "Approval rate by product",
+    description: "Approval rate (%) by product and customer segment.",
+    owner: "You",
+    initials: "RA",
+    updated: "Updated 2h ago",
+    privacy: "Catalogue",
+    preview: "table",
+    accent: "mint",
+  },
+  {
+    id: "catalogue-npa",
+    kind: "CHART",
+    title: "NPA trend over time",
+    description: "Gross NPA (%) trend over the last 12 months.",
+    owner: "Anita Gupta",
+    initials: "AG",
+    updated: "Updated 1d ago",
+    privacy: "Catalogue",
+    preview: "line",
+    accent: "blue",
+  },
+  {
+    id: "catalogue-collection",
+    kind: "CHART",
+    title: "Collection efficiency trend",
+    description: "Collection efficiency (%) trend over time.",
+    owner: "S. Banerjee",
+    initials: "SB",
+    updated: "Updated 5d ago",
+    privacy: "Catalogue",
+    preview: "bars",
+    accent: "violet",
+  },
+  {
+    id: "catalogue-overdue",
+    kind: "TABLE",
+    title: "Top overdue accounts",
+    description: "Top 20 overdue accounts by outstanding amount.",
+    owner: "You",
+    initials: "RA",
+    updated: "Updated 5d ago",
+    privacy: "Private",
+    preview: "table",
+    accent: "mint",
+  },
+  ...recommendedWidgets,
+];
+*/
+/* shared fixtures removed; API is the source of truth */
 
 export function WidgetsPage({
   onBack,
   onEditWidget,
   onNewWidget,
+  homeWidgetIds,
   onToggleHomeWidget,
 }: Props) {
   const t = useT();
   const [tab, setTab] = useState<"mine" | "catalogue" | "shared">("mine");
   const [apiWidgets, setApiWidgets] = useState<Widget[]>([]);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
-  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const [category, setCategory] = useState<Category>("All");
   const [query, setQuery] = useState("");
@@ -77,38 +127,47 @@ export function WidgetsPage({
   const [viewLoading, setViewLoading] = useState(false);
   const [homeActionId, setHomeActionId] = useState<string | null>(null);
   const [homeActionError, setHomeActionError] = useState<string | null>(null);
+  const [added, setAdded] = useState<string[]>([
+    "disbursed",
+    "approval",
+    "npa-trend",
+  ]);
+  const [removedFromHome, setRemovedFromHome] = useState<string[]>([]);
   useEffect(() => {
     const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
-    setLoading(true); setError(false); setPage(0);
-    getWidgets(scope, { search: query || undefined, page: 0, pageSize: 20 }).then(({ items, page: responsePage, pageSize: responsePageSize, total: responseTotal }) => { setApiWidgets(items); setPage(responsePage); setPageSize(responsePageSize); setTotal(responseTotal); }).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
+    setLoading(true); setError(false);
+    getWidgets(scope, { search: query || undefined }).then(({ items }) => setApiWidgets(items)).catch(() => { setApiWidgets([]); setError(true); }).finally(() => setLoading(false));
   }, [tab, query]);
-  const loadMore = async () => {
-    if (loadingMore || apiWidgets.length >= total) return;
-    setLoadingMore(true);
-    try {
-      const scope = tab === "mine" ? "MY_WIDGETS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
-      const response = await getWidgets(scope, { search: query || undefined, page: page + 1, pageSize });
-      setApiWidgets((current) => [...current, ...response.items.filter((item) => !current.some((existing) => existing.id === item.id))]);
-      setPage(response.page); setTotal(response.total);
-    } catch { setError(true); } finally { setLoadingMore(false); }
-  };
   const source = apiWidgets;
-  const toggleWidgetHome = async (widget: Widget) => {
-    if (homeActionId) return;
-    setHomeActionId(widget.id); setHomeActionError(null);
-    try {
-      const result = await onToggleHomeWidget(widget.id, Boolean(widget.isOnHome));
-      setApiWidgets((current) => current.map((item) => item.id === result.widgetId ? { ...item, isOnHome: result.isOnHome } : item));
-    } catch { setHomeActionError(widget.id); } finally { setHomeActionId(null); }
-  };
   const widgets = useMemo(() => source, [source]);
+
+  async function handleToggleHomeWidget(id: string) {
+    if (homeActionId) return;
+    setHomeActionError(null);
+    setHomeActionId(id);
+    try {
+      await Promise.resolve(onToggleHomeWidget(id));
+    } catch {
+      setHomeActionError(t("widgets.homeUpdateError"));
+    } finally {
+      setHomeActionId(null);
+    }
+  }
+
+  function addToHome(id: string) {
+    setAdded((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id],
+    );
+  }
 
   return (
     <main
       className="min-h-0 flex-1 overflow-y-auto bg-surface"
       onClick={() => menuId && setMenuId(null)}
     >
-      <div className="mx-auto max-w-[1480px] px-5 py-6 sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-[1480px] px-4 py-6 sm:px-5">
         <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <AppPageHeader title={t("widgets.title")} description={t("widgets.subtitle")} />
           <div className="flex items-center gap-3">
@@ -122,7 +181,7 @@ export function WidgetsPage({
                 size="inline"
               />
             </label>
-            <AppButton type="button" onClick={onNewWidget}>
+            <AppButton variant="primary" size="action-md" type="button" onClick={onNewWidget}>
               <Plus data-icon="inline-start" /> {t("widgets.newWidget")}
             </AppButton>
           </div>
@@ -177,21 +236,20 @@ export function WidgetsPage({
           ))}
           <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
-            <Select value={sort} onValueChange={(value) => value && setSort(value)}>
-              <SelectTrigger size="sort">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={t("common.recentlyUpdated")}>{t("common.recentlyUpdated")}</SelectItem>
-                <SelectItem value={t("common.nameAZ")}>{t("common.nameAZ")}</SelectItem>
-                <SelectItem value={t("common.type")}>{t("common.type")}</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              className="rounded-lg border border-surface-200 bg-surface px-3 py-2.5 font-bold text-navy-900 outline-none"
+            >
+              <option>{t("common.recentlyUpdated")}</option>
+              <option>{t("common.nameAZ")}</option>
+              <option>{t("common.type")}</option>
+            </select>
             <div className="flex rounded-lg border border-surface-200 p-0.5">
-              <AppButton variant="icon" size="toggle" active={!list} type="button" onClick={() => setList(false)} aria-label={t("widgets.gridView")}>
+              <AppButton variant="icon" type="button" onClick={() => setList(false)} className={`size-8 rounded-md ${!list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.gridView")}>
                 <Grid2X2 />
               </AppButton>
-              <AppButton variant="icon" size="toggle" active={list} type="button" onClick={() => setList(true)} aria-label={t("widgets.listView")}>
+              <AppButton variant="icon" type="button" onClick={() => setList(true)} className={`size-8 rounded-md ${list ? "bg-mint-50 text-mint-700" : "text-ink-500"}`} aria-label={t("widgets.listView")}>
                 <LayoutList />
               </AppButton>
             </div>
@@ -199,7 +257,11 @@ export function WidgetsPage({
         </div>
         {loading && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">{t("widgets.loading")}</AppCard>}
         {error && <AppCard variant="default" className="mt-5 px-6 py-12 text-center text-[13px] text-ink-500">{t("widgets.loadError")}</AppCard>}
-        {homeActionError && <p role="alert" className="mt-3 text-[11px] text-danger-600">{t("widgets.homeUpdateError")}</p>}
+        {!loading && !error && homeActionError && (
+          <AppCard variant="default" className="mt-5 border border-alert-error-border bg-alert-error-bg px-6 py-3 text-[12px] text-alert-error-text">
+            {homeActionError}
+          </AppCard>
+        )}
         {!loading && !error && <div className={`mt-5 grid gap-4 ${list ? "grid-cols-1" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
           {widgets.map((widget) => (
             <WidgetCard
@@ -210,9 +272,11 @@ export function WidgetsPage({
                 event.stopPropagation();
                 setMenuId(menuId === widget.id ? null : widget.id);
               }}
-              added={Boolean(widget.isOnHome)}
-              pending={homeActionId === widget.id}
-              onAdd={() => toggleWidgetHome(widget)}
+              added={homeWidgetIds.includes(widget.id)}
+              isUpdatingHome={homeActionId === widget.id}
+              onAdd={() => {
+                void handleToggleHomeWidget(widget.id);
+              }}
               onShare={() => {
                 setMenuId(null);
                 setShareWidget(widget);
@@ -223,7 +287,9 @@ export function WidgetsPage({
               }}
               onView={() => { setViewWidget(widget); setViewLoading(true); getWidgetData(widget.id).then(setViewData).finally(() => setViewLoading(false)); }}
               onEdit={() => onEditWidget(widget)}
-              onRemove={() => toggleWidgetHome(widget)}
+              onRemove={() => {
+                void handleToggleHomeWidget(widget.id);
+              }}
             />
           ))}
         </div>}
@@ -234,9 +300,9 @@ export function WidgetsPage({
         )}
         <div className="flex items-center justify-center gap-4 py-7 text-[11px] text-ink-500">
           {t("widgets.showingOf", { count: String(widgets.length) })}{" "}
-          {widgets.length < total && <AppButton variant="secondary" type="button" onClick={loadMore} disabled={loadingMore}>
-            {loadingMore ? t("widgets.loading") : t("common.loadMore")} <ChevronDown data-icon="inline-end" />
-          </AppButton>}
+          <AppButton variant="secondary" type="button" className="px-4 py-2 font-bold text-navy-900">
+            {t("common.loadMore")} <ChevronDown data-icon="inline-end" />
+          </AppButton>
         </div>
       </div>
       {shareWidget && (
@@ -273,7 +339,7 @@ function WidgetCard({
   onEdit,
   onRemove,
   added,
-  pending,
+  isUpdatingHome,
 }: {
   widget: Widget;
   menuOpen: boolean;
@@ -285,7 +351,7 @@ function WidgetCard({
   onEdit: () => void;
   onRemove: () => void;
   added: boolean;
-  pending: boolean;
+  isUpdatingHome: boolean;
 }) {
   const t = useT();
   return (
@@ -309,7 +375,7 @@ function WidgetCard({
             }}
             aria-label={t("home.previewWidgetName", { name: widget.title })}
             title={t("home.previewWidget")}
-            size="icon-sm"
+            className="size-6 text-navy-900 transition hover:text-mint-700"
           >
             <Eye aria-hidden="true" />
           </AppButton>
@@ -321,7 +387,12 @@ function WidgetCard({
             {widget.title}
           </h2>
         </div>
-        {added && (
+        {isUpdatingHome && (
+          <AppBadge variant="warning" size="status">
+            {t("widgets.updatingHome")}
+          </AppBadge>
+        )}
+        {!isUpdatingHome && added && (
           <AppBadge variant="success" size="status">
             {t("home.addedToHome")}
           </AppBadge>
@@ -355,19 +426,10 @@ function WidgetCard({
         <AppButton variant="secondary" type="button" size="card-action">
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
-        <AppButton
-          variant={added ? "success-outline" : "secondary"}
-          type="button"
-          disabled={pending}
-          onClick={(event) => {
-            event.stopPropagation();
-            onAdd();
-          }}
-          size="widget-home"
-        >
-          <Bookmark data-icon="inline-start" /> {pending ? t("widgets.updatingHome") : added ? t("home.addedToHome") : t("home.addToHome")}
+        <AppButton variant="secondary" type="button" onClick={onAdd} disabled={isUpdatingHome} className="flex-1 py-2 text-[10px] font-bold disabled:cursor-not-allowed disabled:opacity-60">
+          <Bookmark data-icon="inline-start" /> {isUpdatingHome ? t("widgets.updatingHome") : added ? t("home.addedToHome") : t("home.addToHome")}
         </AppButton>
-        <AppButton variant="icon" size="widget-icon" type="button" onClick={onMenu} aria-label={t("widgets.openMenu")}>
+        <AppButton variant="icon" type="button" onClick={onMenu} className="size-8 border border-surface-200 text-navy-900" aria-label={t("widgets.openMenu")}>
           <Ellipsis />
         </AppButton>
       </div>
@@ -410,7 +472,7 @@ function WidgetMenu({
         </AppButton>
       ))}
       <div className="my-1 h-px bg-surface-100" />
-      <AppButton variant="danger" size="menu-danger" type="button">
+      <AppButton variant="danger" type="button" className="h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold">
         <Trash2 data-icon="inline-start" /> {t("common.delete")}
       </AppButton>
     </div>
@@ -450,10 +512,10 @@ function WidgetReadOnlyView({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <AppButton variant="secondary" size="action-sm" type="button" onClick={onEdit}>
+            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
               <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
             </AppButton>
-            <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("widgets.closeView")}>
+            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("widgets.closeView")}>
               <X />
             </AppButton>
           </div>
@@ -524,7 +586,7 @@ function ShareWidgetModal({
             </h2>
             <p className="mt-1 text-[16px] text-ink-500">{widget.title}</p>
           </div>
-          <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("common.close")}>
+          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
             <X />
           </AppButton>
         </div>
@@ -712,7 +774,7 @@ function ShareToCatalogueModal({
               {t("widgets.catalogueSubtitle")}
             </p>
           </div>
-          <AppButton variant="icon" size="modal-icon" type="button" onClick={onClose} aria-label={t("common.close")}>
+          <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("common.close")}>
             <X />
           </AppButton>
         </div>
@@ -743,14 +805,15 @@ function ShareToCatalogueModal({
         </div>
         <label className="mt-5 block text-[14px] font-bold text-navy-900">
           {t("common.category")}
-          <Select value={category} onValueChange={(value) => value && setCategory(value as Category)}>
-            <SelectTrigger className="mt-2 w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {cats.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <select
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            className="mt-2 w-full rounded-lg border border-surface-200 bg-surface px-3 py-3 text-[13px] font-semibold text-navy-900 outline-none focus:border-mint-500"
+          >
+            {cats.map((item) => (
+              <option key={item}>{item}</option>
+            ))}
+          </select>
           <span className="mt-1 block text-[11px] font-normal text-ink-500">
             {t("widgets.categoryHelp")}
           </span>
