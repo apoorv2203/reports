@@ -28,6 +28,12 @@ export const recentSessions = [
   { name: 'Active loan accounts summary', time: '3h ago', kind: 'TABLE' as const },
 ];
 
+export const pinnedReports = [
+  { name: 'Loan Portfolio Summary', updated: new Date().toISOString(), pinned: true },
+  { name: 'Branch Review Report', updated: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), pinned: true },
+  { name: 'Collections Performance', updated: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), pinned: false },
+];
+
 export const myWidgets: Widget[] = [
   { id: 'approval', kind: 'TABLE', title: 'Top 5 products by approval rate', description: 'This month', owner: 'You', initials: 'RA', updated: 'Updated 1h ago', privacy: 'Private', preview: 'table', accent: 'mint' },
   { id: 'npa-trend', kind: 'CHART', title: 'NPA trend over time', description: 'Gross NPA (%) trend over the last 12 months.', owner: 'Anita Gupta', initials: 'AG', updated: 'Updated 2h ago', privacy: 'Private', preview: 'line', accent: 'violet' },

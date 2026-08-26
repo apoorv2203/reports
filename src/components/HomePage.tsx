@@ -22,9 +22,15 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import type { HomeWidget, Widget, WidgetData, WidgetRecommendation } from "@/api/services/widgetService";
-import type { PinnedReport } from "@/api/types/report";
-import type { ScheduledDelivery } from "@/api/types/scheduledDelivery";
+import {
+  myWidgets,
+  pinnedReports,
+  recentSessions,
+  recommendedWidgets,
+  scheduledDeliveries,
+  type Widget,
+} from "@/data/homeData";
+import type { HomeWidget, WidgetData } from "@/services/widgetService";
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppCard } from "@/components/app/AppCard";
@@ -42,19 +48,10 @@ type HomePageProps = {
   onEditWidget: (widget: Widget) => void;
   homeWidgetIds: string[];
   homeWidgets?: HomeWidget[];
-  pinnedReports?: PinnedReport[];
-  recommendedWidgets?: WidgetRecommendation[];
-  scheduledDeliveries?: ScheduledDelivery[];
-  scheduledDeliveriesLoading?: boolean;
-  scheduledDeliveriesError?: boolean;
-  downloadingDeliveryId?: string;
-  deliveryDownloadError?: boolean;
-  onDownloadDelivery?: (id: string) => void;
   widgetData?: Record<string, WidgetData | undefined>;
   widgetLoading?: Record<string, boolean>;
   widgetErrors?: Record<string, boolean>;
   onRetryWidget?: (id: string) => void;
-  onPreviewWidget?: (id: string) => Promise<WidgetData>;
   onRemoveWidget: (id: string) => void;
   isNewUser?: boolean;
   userName?: string;
@@ -69,19 +66,10 @@ export function HomePage({
   onEditWidget,
   homeWidgetIds,
   homeWidgets,
-  pinnedReports = [],
-  recommendedWidgets = [],
-  scheduledDeliveries = [],
-  scheduledDeliveriesLoading = false,
-  scheduledDeliveriesError = false,
-  downloadingDeliveryId,
-  deliveryDownloadError = false,
-  onDownloadDelivery,
   widgetData = {},
   widgetLoading = {},
   widgetErrors = {},
   onRetryWidget,
-  onPreviewWidget,
   onRemoveWidget,
   isNewUser = false,
   userName = "Rahul",
@@ -90,15 +78,8 @@ export function HomePage({
   const { relativeLabel } = useFormat();
   const [addedWidgets, setAddedWidgets] = useState<string[]>([]);
   const [removedWidgets, setRemovedWidgets] = useState<string[]>([]);
-  const [maximizedWidget, setMaximizedWidget] = useState<Widget | HomeWidget | WidgetRecommendation | null>(null);
-  const [maximizedWidgetData, setMaximizedWidgetData] = useState<WidgetData>();
+  const [maximizedWidget, setMaximizedWidget] = useState<Widget | null>(null);
   const [question, setQuestion] = useState("");
-  const openWidgetPreview = async (widget: Widget | HomeWidget | WidgetRecommendation) => {
-    setMaximizedWidget(widget);
-    if (onPreviewWidget) {
-      try { setMaximizedWidgetData(await onPreviewWidget(widget.id)); } catch { setMaximizedWidgetData(undefined); }
-    }
-  };
   const [pinnedVisible, setPinnedVisible] = useState(5);
 
   function addWidget(id: string) {
@@ -128,10 +109,10 @@ export function HomePage({
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={t("home.askAnything")}
-              size="inline"
+              className="min-w-0 flex-1 border-0 bg-transparent text-[13px] shadow-none outline-none placeholder:text-ink-500 focus-visible:ring-0"
               aria-label={t("home.askAnythingLabel")}
             />
-            <AppButton variant="primary" type="submit" aria-label={t("home.submitQuestion")} size="icon-sm">
+            <AppButton variant="icon" type="submit" aria-label={t("home.submitQuestion")} className="size-8 rounded-lg bg-mint-600 text-surface hover:bg-mint-700">
               <Send data-icon="inline-start" />
             </AppButton>
           </form>
@@ -150,7 +131,7 @@ export function HomePage({
                   setQuestion(example);
                   onNewSession(example);
                 }}
-                size="action-sm"
+                className="h-auto px-3 py-1.5 text-[11px] text-ink-500"
               >
                 {example}
               </AppButton>
@@ -171,29 +152,38 @@ export function HomePage({
                     action={t("home.scheduleReport")}
                     onAction={onOpenReports}
                   />
-                ) : scheduledDeliveriesLoading ? (
-                  <div className="py-4 text-center text-[11px] text-ink-500">Loading…</div>
-                ) : scheduledDeliveriesError ? (
-                  <div className="py-4 text-center text-[11px] text-ink-500">Unable to load scheduled deliveries.</div>
-                ) : scheduledDeliveries.length === 0 ? (
-                  <EmptySideState icon={<Clock3 className="h-9 w-9" />} title={t("home.noScheduledDeliveries")} text={t("home.scheduledEmpty")} action={t("home.scheduleReport")} onAction={onOpenReports} />
                 ) : (
                   <>
                     <div className="divide-y divide-surface-100">
                       {scheduledDeliveries.map((delivery) => (
-                        <button key={delivery.id} type="button" onClick={() => onDownloadDelivery?.(delivery.id)} disabled={downloadingDeliveryId === delivery.id} className="flex w-full items-center gap-2.5 py-2.5 text-left disabled:opacity-60">
-                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} size="format">{delivery.format === "PDF" ? t("common.pdf") : t("common.xlsx")}</AppBadge>
-                          <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-bold text-navy-900">{delivery.reportName}</span><span className="mt-0.5 block text-[10px] text-ink-500">{relativeLabel(delivery.generatedAt)}</span></span>
-                          <AppBadge variant="success" size="status">{downloadingDeliveryId === delivery.id ? "Downloading" : t("common.delivered")}</AppBadge>
-                        </button>
+                        <div
+                          key={delivery.name}
+                          className="flex items-center gap-2.5 py-2.5"
+                        >
+                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} className="flex size-7 shrink-0 items-center justify-center p-0 text-[8px]">
+                            {delivery.format === "PDF"
+                              ? t("common.pdf")
+                              : t("common.xlsx")}
+                          </AppBadge>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-[11px] font-bold text-navy-900">
+                              {delivery.name}
+                            </span>
+                            <span className="mt-0.5 block text-[10px] text-ink-500">
+                              {delivery.time}
+                            </span>
+                          </span>
+                          <AppBadge variant="success" className="rounded-md px-2 py-1 text-[9px] font-bold">
+                            {t("common.delivered")}
+                          </AppBadge>
+                        </div>
                       ))}
                     </div>
-                    {deliveryDownloadError && <p className="pt-2 text-[10px] text-danger-600">Unable to download the scheduled delivery.</p>}
                     <AppButton
                       variant="ghost"
                       type="button"
                       onClick={onOpenReports}
-                      size="link-sm" className="mt-2 w-full justify-center border-t border-surface-100 pt-3"
+                      className="mt-2 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold"
                     >
                       <Plus data-icon="inline-start" /> {t("home.scheduleReport")}
                     </AppButton>
@@ -219,23 +209,23 @@ export function HomePage({
                       <AppButton
                         variant="ghost"
                         type="button"
-                        key={report.id}
-                        onClick={() => onRunPinnedReport(report.title)}
-                        size="list-row"
+                        key={report.name}
+                        onClick={() => onRunPinnedReport(report.name)}
+                        className="h-auto w-full justify-start gap-2.5 py-2.5 text-left"
                       >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
                           <FileText className="h-4 w-4" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[11px] font-bold text-navy-900">
-                            {report.title}
+                            {report.name}
                           </span>
                           <span className="mt-0.5 block text-[10px] text-ink-500">
-                            {relativeLabel(report.updatedAt)}
+                            {relativeLabel(report.updated)}
                           </span>
                         </span>
                         <Star
-                          className={`h-3.5 w-3.5 shrink-0 ${report.isPinned ? "fill-amber-400 text-amber-400" : "text-ink-300"}`}
+                          className={`h-3.5 w-3.5 shrink-0 ${report.pinned ? "fill-amber-400 text-amber-400" : "text-ink-300"}`}
                         />
                       </AppButton>
                     ))}
@@ -246,7 +236,7 @@ export function HomePage({
                     variant="ghost"
                     type="button"
                     onClick={() => setPinnedVisible((count) => Math.min(count + 5, pinnedReports.length))}
-                    size="link-sm" className="mt-3 w-full justify-center border-t border-surface-100 pt-3"
+                    className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
                   >
                     {t("common.viewMore")} <ChevronDown data-icon="inline-end" />
                   </AppButton>
@@ -255,7 +245,7 @@ export function HomePage({
                   variant="ghost"
                   type="button"
                   onClick={onCreateReport}
-                  size="link-sm" className="mt-3 w-full justify-center border-t border-surface-100 pt-3"
+                  className="mt-3 h-auto w-full justify-center border-t border-surface-100 pt-3 text-[11px] font-bold text-mint-700"
                 >
                   <Plus data-icon="inline-start" /> {t("home.createReportFromTemplate")}
                 </AppButton>
@@ -265,19 +255,32 @@ export function HomePage({
             <div className="min-w-0">
               <AppSectionHeader
                 title={t("home.myWidgets")}
-                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} size="link-sm">{t("home.addWidget")}</AppButton>}
+                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} className="h-auto px-0 text-[11px] font-bold text-mint-700">{t("home.addWidget")}</AppButton>}
               />
               {isNewUser ? (
                 <EmptyDashboard onAddWidget={onOpenWidgets} />
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {(homeWidgets ?? [])
-                    .filter((widget) => widget.isOnHome && !removedWidgets.includes(widget.id))
+                  {(
+                    homeWidgets ??
+                    myWidgets
+                      .filter(
+                        (widget) =>
+                          homeWidgetIds.includes(widget.id) &&
+                          !removedWidgets.includes(widget.id),
+                      )
+                      .map((widget) => ({
+                        ...widget,
+                        isOnHome: true,
+                        dataApi: `/api/widgets/${widget.id}/data`,
+                      }))
+                  )
+                    .filter((widget) => widget.isOnHome)
                     .map((widget) => (
                       <WidgetCard
                         key={widget.id}
                         widget={widget}
-                        onEdit={() => onEditWidget(widget as unknown as Widget)}
+                        onEdit={() => onEditWidget(widget)}
                         onRemove={() => {
                           onRemoveWidget(widget.id);
                           setRemovedWidgets((current) => [
@@ -285,7 +288,7 @@ export function HomePage({
                             widget.id,
                           ]);
                         }}
-                        onMaximize={() => void openWidgetPreview(widget)}
+                        onMaximize={() => setMaximizedWidget(widget)}
                         data={widgetData[widget.id]}
                         loading={widgetLoading[widget.id]}
                         error={widgetErrors[widget.id]}
@@ -300,7 +303,7 @@ export function HomePage({
                   onViewAll={onOpenWidgets}
                 />
                 {isNewUser ? (
-                  <AppCard variant="recommendation" density="recommendation">
+                  <AppCard variant="recommendation" className="rounded-xl px-5 py-5">
                     <div className="flex items-center gap-3">
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-100 text-mint-700">
                         <Sparkles className="h-4 w-4" />
@@ -327,7 +330,7 @@ export function HomePage({
                           addWidget(widget.id);
                           onRemoveWidget(widget.id);
                         }}
-                        onMaximize={() => void openWidgetPreview(widget)}
+                        onMaximize={() => setMaximizedWidget(widget)}
                       />
                     ))}
                   </div>
@@ -340,11 +343,10 @@ export function HomePage({
       {maximizedWidget && (
         <MaximizedWidget
           widget={maximizedWidget}
-          data={maximizedWidgetData}
           onClose={() => setMaximizedWidget(null)}
           onEdit={() => {
             setMaximizedWidget(null);
-            onEditWidget(maximizedWidget as unknown as Widget);
+            onEditWidget(maximizedWidget);
           }}
         />
       )}
@@ -365,13 +367,13 @@ function SideCard({
 }) {
   const t = useT();
   return (
-    <AppCard variant="admin" density="compact">
+    <AppCard variant="admin" className="rounded-xl px-4 py-3 shadow-card">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-navy-900">
           {icon}
           <h2 className="font-display text-[12px] font-bold">{title}</h2>
         </div>
-        <AppButton variant="ghost" type="button" onClick={onViewAll} size="link-xs">
+        <AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[10px] font-bold text-mint-700">
           {t("common.viewAll")} <span aria-hidden>›</span>
         </AppButton>
       </div>
@@ -390,7 +392,7 @@ function SectionHeading({
   return (
     <AppSectionHeader
       title={title}
-      action={<AppButton variant="ghost" type="button" onClick={onViewAll} size="link-sm">{t("common.viewAll")} <span aria-hidden>›</span></AppButton>}
+      action={<AppButton variant="ghost" type="button" onClick={onViewAll} className="h-auto px-0 text-[11px] font-bold text-mint-700 hover:text-mint-600">{t("common.viewAll")} <span aria-hidden>›</span></AppButton>}
     />
   );
 }
@@ -414,7 +416,7 @@ function EmptySideState({
       <p className="mt-1 max-w-[190px] text-[11px] leading-5 text-ink-500">
         {text}
       </p>
-      <AppButton variant="secondary" type="button" onClick={onAction} size="action-sm">
+      <AppButton variant="secondary" type="button" onClick={onAction} className="mt-3 px-3 py-2 text-[11px] font-bold text-mint-700">
         {action}
       </AppButton>
     </div>
@@ -423,7 +425,7 @@ function EmptySideState({
 function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
   const t = useT();
   return (
-    <AppCard variant="recommendation" density="empty">
+    <AppCard variant="recommendation" className="flex min-h-[430px] flex-col items-center justify-center px-6 text-center">
       <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-mint-50 text-mint-600">
         <LineChart className="h-9 w-9" />
       </span>
@@ -433,7 +435,7 @@ function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
       <p className="mt-2 max-w-[320px] text-[12px] leading-5 text-ink-500">
         {t("home.emptyDashboardDesc")}
       </p>
-      <AppButton variant="primary" type="button" onClick={onAddWidget} size="action-md" className="mt-5">
+      <AppButton variant="primary" type="button" onClick={onAddWidget} className="mt-5 px-4 py-2.5 text-[12px] font-bold">
         <Plus data-icon="inline-start" /> {t("home.addFirstWidget")}
       </AppButton>
       <div className="my-4 flex w-full max-w-[280px] items-center gap-3 text-[11px] text-ink-300">
@@ -441,7 +443,7 @@ function EmptyDashboard({ onAddWidget }: { onAddWidget: () => void }) {
         {t("home.or")}
         <span className="h-px flex-1 bg-surface-200" />
       </div>
-      <AppButton variant="secondary" type="button" onClick={onAddWidget} size="action-sm">
+      <AppButton variant="secondary" type="button" onClick={onAddWidget} className="px-4 py-2.5 text-[11px] font-bold text-navy-900">
         <BarChart3 data-icon="inline-start" /> {t("home.exploreWidgetCatalogue")}
       </AppButton>
     </AppCard>
@@ -461,7 +463,7 @@ function WidgetCard({
   error,
   onRetry,
 }: {
-  widget: Widget | HomeWidget | WidgetRecommendation;
+  widget: Widget;
   recommended?: boolean;
   added?: boolean;
   onAdd?: () => void;
@@ -489,7 +491,7 @@ function WidgetCard({
   return (
     <AppCard variant="widget">
       <div className="flex items-start justify-between gap-2">
-        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
+        <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
           {widget.kind}
         </AppBadge>
         <div ref={menuRef} className="relative flex items-center gap-2">
@@ -500,7 +502,7 @@ function WidgetCard({
               onClick={onMaximize}
               aria-label={t("home.previewWidgetName", { name: widget.title })}
               title={t("home.previewWidget")}
-              size="icon-sm"
+              className="size-6 text-navy-900"
             >
               {recommended ? (
                 <Eye className="h-4 w-4" aria-hidden="true" />
@@ -521,7 +523,7 @@ function WidgetCard({
                   onClick={() => setMenuOpen((open) => !open)}
                   aria-label={t("home.moreOptions", { name: widget.title })}
                   aria-expanded={menuOpen}
-                  size="icon-sm"
+                  className="size-6 text-navy-900"
                 >
                   <Ellipsis />
                 </AppButton>
@@ -531,7 +533,7 @@ function WidgetCard({
                       variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      size="menu"
+                      className="h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />{" "}
                       {t("home.refreshData")}
@@ -543,7 +545,7 @@ function WidgetCard({
                         onRemove?.();
                         closeMenu();
                       }}
-                      size="menu"
+                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
                       <Trash2 className="h-3.5 w-3.5" />{" "}
                       {t("home.removeFromHome")}
@@ -552,7 +554,7 @@ function WidgetCard({
                       variant="ghost"
                       type="button"
                       onClick={closeMenu}
-                      size="menu"
+                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
                     >
                       <Info data-icon="inline-start" /> {t("home.viewDetails")}
                     </AppButton>
@@ -576,7 +578,7 @@ function WidgetCard({
       ) : error ? (
         <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-2 text-center text-[11px] text-ink-500">
           <span>{t("home.unableToLoad")}</span>
-          <AppButton variant="ghost" type="button" onClick={onRetry} size="retry">
+          <AppButton variant="ghost" type="button" onClick={onRetry} className="h-auto p-0 font-bold text-mint-700">
             {t("common.retry")}
           </AppButton>
         </div>
@@ -597,7 +599,7 @@ function WidgetCard({
           type="button"
           onClick={onAdd}
           disabled={added}
-          size="widget"
+          className="mt-3 h-auto w-full gap-1.5 py-1.5 text-[10px] font-bold"
         >
           {added ? (
             <>
@@ -625,12 +627,10 @@ function WidgetCard({
 
 function MaximizedWidget({
   widget,
-  data,
   onClose,
   onEdit,
 }: {
-  widget: Widget | HomeWidget | WidgetRecommendation;
-  data?: WidgetData;
+  widget: Widget;
   onClose: () => void;
   onEdit: () => void;
 }) {
@@ -638,15 +638,15 @@ function MaximizedWidget({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay-light p-4">
       <AppCard
-variant="report"
-            density="modal"
+        variant="report"
+        className="w-full max-w-5xl rounded-xl p-6 shadow-floaty"
         role="dialog"
         aria-modal="true"
         aria-label={t("home.previewWidgetName", { name: widget.title })}
       >
         <div className="flex items-start justify-between">
           <div>
-            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
+            <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"} className="">
               {widget.kind}
             </AppBadge>
             <h2 className="mt-3 font-display text-[24px] font-bold text-navy-900">
@@ -657,16 +657,16 @@ variant="report"
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <AppButton variant="secondary" type="button" onClick={onEdit} size="action-md">
+            <AppButton variant="secondary" type="button" onClick={onEdit} className="px-3 py-2 text-[12px] font-bold">
               <Edit3 data-icon="inline-start" /> {t("home.editWidget")}
             </AppButton>
-            <AppButton variant="icon" type="button" onClick={onClose} size="icon-lg" aria-label={t("home.close")}>
+            <AppButton variant="icon" type="button" onClick={onClose} className="size-9 text-ink-500" aria-label={t("home.close")}>
               <X />
             </AppButton>
           </div>
         </div>
         <div className="mt-7 rounded-lg border border-surface-200 bg-surface-50 p-6">
-          <WidgetPreview widget={widget} data={data} />
+          <WidgetPreview widget={widget} />
         </div>
         <div className="mt-4 text-[11px] text-ink-500">
           {widget.owner} · {widget.updated} · {t("common.readOnlyView")}
@@ -681,7 +681,7 @@ function WidgetPreview({
   widget,
   data,
 }: {
-  widget: Widget | HomeWidget | WidgetRecommendation;
+  widget: Widget;
   data?: WidgetData;
 }) {
   const t = useT();
@@ -722,7 +722,7 @@ function WidgetPreview({
         ))}
       </div>
     );
-  if (widget.kind === "TABLE")
+  if (widget.preview === "table")
     return (
       <div className="mt-3 overflow-hidden rounded-md border border-surface-100 text-[8px]">
         <div className="grid grid-cols-3 bg-surface-50 px-2 py-1 font-bold text-ink-500">
@@ -744,6 +744,37 @@ function WidgetPreview({
             <span>{percentage([83.6, 76.4, 72.1, 68.3][index])}</span>
             <span className="text-mint-600">{t("common.trendUp")}</span>
           </div>
+        ))}
+      </div>
+    );
+  if (widget.preview === "donut")
+    return (
+      <div className="mt-3 flex items-center justify-center gap-3">
+        <div className={`donut-chart ${widget.accent}`} />
+        <div className="space-y-1 text-[8px] text-ink-500">
+          <div>
+            <i className="legend-dot bg-chart-accent" /> {t("common.north42")}
+          </div>
+          <div>
+            <i className="legend-dot bg-chart-accent-light" />{" "}
+            {t("common.west28")}
+          </div>
+          <div>
+            <i className="legend-dot bg-chart-accent-lighter" />{" "}
+            {t("common.south19")}
+          </div>
+        </div>
+      </div>
+    );
+  if (widget.preview === "bars")
+    return (
+      <div className="mt-3 flex h-14 items-end gap-1.5 px-1">
+        {[20, 39, 28, 52, 64, 43, 31].map((height, index) => (
+          <span
+            key={index}
+            className="flex-1 rounded-t-sm bg-chart-blue"
+            style={{ height: `${height}%` }}
+          />
         ))}
       </div>
     );
