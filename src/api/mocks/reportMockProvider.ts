@@ -1,5 +1,12 @@
 import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
-import { reportTemplates } from '@/data/reportTemplates';
+import type { ReportTemplateResponse } from '@/api/types/report';
+
+const templates: ReportTemplateResponse[] = [
+  { id: 'branch', masterTemplateId: 'JR_BRANCH_SUMMARY', name: 'Branch Summary', category: 'Most Used', description: 'Branch performance report', preview: '/templates/branch-summary.png', updated: 'Used 28 times this month' },
+  { id: 'portfolio', masterTemplateId: 'JR_PORTFOLIO_OVERVIEW', name: 'Portfolio Overview', category: 'Most Used', description: 'Portfolio health and movement report', preview: '/templates/portfolio-overview.png', updated: 'Used 21 times this month' },
+  { id: 'operations', masterTemplateId: 'JR_OPERATIONS_PULSE', name: 'Operations Pulse', category: 'Recommended', description: 'Operational performance report', preview: '/templates/operations-pulse.png', updated: 'Used 14 times this month' },
+  { id: 'blank', masterTemplateId: 'JR_BLANK_SHELL', name: 'Start from blank', category: 'Other', description: 'Build a report from a blank canvas', preview: '/templates/blank.png', updated: 'New template' },
+];
 
 const records: ReportRecord[] = [
   { id: 'q2', title: 'Q2 branch review', description: 'Comprehensive review of branch performance and key metrics for Q2.', owner: 'You', initials: 'RA', status: 'PUBLISHED', privacy: 'PRIVATE', updatedAt: '2026-08-25T07:00:00Z', templateId: 'branch' },
@@ -32,9 +39,7 @@ export const reportMockProvider = {
   },
   getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
     const search = (params.search ?? '').toLowerCase();
-    const items = reportTemplates
-      .filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))
-      .map((template) => ({ ...template, description: template.description }));
+    const items = templates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
     return { items, page: Number(params.page ?? 0), pageSize: Number(params.pageSize ?? items.length), total: items.length };
   },
   createReport: async (payload: { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }) => ({ id: `rpt-${Date.now()}`, title: payload.title, status: 'DRAFT' as const, createdAt: new Date().toISOString() }),

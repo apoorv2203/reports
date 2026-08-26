@@ -4,13 +4,14 @@ import { AppButton } from '@/components/app/AppButton';
 import { AppCard } from '@/components/app/AppCard';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowDownToLine, ArrowUpRight, Check, ChevronDown, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send } from 'lucide-react';
-import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate } from '@/data/reportTemplates';
+import { defaultReportParameters, type LibraryReport, type ReportParameter } from '@/data/reportTemplates';
+import type { ReportTemplateResponse } from '@/api/types/report';
 import { renderReportTemplate } from '@/api/services/reportService';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
 
-export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
+export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplateResponse; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
   const t = useT();
   const [renderedHtml, setRenderedHtml] = useState('');
   const [renderError, setRenderError] = useState(false);
