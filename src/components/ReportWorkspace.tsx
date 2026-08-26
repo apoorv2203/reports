@@ -50,7 +50,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     setExportOpen(false);
   }
 
-  if (readOnly) return <PublishedReportViewer template={template} report={report} renderedHtml={renderedHtml} renderError={renderError} onBack={onBrowseReports} />;
+  if (readOnly) return <PublishedReportViewer template={template} report={report} renderedHtml={renderedHtml} renderError={renderError} onBack={onBrowseReports} onRunReport={async (values) => { if (report?.id) await runReport(report.id, values); const response = await renderReportTemplate(template.masterTemplateId); setRenderedHtml(response.html); setRenderError(false); }} />;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-card">
