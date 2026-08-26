@@ -101,6 +101,9 @@ export const defaultReportParameters: ReportParameter[] = [
   { id: 'risk', table: 'loans', column: 'risk_level', label: 'Risk level', type: 'single-select', required: false, defaultValue: 'High', options: ['Low', 'Medium', 'High', 'Critical'] },
 ];
 
+// Regions that should use a white-fill presentation in multi-select pills
+export const whiteFillRegions = ['South', 'East', 'Central'];
+
 export type LibraryReport = {
   id: string;
   title: string;

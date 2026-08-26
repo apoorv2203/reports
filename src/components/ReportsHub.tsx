@@ -345,13 +345,13 @@ function ReportCard({
       <FileText className="h-5 w-5" />
     );
   return (
-    <AppCard variant="report" density="report-empty">
+    <AppCard variant="report" density="report-empty" className="bg-white">
       <div className="flex items-start justify-between">
         <AppBadge variant={report.icon === "chart" ? "chart" : "success"} size="format">
           {icon}
         </AppBadge>
         <div className="flex items-start gap-3">
-<AppBadge variant={report.status === "Published" ? "success" : "warning"} size="status">
+          <AppBadge variant={report.status === "Published" ? "success" : "warning"} size="status">
             {report.status === "Published"
               ? t("reports.published")
               : t("reports.draft")}
@@ -359,10 +359,12 @@ function ReportCard({
           <AppButton
             onClick={onRun}
             aria-label={t("reports.runReportName", { name: report.title })}
+            variant="reportRun"
             size="run-icon"
             title={t("reports.runReport")}
+            className="bg-transparent border border-border text-foreground size-7 rounded-full p-0 hover:border-primary hover:text-primary"
           >
-            <Play />
+            <Play className="size-4" />
           </AppButton>
         </div>
       </div>
@@ -391,17 +393,20 @@ function ReportCard({
           <AppButton
             type="button"
             onClick={onEdit}
-            variant="secondary" size="report-action"
+            variant="secondary"
+            size="widget-home"
           >
             <Pencil /> {t("common.edit")}
           </AppButton>
           <AppButton
             type="button"
             onClick={onAdd}
-            variant="secondary" size="report-action" active={added}
+            variant={added ? "success-outline" : "secondary"}
+            size="widget-home"
+            active={added}
           >
             <Bookmark className="h-5 w-5" />{" "}
-            {added ? t("reports.added") : t("reports.addToHome")}
+            {added ? t("home.addedToHome") : t("home.addToHome")}
           </AppButton>
           <AppButton
             type="button"

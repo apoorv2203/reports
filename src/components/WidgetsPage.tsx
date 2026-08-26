@@ -293,7 +293,7 @@ function WidgetCard({
       variant="widget"
       density="widget"
       onClick={onView}
-      className="cursor-pointer"
+      className="cursor-pointer bg-white"
     >
       <div className="flex items-start justify-between gap-2">
         <AppBadge variant={widget.kind === "TABLE" ? "table" : "chart"}>
@@ -352,7 +352,16 @@ function WidgetCard({
         </span>
       </div>
       <div className="mt-3 flex items-center gap-2">
-        <AppButton variant="secondary" type="button" size="card-action">
+        <AppButton
+          variant={added ? "success-outline" : "secondary"}
+          type="button"
+          disabled={pending}
+          onClick={(event) => {
+            event.stopPropagation();
+            onEdit();
+          }}
+          size="widget-home"
+        >
           <Edit3 data-icon="inline-start" /> {t("common.edit")}
         </AppButton>
         <AppButton

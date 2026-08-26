@@ -124,12 +124,14 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
       <div className="mt-5 flex items-center gap-2">
         {report.ownedByYou ? (
           <>
-            <AppButton variant="secondary" size="report-action" onClick={onOpen}><FilePenLine /> {t('reports.edit')}</AppButton>
-            <AppButton variant="danger" size="report-action" onClick={onPublish}><EyeOff /> {report.published ? t('reports.unpublish') : t('reports.publish')}</AppButton>
+            <AppButton variant="secondary" size="widget-home" onClick={onOpen}><FilePenLine /> {t('reports.edit')}</AppButton>
+            <AppButton variant="danger" size="widget-home" onClick={onPublish}><EyeOff /> {report.published ? t('reports.unpublish') : t('reports.publish')}</AppButton>
           </>
         ) : (
           <>
-            <AppButton variant="primary" size="report-action" onClick={onOpen}><Play /> {t('reports.run')}</AppButton>
+            <AppButton variant="reportRun" size="run-icon" onClick={onOpen} aria-label={t('reports.run')} className="bg-transparent border border-border text-foreground size-7 rounded-full p-0 hover:border-primary hover:text-primary">
+              <Play className="size-4" />
+            </AppButton>
             <AppButton variant="secondary" size="toggle" active={report.favourite} onClick={onFavourite} aria-label={report.favourite ? `${t('reports.removeFromFavourites')} ${report.title}` : `${t('reports.addToFavourites')} ${report.title}`} aria-pressed={report.favourite}><Heart className={report.favourite ? 'fill-current' : undefined} /></AppButton>
           </>
         )}
