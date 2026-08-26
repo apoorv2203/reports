@@ -35,13 +35,13 @@ export function ParameterFieldsPopover({ reportId, selectedIds, onAdd, children 
 
   return <div className="w-full">
     <div onClick={toggleOpen}>{children}</div>
-    {open && <div className="mt-3 rounded-lg border border-border bg-white text-foreground shadow-sm max-h-[calc(100vh-260px)] flex flex-col min-h-0">
+    {open && <div className="mt-3 rounded-lg border border-border bg-white text-foreground shadow-sm max-h-[calc(100vh-260px)] flex flex-col min-h-0 max-w-full overflow-x-hidden">
       <div className="flex flex-col min-h-0">
         <div className="flex items-center gap-2 px-4 pt-2 pb-2 flex-shrink-0">
           <Search className="size-4 text-muted-foreground" />
           <AppInput aria-label={t('reports.searchFields')} value={query} onChange={(event) => { setQuery(event.target.value); void loadFields(event.target.value); }} placeholder={t('reports.searchFields')} size="inline" />
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto border-t border-b border-border px-3">
+        <div className="flex-1 min-h-0 overflow-y-auto border-t border-b border-border px-3 min-w-0">
           {loading && <p className="py-8 text-center text-sm text-muted-foreground">{t('common.loading')}</p>}
           {error && <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-muted-foreground"><p>{t('reports.fieldsError')}</p><AppButton size="sm" variant="outline" onClick={() => void loadFields(query)}>{t('common.retry')}</AppButton></div>}
           {!loading && !error && Object.keys(grouped).length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">{t('reports.noFieldsFound')}</p>}

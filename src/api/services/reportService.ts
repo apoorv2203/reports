@@ -22,7 +22,9 @@ export const getReportParameters = async (reportId: string): Promise<ReportParam
 export const renderReportTemplate = async (masterTemplateId: string): Promise<ReportTemplateRenderResponse> => request<ReportTemplateRenderResponse>('reportTemplateRender', { masterTemplateId });
 export const createReport = async (payload: CreateReportPayload): Promise<CreateReportResponse> => request<CreateReportResponse>('reportCreate', {}, { body: payload });
 export const runReport = async (reportId: string, parameters: Record<string, unknown>) => request<unknown>('reportRun', { reportId }, { body: parameters });
-export const publishReport = async (reportId: string, parameters: ReportParameter[]) => request<unknown>('reportPublish', { reportId }, { body: { parameters } });
+export type PublishOptions = { title: string; description?: string };
+export const publishReport = async (reportId: string, options: PublishOptions) => request<unknown>('reportPublish', { reportId }, { body: options });
+export const parameterizeReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportParameterize', { reportId }, { body: payload });
 export const exportReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportExport', { reportId }, { body: payload });
 
 export const getPinnedReports = async (): Promise<PinnedReportsResponse> => {

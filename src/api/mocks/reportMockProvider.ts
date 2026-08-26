@@ -85,6 +85,21 @@ export const reportMockProvider = {
     // Return parameters for a report. Use defaultReportParameters as mock data.
     return { items: defaultReportParameters };
   },
+  parameterizeReport: async ({ params = {}, body = {} }: { params?: Record<string, string>; body?: unknown } = {}) => {
+    // Simulate parameterization work. Accept body with fields/parameters and return success.
+    await new Promise((res) => setTimeout(res, 400));
+    return { status: 'ok', message: 'Parameterization complete' };
+  },
+  runReport: async ({ params = {}, body = {} }: { params?: Record<string, string>; body?: unknown } = {}) => {
+    // Simulate running the report and echo the payload back for debugging.
+    await new Promise((res) => setTimeout(res, 400));
+    return { status: 'ok', executedAt: new Date().toISOString(), payload: body };
+  },
+  publishReport: async ({ params = {}, body = {} }: { params?: Record<string, string>; body?: unknown } = {}) => {
+    // Simulate publishing: accept title/description and return publish id
+    await new Promise((res) => setTimeout(res, 300));
+    return { success: true, publishId: `pub-${Date.now()}`, payload: body };
+  },
   getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
     const search = (params.search ?? '').toLowerCase();
     const items = templates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
