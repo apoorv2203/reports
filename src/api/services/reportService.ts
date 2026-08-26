@@ -1,5 +1,6 @@
 import { request } from '@/api/client/apiClient';
 import type { CreateReportPayload, CreateReportResponse, PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse, ReportParametersResponse } from '@/api/types/report';
+import type { ReportParameter } from '@/data/reportTemplates';
 
 export type GetReportsOptions = { search?: string; scope?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 export const getReports = async (options: GetReportsOptions = {}): Promise<ReportsResponse> => {
@@ -21,6 +22,7 @@ export const getReportParameters = async (reportId: string): Promise<ReportParam
 export const renderReportTemplate = async (masterTemplateId: string): Promise<ReportTemplateRenderResponse> => request<ReportTemplateRenderResponse>('reportTemplateRender', { masterTemplateId });
 export const createReport = async (payload: CreateReportPayload): Promise<CreateReportResponse> => request<CreateReportResponse>('reportCreate', {}, { body: payload });
 export const runReport = async (reportId: string, parameters: Record<string, unknown>) => request<unknown>('reportRun', { reportId }, { body: parameters });
+export const publishReport = async (reportId: string, parameters: ReportParameter[]) => request<unknown>('reportPublish', { reportId }, { body: { parameters } });
 export const exportReport = async (reportId: string, payload: Record<string, unknown>) => request<unknown>('reportExport', { reportId }, { body: payload });
 
 export const getPinnedReports = async (): Promise<PinnedReportsResponse> => {

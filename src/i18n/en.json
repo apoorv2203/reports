@@ -111,6 +111,8 @@
   "reports.selectValue": "Select a value",
   "reports.running": "Running...",
   "reports.reportExecuted": "Report executed successfully",
+  "reports.reportValidated": "Report validated successfully",
+  "reports.reportValidatedHelp": "The report ran successfully with the selected parameters. You can publish it now.",
   "reports.runError": "Unable to run report. Please try again.",
   "reports.backToReportBuilder": "Back to report builder",
   "workspace.myReports": "My reports",

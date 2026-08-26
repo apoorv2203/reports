@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { runReport } from "@/api/services/reportService";
+import { publishReport, runReport } from "@/api/services/reportService";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppInput } from "@/components/app/AppInput";
@@ -27,14 +27,16 @@ import type {
 export function PublishReportDialog({
   onClose,
   onPublished,
+  reportId,
   onTested,
 }: {
   onClose: () => void;
   onPublished: (parameters: ReportParameter[]) => void;
+  reportId?: string;
   onTested?: (parameters: ReportParameter[], values: Record<string, unknown>) => Promise<void>;
 }) {
   const t = useT();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedFields, setSelectedFields] = useState<ReportParameterField[]>(
     [],
   );
@@ -107,8 +109,8 @@ export function PublishReportDialog({
             </span>
             {t("reports.test")}
           </li>
-          <li className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex size-7 items-center justify-center rounded-full border border-border bg-card">
+          <li className={`flex items-center gap-2 ${step === 3 ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+            <span className={`flex size-7 items-center justify-center rounded-full ${step === 3 ? "bg-primary text-primary-foreground" : "border border-border bg-card"}`}>
               3
             </span>
             {t("reports.publish")}
@@ -289,7 +291,7 @@ export function PublishReportDialog({
                 )}
               </AppCard>
             </div>
-          ) : (
+          ) : step === 2 ? (
             <div className="flex flex-col gap-4">
               <div>
                 <h3 className="font-display text-[18px] font-bold text-foreground">{t("reports.runReport")}</h3>
@@ -303,9 +305,16 @@ export function PublishReportDialog({
                   {parameter.type === "date-range" ? <div className="grid grid-cols-2 gap-2"><AppInput type="date" value={Array.isArray(value) ? value[0] ?? "" : ""} onChange={(event) => setValue([event.target.value, Array.isArray(value) ? value[1] ?? "" : ""])} aria-label={`${parameter.label} start`} /><AppInput type="date" value={Array.isArray(value) ? value[1] ?? "" : ""} onChange={(event) => setValue([Array.isArray(value) ? value[0] ?? "" : "", event.target.value])} aria-label={`${parameter.label} end`} /></div> : parameter.type === "number" ? <AppInput type="number" value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} /> : parameter.type === "multi-select" ? <select multiple value={Array.isArray(value) ? value : []} onChange={(event) => setValue(Array.from(event.target.selectedOptions, (option) => option.value))} className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-sm" aria-label={parameter.label}>{(parameter.options ?? []).map((option) => <option key={option} value={option}>{option}</option>)}</select> : parameter.type === "single-select" ? <select value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm" aria-label={parameter.label}><option value="">{t("reports.selectValue")}</option>{(parameter.options ?? []).map((option) => <option key={option} value={option}>{option}</option>)}</select> : <AppInput value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} />}
                 </label>;
               })}
-              <AppButton disabled={runState === "running" || !parameters.every((parameter) => { const value = values[parameter.id] ?? parameter.defaultValue; return Array.isArray(value) ? value.length > 0 && value.every(Boolean) : Boolean(value); })} onClick={async () => { setRunState("running"); setRunError(false); try { await onTested?.(parameters, values); setRunState("success"); } catch { setRunError(true); setRunState("idle"); } }} variant="primary" size="action-md" className="self-start">{runState === "running" ? t("reports.running") : t("reports.runReport")}<ArrowRight /></AppButton>
+              <AppButton disabled={runState === "running" || !parameters.every((parameter) => { const value = values[parameter.id] ?? parameter.defaultValue; return Array.isArray(value) ? value.length > 0 && value.every(Boolean) : Boolean(value); })} onClick={async () => { setRunState("running"); setRunError(false); try { await onTested?.(parameters, values); setRunState("success"); setStep(3); } catch { setRunError(true); setRunState("idle"); } }} variant="primary" size="action-md" className="self-start">{runState === "running" ? t("reports.running") : t("reports.runReport")}<ArrowRight /></AppButton>
               {runError && <p role="alert" className="text-sm text-destructive">{t("reports.runError")}</p>}
               {runState === "success" && <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success-bg px-4 py-3 text-sm text-success"><span className="flex items-center gap-2"><Check className="size-4" />{t("reports.reportExecuted")}</span><AppButton variant="ghost" size="action-sm" onClick={() => setRunState("idle")}>{t("reports.runAgain")}<ArrowRight /></AppButton></div>}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-5">
+              <div className="rounded-lg border border-success/30 bg-success-bg p-4 text-success">
+                <div className="flex items-start gap-3"><Check className="mt-0.5 size-5 shrink-0" /><div><p className="font-semibold">{t("reports.reportValidated")}</p><p className="mt-1 text-sm leading-relaxed">{t("reports.reportValidatedHelp")}</p></div></div>
+              </div>
+              <div className="flex flex-col gap-3"><AppButton variant="outline" size="action-md" onClick={() => setStep(2)}>{t("reports.runAgain")}<ArrowLeft /></AppButton><AppButton variant="primary" size="action-md" onClick={async () => { if (reportId) await publishReport(reportId, parameters); onPublished(parameters); }}><Check />{t("reports.publishReport")}</AppButton></div>
             </div>
           )}
         </div>
@@ -313,7 +322,7 @@ export function PublishReportDialog({
         <footer className="mt-auto flex items-center justify-between border-t border-border bg-card px-5 py-4">
           <AppButton
             className={step === 1 ? "invisible" : ""}
-            onClick={() => (step === 2 ? setStep(1) : onClose())}
+            onClick={() => (step === 2 || step === 3 ? setStep(step === 3 ? 2 : 1) : onClose())}
             variant="ghost"
             size="action-md"
           >
@@ -331,14 +340,16 @@ export function PublishReportDialog({
               {t("reports.saveAndTest")}
               <ArrowRight />
             </AppButton>
+          ) : step === 2 ? (
+            <span aria-hidden="true" />
           ) : (
             <AppButton
-              onClick={() => onPublished(parameters)}
+              onClick={async () => { if (reportId) await publishReport(reportId, parameters); onPublished(parameters); }}
               variant="primary"
               size="action-md"
             >
               <Check />
-              Publish report
+              {t("reports.publishReport")}
             </AppButton>
           )}
         </footer>

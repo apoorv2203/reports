@@ -107,7 +107,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
         }
         right={
           <aside className="relative flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted p-4">
-            {showPublishDialog ? <PublishReportDialog onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} onTested={async (_parameters, values) => { if (report?.id) await runReport(report.id, values); const response = await renderReportTemplate(template.masterTemplateId); setRenderedHtml(response.html); setRenderError(false); }} /> : <>
+            {showPublishDialog ? <PublishReportDialog reportId={report?.id} onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} onTested={async (_parameters, values) => { if (report?.id) await runReport(report.id, values); const response = await renderReportTemplate(template.masterTemplateId); setRenderedHtml(response.html); setRenderError(false); }} /> : <>
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-foreground">{t('workspace.actions')}</div>
             {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="report-publish"><ArrowUpRight /> {t('workspace.publishReport')}</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-muted-foreground">{t('workspace.publishHelper')}</p></>}
