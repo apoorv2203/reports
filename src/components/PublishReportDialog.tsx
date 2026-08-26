@@ -225,7 +225,7 @@ export function PublishReportDialog({
                       return (
                         <div
                           key={field.id}
-                          className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-3 rounded-[14px] border border-surface-200 px-4 py-4"
+                          className="relative grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-x-4 gap-y-4 rounded-[14px] border border-surface-200 px-4 py-4"
                         >
                           <GripVertical
                             className="size-5 shrink-0 text-muted-foreground"
@@ -236,15 +236,15 @@ export function PublishReportDialog({
                           >
                             <Icon className="size-7" aria-hidden="true" />
                           </div>
-                          <div className="min-w-0 self-center">
-                            <p className="text-[15px] font-bold text-foreground">
+                          <div className="col-span-2 min-w-0 self-center">
+                            <p className="break-words text-[15px] font-bold text-foreground">
                               {field.displayName}
                             </p>
                             <p className="mt-2 text-[13px] text-muted-foreground">
                               {field.dataType}
                             </p>
                           </div>
-                          <fieldset className="min-w-0 self-center">
+                          <fieldset className="col-span-3 min-w-0 self-start">
                             <legend className="mb-2 text-[12px] font-semibold text-muted-foreground">
                               {t("reports.inputFormat")}
                             </legend>
@@ -275,6 +275,7 @@ export function PublishReportDialog({
                             type="button"
                             variant="ghost"
                             size="icon-sm"
+                            className="absolute end-3 top-3"
                             aria-label={t("reports.removeParameter", {
                               name: field.displayName,
                             })}
