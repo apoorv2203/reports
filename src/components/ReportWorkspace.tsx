@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { exportReport } from '@/api/services/reportService';
 import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
+import { PublishedReportViewer } from './PublishedReportViewer';
 
 export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplateResponse; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
   const t = useT();
@@ -48,6 +49,8 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     }
     setExportOpen(false);
   }
+
+  if (readOnly) return <PublishedReportViewer template={template} report={report} renderedHtml={renderedHtml} renderError={renderError} onBack={onBrowseReports} />;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-card">
