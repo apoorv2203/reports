@@ -36,7 +36,39 @@ export const reportMockProvider = {
     const masterTemplateId = params.masterTemplateId ?? '';
     const base = `<style>.jasper-report{font-family:Arial,sans-serif;max-width:900px;margin:auto;padding:32px;color:#17324d}.jasper-report header{border-bottom:2px solid #dce7ee;padding-bottom:18px}.jasper-report h1{margin:0 0 8px}.jasper-report h2{margin-top:24px}.jasper-report p{color:#60758a}.jasper-report .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.jasper-report .metric,.jasper-report .panel{border:1px solid #dce7ee;border-radius:10px;padding:16px;background:#f8fbfc}.jasper-report .metric strong{display:block;font-size:24px;margin-top:6px}.jasper-report table{width:100%;border-collapse:collapse}.jasper-report th,.jasper-report td{text-align:left;padding:10px;border-bottom:1px solid #dce7ee}</style>`;
     const reports: Record<string, string> = {
-      JR_BRANCH_SUMMARY: `${base}<article class="jasper-report"><header><h1>Branch Performance Summary</h1><p>Branch lending activity and portfolio health for the current reporting period.</p></header><section><h2>Key performance indicators</h2><div class="grid"><div class="metric"><span>Outstanding balance</span><strong>97.9 Cr</strong></div><div class="metric"><span>Active loans</span><strong>1,284</strong></div><div class="metric"><span>Quarterly growth</span><strong>+7.2%</strong></div></div></section><section><h2>Branch performance</h2><div class="panel"><p>Central 76% · North 58% · South 88% · West 68%</p></div></section><section><h2>Summary table</h2><table><thead><tr><th>Branch</th><th>Active loans</th><th>Balance</th></tr></thead><tbody><tr><td>Central</td><td>412</td><td>31.4 Cr</td></tr><tr><td>North</td><td>286</td><td>21.8 Cr</td></tr><tr><td>South</td><td>356</td><td>27.6 Cr</td></tr></tbody></table></section></article>`,
+      JR_BRANCH_SUMMARY: `${base}<article class="jasper-report"><header><h1>Branch Performance Summary</h1><p>Branch lending activity and portfolio health for the current reporting period.</p></header><section><h2>Key performance indicators</h2><div class="grid"><div class="metric"><span>Outstanding balance</span><strong>97.9 Cr</strong></div><div class="metric"><span>Active loans</span><strong>1,284</strong></div><div class="metric"><span>Quarterly growth</span><strong>+7.2%</strong></div></div></section><section><h2>Branch performance</h2><div class="panel"><!-- Inline SVG bar chart for branch performance -->
+        <svg role="img" aria-label="Branch performance chart" width="100%" height="180" viewBox="0 0 600 180" preserveAspectRatio="xMidYMid meet">
+          <style>
+            .label { font: 12px/1.2 Arial, sans-serif; fill: #17324d; }
+            .value { font: 11px/1 Arial, sans-serif; fill: #ffffff; font-weight:700 }
+            .bar-bg { fill: #e9f5f7; }
+            .bar-fill { fill: #2aa7a1; }
+            .axis { stroke: #dce7ee; stroke-width:1; }
+          </style>
+          <!-- Background rows -->
+          <rect x="0" y="0" width="600" height="180" fill="transparent" />
+          <!-- Row 1: Central 76% -->
+          <text x="8" y="26" class="label">Central</text>
+          <rect x="100" y="12" width="480" height="24" class="bar-bg" rx="6" />
+          <rect x="100" y="12" width="365" height="24" class="bar-fill" rx="6" />
+          <text x="480" y="30" class="value">76%</text>
+          <!-- Row 2: North 58% -->
+          <text x="8" y="68" class="label">North</text>
+          <rect x="100" y="54" width="480" height="24" class="bar-bg" rx="6" />
+          <rect x="100" y="54" width="278" height="24" class="bar-fill" rx="6" />
+          <text x="388" y="72" class="value">58%</text>
+          <!-- Row 3: South 88% -->
+          <text x="8" y="110" class="label">South</text>
+          <rect x="100" y="96" width="480" height="24" class="bar-bg" rx="6" />
+          <rect x="100" y="96" width="422" height="24" class="bar-fill" rx="6" />
+          <text x="522" y="114" class="value">88%</text>
+          <!-- Row 4: West 68% -->
+          <text x="8" y="152" class="label">West</text>
+          <rect x="100" y="138" width="480" height="24" class="bar-bg" rx="6" />
+          <rect x="100" y="138" width="326" height="24" class="bar-fill" rx="6" />
+          <text x="426" y="156" class="value">68%</text>
+        </svg>
+      </div></section><section><h2>Summary table</h2><table><thead><tr><th>Branch</th><th>Active loans</th><th>Balance</th></tr></thead><tbody><tr><td>Central</td><td>412</td><td>31.4 Cr</td></tr><tr><td>North</td><td>286</td><td>21.8 Cr</td></tr><tr><td>South</td><td>356</td><td>27.6 Cr</td></tr></tbody></table></section></article>`,
       JR_PORTFOLIO_OVERVIEW: `${base}<article class="jasper-report"><header><h1>Portfolio Overview</h1><p>Portfolio composition, exposure, and risk distribution.</p></header><section><h2>Portfolio health</h2><div class="grid"><div class="metric"><span>Total exposure</span><strong>184.6 Cr</strong></div><div class="metric"><span>Accounts</span><strong>8,942</strong></div><div class="metric"><span>At risk</span><strong>4.8%</strong></div></div></section><section><h2>Risk distribution</h2><div class="panel"><p>Low risk 62% · Medium risk 29% · High risk 9%</p></div></section></article>`,
       JR_OPERATIONS_PULSE: `${base}<article class="jasper-report"><header><h1>Operations Pulse</h1><p>Daily operational throughput and exceptions requiring attention.</p></header><section><h2>Today at a glance</h2><div class="grid"><div class="metric"><span>Applications processed</span><strong>642</strong></div><div class="metric"><span>Approval rate</span><strong>81.4%</strong></div><div class="metric"><span>Open exceptions</span><strong>18</strong></div></div></section><section><h2>Exceptions to review</h2><div class="panel"><p>Documentation delays, approval escalations, and pending verifications.</p></div></section></article>`,
       JR_BLANK_SHELL: `${base}<article class="jasper-report"><header><h1>Untitled Report</h1><p>Jasper report shell ready for data.</p></header><section><h2>Report content</h2><p>No content has been configured yet.</p></section></article>`,

@@ -24,7 +24,7 @@ export function TopNav({ onOpenHome, onOpenReports, onOpenWidgets, onOpenSession
       <button type="button" onClick={onOpenHome} className="flex shrink-0 items-center gap-2"><LogoMark /><Wordmark /></button>
       <span className="hidden h-5 w-px bg-surface-200 lg:block" />
       <button type="button" onClick={onOpenHome} className="hidden items-center gap-2 text-[12px] font-bold text-navy-900 lg:inline-flex"><Home className="h-3.5 w-3.5" /> {t('nav.home')} <ChevronDown className="h-3.5 w-3.5" /></button>
-      <nav className="ml-auto flex items-center gap-2 sm:gap-3">
+      <nav className="start-auto flex items-center gap-2 sm:gap-3">
         <button type="button" onClick={onOpenSessions} className="hidden items-center gap-1.5 text-[12px] font-bold text-navy-900 hover:text-mint-700 sm:inline-flex"><Clock3 className="h-4 w-4" /> {t('nav.sessions')}</button>
         <button type="button" onClick={onOpenWidgets} className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold text-navy-900 transition hover:bg-mint-50 hover:text-mint-700 lg:inline-flex"><Grid2X2 className="h-4 w-4" /> {t('nav.widgets')}</button>
         <button type="button" onClick={onOpenReports} className="hidden items-center gap-1.5 text-[12px] font-bold text-navy-900 hover:text-mint-700 sm:inline-flex"><FileText className="h-4 w-4" /> {t('nav.reports')}</button>

@@ -8,6 +8,8 @@ import { defaultReportParameters, type LibraryReport, type ReportParameter } fro
 import type { ReportTemplateResponse } from '@/api/types/report';
 import { renderReportTemplate } from '@/api/services/reportService';
 import { PublishReportDialog } from './PublishReportDialog';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { exportReport } from '@/api/services/reportService';
 import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
 
@@ -31,9 +33,20 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
   function applyPrompt(value: string) {
     const text = value.trim();
     if (!text) return;
-    const result = 'The Jasper report preview will update with this request.';
+    const result = t('workspace.promptApplied');
     setMessages((current) => [...current, { prompt: text, result }]);
     setPrompt('');
+  }
+
+  async function handleExport(format: 'image' | 'jrxml' | 'pdf') {
+    if (!report?.id) return;
+    try {
+      await exportReport(report.id, { format });
+    } catch (err) {
+      // keep behavior minimal; the export service handles the response
+      console.error('Export failed', err);
+    }
+    setExportOpen(false);
   }
 
   return (
@@ -45,21 +58,41 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <aside className={`flex h-full min-h-0 flex-col border-r border-border bg-muted p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
             {!readOnly && <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto">
-              {messages.length === 0 && <div className="rounded-[24px] border border-dashed border-border bg-transparent px-8 py-8 text-[15px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</div>}
+              {messages.length === 0 && <div className="rounded-[24px] border border-dashed border-border bg-transparent px-6 py-6 text-[13px] leading-relaxed text-muted-foreground">{t('workspace.emptyState')}</div>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-foreground px-3.5 py-3 text-[13px] font-medium leading-relaxed text-background">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-primary"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
               <div className="mt-6 border-t border-border pt-4">
                 <div className="text-[12px] font-bold text-muted-foreground">{t('workspace.tryNext')}</div>
                 <div className="mt-2 flex flex-col gap-2">
-                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item" className="rounded-lg border border-border bg-card px-3 py-2.5 text-left text-[12px] font-medium leading-relaxed text-foreground shadow-none hover:border-primary hover:bg-accent">{suggestion}</AppButton>)}
+                  {[t('workspace.suggestionKPI'), t('workspace.suggestionChart'), t('workspace.suggestionTitle')].map((suggestion) => (
+                    <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="suggestion">
+                      {suggestion}
+                    </AppButton>
+                  ))}
                 </div>
               </div>
             </div>}
-            <AppCard variant="report" density="report-layout" className="mt-4 shrink-0 rounded-[24px] border border-border bg-card p-4 shadow-none">
-              <Textarea className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
-              <div className="mt-4 flex items-center justify-between px-1"><span className="text-[12px] text-muted-foreground">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" className="size-12 rounded-full" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
-            </AppCard>
+            <div className="mt-4 shrink-0 relative">
+              <Textarea
+                className="w-full resize-none bg-white rounded-[18px] border border-border px-4 pt-4 pb-8 text-[13px] text-ink-900 outline-none placeholder:text-ink-300 min-h-[36px]"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }}
+                placeholder={t('workspace.askPlaceholder')}
+                rows={4}
+              />
+              <div className="absolute left-3 bottom-3 text-[12px] text-muted-foreground">{t('workspace.enterToSend')}</div>
+              <AppButton
+                variant="primary"
+                size="icon-sm"
+                className="absolute right-3 bottom-2 h-10 w-10 rounded-full bg-ink-900 text-white shadow-md"
+                onClick={() => applyPrompt(prompt)}
+                aria-label={t('workspace.sendPrompt')}
+              >
+                <Send className="h-4 w-4" />
+              </AppButton>
+            </div>
           </aside>
         }
         center={
@@ -77,14 +110,20 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="report-publish"><ArrowUpRight /> {t('workspace.publishReport')}</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-muted-foreground">{t('workspace.publishHelper')}</p></>}
             <div>
-              <AppButton type="button" onClick={() => setExportOpen((open) => !open)} variant="secondary" size="report-export">
-                <ArrowDownToLine className="h-4 w-4" />
-                {t('workspace.export')}
-                <ChevronDown className={`ml-auto h-4 w-4 text-muted-foreground transition ${exportOpen ? 'rotate-180' : ''}`} />
-              </AppButton>
-              {exportOpen && <div className="mt-1 flex flex-col gap-1 rounded-lg border border-border bg-card p-1">
-                {[t('workspace.exportImage'), t('workspace.exportJRXML'), t('workspace.exportPDF')].map((option) => <AppButton key={option} type="button" variant="ghost" size="menu-item">{option}</AppButton>)}
-              </div>}
+              <DropdownMenu open={exportOpen} onOpenChange={(open) => setExportOpen(open)}>
+                <DropdownMenuTrigger {...({ asChild: true } as any)}>
+                  <AppButton type="button" variant="secondary" size="report-export" aria-label={t('workspace.export')} className="w-full">
+                    <ArrowDownToLine className="h-4 w-4" />
+                    {t('workspace.export')}
+                    <ChevronDown style={{ marginInlineStart: 'auto' }} className={`h-4 w-4 text-muted-foreground transition ${exportOpen ? 'rotate-180' : ''}`} />
+                  </AppButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" sideOffset={8} className="bg-white rounded-lg p-2 text-foreground shadow-lg ring-1 ring-foreground/10">
+                  <DropdownMenuItem onSelect={() => handleExport('image')}>{t('workspace.exportImage')}</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleExport('jrxml')}>{t('workspace.exportJRXML')}</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleExport('pdf')}>{t('workspace.exportPDF')}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-muted-foreground'}>{t('workspace.layout')}</div>

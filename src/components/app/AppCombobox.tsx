@@ -15,7 +15,7 @@ export function AppCombobox({ options, value, onValueChange, placeholder = "", s
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger render={<Button variant="outline" role="combobox" aria-expanded={open} className={cn("w-full justify-between", className)}>{selected?.label || placeholder}<ChevronsUpDown /></Button>} />
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command><CommandInput placeholder={searchPlaceholder} /><CommandList><CommandEmpty>{emptyText}</CommandEmpty><CommandGroup>{options.map((option) => <CommandItem key={option.value} value={option.value} onSelect={() => { onValueChange?.(option.value); setOpen(false) }}>{option.label}<Check className={cn("ml-auto", value === option.value ? "opacity-100" : "opacity-0")} /></CommandItem>)}</CommandGroup></CommandList></Command>
+      <Command><CommandInput placeholder={searchPlaceholder} /><CommandList><CommandEmpty>{emptyText}</CommandEmpty><CommandGroup>{options.map((option) => <CommandItem key={option.value} value={option.value} onSelect={() => { onValueChange?.(option.value); setOpen(false) }}>{option.label}<Check className={cn("start-auto", value === option.value ? "opacity-100" : "opacity-0")} /></CommandItem>)}</CommandGroup></CommandList></Command>
       </PopoverContent>
     </Popover>
   )

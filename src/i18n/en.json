@@ -400,6 +400,7 @@
   "workspace.editingReport": "Editing this report",
   "workspace.emptyState": "Tell ReportIQ what to change. Reference a section number to place content exactly where you want it.",
   "workspace.tryNext": "Try next",
+  "workspace.promptApplied": "The Jasper report preview will update with this request.",
   "workspace.suggestionKPI": "Add a KPI block in section 2",
   "workspace.suggestionChart": "Add a chart in section 3",
   "workspace.suggestionTitle": "Update the title in section 1 to \"Q2 branch review\"",

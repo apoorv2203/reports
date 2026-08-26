@@ -115,3 +115,10 @@ button:focus-visible {
   margin-inline-end: 4px;
 }
 
+/* Logical spacing helpers (RTL-ready) */
+.start-auto { margin-inline-start: auto; }
+.end-auto { margin-inline-end: auto; }
+/* Backwards-compatible mapping for existing Tailwind classes to logical properties */
+.ml-auto { margin-inline-start: auto; }
+.mr-auto { margin-inline-end: auto; }
+

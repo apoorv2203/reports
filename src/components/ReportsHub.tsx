@@ -230,7 +230,7 @@ export function ReportsHub({
               <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             </AppButton>
           ))}
-          <div className="ml-auto flex items-center gap-2 text-[12px] text-muted-foreground">
+          <div className="start-auto flex items-center gap-2 text-[12px] text-muted-foreground">
             {t("common.sortBy")}
             <AppButton variant="secondary" size="filter">
               {t("common.recentlyUpdated")}

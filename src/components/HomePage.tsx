@@ -30,7 +30,8 @@ import {
   scheduledDeliveries,
   type Widget,
 } from "@/data/homeData";
-import type { HomeWidget, WidgetData } from "@/services/widgetService";
+import type { HomeWidget, WidgetData } from "@/api/services/widgetService";
+import type { PinnedReport } from '@/api/types/report';
 import { useFormat, useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppCard } from "@/components/app/AppCard";
@@ -45,7 +46,9 @@ type HomePageProps = {
   onOpenReports: () => void;
   onCreateReport: () => void;
   onOpenWidgets: () => void;
-  onEditWidget: (widget: Widget) => void;
+    onEditWidget: (widget: any) => void;
+  recommendedWidgets?: any[];
+  pinnedReports?: PinnedReport[];
   homeWidgetIds: string[];
   homeWidgets?: HomeWidget[];
   widgetData?: Record<string, WidgetData | undefined>;
@@ -55,6 +58,7 @@ type HomePageProps = {
   onRemoveWidget: (id: string) => void;
   isNewUser?: boolean;
   userName?: string;
+    [key: string]: any;
 };
 
 export function HomePage({
@@ -78,7 +82,7 @@ export function HomePage({
   const { relativeLabel } = useFormat();
   const [addedWidgets, setAddedWidgets] = useState<string[]>([]);
   const [removedWidgets, setRemovedWidgets] = useState<string[]>([]);
-  const [maximizedWidget, setMaximizedWidget] = useState<Widget | null>(null);
+  const [maximizedWidget, setMaximizedWidget] = useState<any | null>(null);
   const [question, setQuestion] = useState("");
   const [pinnedVisible, setPinnedVisible] = useState(5);
 
@@ -463,7 +467,7 @@ function WidgetCard({
   error,
   onRetry,
 }: {
-  widget: Widget;
+  widget: any;
   recommended?: boolean;
   added?: boolean;
   onAdd?: () => void;
@@ -690,16 +694,16 @@ function WidgetPreview({
     return (
       <div className="mt-3 overflow-hidden rounded-md border border-surface-100 text-[9px]">
         <div className="grid grid-cols-3 bg-surface-50 px-2 py-1 font-bold text-ink-500">
-          {data.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
+          {data.columns.map((column: string) => (
+              <span key={column}>{column}</span>
+            ))}
         </div>
-        {data.rows.map((row, index) => (
+        {data.rows.map((row: (string | number)[], index: number) => (
           <div
             key={index}
             className="grid grid-cols-3 border-t border-surface-100 px-2 py-1 text-ink-700"
           >
-            {row.map((cell, cellIndex) => (
+            {row.map((cell: string | number, cellIndex: number) => (
               <span key={cellIndex} className="truncate">
                 {cell}
               </span>
@@ -711,12 +715,12 @@ function WidgetPreview({
   if (data?.type === "CHART")
     return (
       <div className="mt-3 flex h-32 items-end gap-1.5 px-1">
-        {data.series[0].data.map((value, index) => (
+        {data.series[0].data.map((value: number, index: number) => (
           <span
             key={index}
             className="flex-1 rounded-t-sm bg-chart-blue"
             style={{
-              height: `${Math.max(12, (value / Math.max(...data.series[0].data)) * 100)}%`,
+              height: `${Math.max(12, (value / Math.max(...data.series[0].data as number[])) * 100)}%`,
             }}
           />
         ))}

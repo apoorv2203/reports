@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'success' | 'success-outline' | 'icon' | 'compact';
   active?: boolean;
-  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon' | 'report-back' | 'report-export' | 'report-designer' | 'report-publish' | 'report-header';
+  size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon' | 'report-back' | 'report-export' | 'report-designer' | 'report-publish' | 'report-header' | 'suggestion';
 };
 
 type PrimitiveButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link';
@@ -52,14 +52,17 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   'template-card': { variant: 'ghost', size: 'default', className: 'group flex h-auto min-w-0 w-full flex-col items-stretch overflow-hidden p-0 text-left' },
   'section-icon': { variant: 'icon', size: 'icon-sm', className: 'text-ink-300 hover:text-ink-900' },
   'report-back': { variant: 'ghost', size: 'icon', className: 'mr-1 size-7 text-muted-foreground hover:bg-muted' },
-  'report-export': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold text-foreground' },
+  'report-export': { size: 'default', className: 'flex h-auto w-full items-center justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold rounded-lg bg-white border border-[var(--color-success-medium)] text-[var(--color-success-medium)] hover:bg-[var(--color-success-bg)] hover:border-[var(--color-success-medium)] hover:text-[var(--color-success-medium)] transition-colors duration-150' },
   'report-designer': { size: 'default', className: 'mt-3 w-full bg-primary text-primary-foreground hover:bg-primary/90' },
-  'report-publish': { size: 'default', className: 'w-full bg-primary text-primary-foreground hover:bg-primary/90' },
+  // Use the semantic dark button token for report publishing (centralized)
+  'report-publish': { size: 'default', className: 'w-full bg-[var(--color-button-dark)] text-white hover:brightness-95' },
   'report-header': { size: 'default', className: 'bg-primary text-primary-foreground hover:bg-primary/90' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
   pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
   'run-icon': { size: 'icon', className: 'size-8 text-foreground hover:text-primary' },
   'report-action': { size: 'default', className: 'flex-1 gap-2 py-1.5 text-[11px] font-bold' },
+  // Suggestion buttons used in the report left pane (full-width, light surface)
+  suggestion: { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[12px] font-medium rounded-lg bg-white border border-border shadow-none transition-colors duration-150 hover:bg-[var(--color-success-bg)] hover:border-[var(--color-success-medium)] hover:text-navy-900' },
 };
 
 export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {

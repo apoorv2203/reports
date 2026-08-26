@@ -124,7 +124,7 @@ function ContextMenuSubTrigger({
   inset?: boolean
 }) {
   return (
-    <ContextMenuPrimitive.SubmenuTrigger
+      <ContextMenuPrimitive.SubmenuTrigger
       data-slot="context-menu-sub-trigger"
       data-inset={inset}
       className={cn(
@@ -134,7 +134,7 @@ function ContextMenuSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto" />
+      <ChevronRightIcon className="start-auto" />
     </ContextMenuPrimitive.SubmenuTrigger>
   )
 }
@@ -244,7 +244,7 @@ function ContextMenuShortcut({
     <span
       data-slot="context-menu-shortcut"
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-focus/context-menu-item:text-accent-foreground",
+        "start-auto text-xs tracking-widest text-muted-foreground group-focus/context-menu-item:text-accent-foreground",
         className
       )}
       {...props}

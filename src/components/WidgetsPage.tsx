@@ -175,7 +175,7 @@ export function WidgetsPage({
               <ChevronDown data-icon="inline-end" />
             </AppButton>
           ))}
-          <div className="ml-auto flex items-center gap-2 text-[12px] text-ink-500">
+          <div className="start-auto flex items-center gap-2 text-[12px] text-ink-500">
             {t("common.sortBy")}
             <Select value={sort} onValueChange={(value) => value && setSort(value)}>
               <SelectTrigger size="sort">
