@@ -17,8 +17,8 @@ import {
   libraryReports,
   reportTemplates,
   type LibraryReport,
-  type ReportTemplate,
 } from '@/data/reportTemplates';
+import type { ReportTemplateResponse } from '@/api/types/report';
 
 type LibraryTab = 'mine' | 'catalogue';
 
@@ -27,7 +27,7 @@ export function BuilderReportsLibrary({
   onOpenReport,
 }: {
   onBack: () => void;
-  onOpenReport: (template: ReportTemplate, report: LibraryReport) => void;
+  onOpenReport: (template: ReportTemplateResponse, report: LibraryReport) => void;
 }) {
   const t = useT();
   const [tab, setTab] = useState<LibraryTab>('catalogue');

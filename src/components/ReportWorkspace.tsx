@@ -4,13 +4,14 @@ import { AppButton } from '@/components/app/AppButton';
 import { AppCard } from '@/components/app/AppCard';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowDownToLine, ArrowUpRight, Check, ChevronDown, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send } from 'lucide-react';
-import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate } from '@/data/reportTemplates';
+import { defaultReportParameters, type LibraryReport, type ReportParameter } from '@/data/reportTemplates';
+import type { ReportTemplateResponse } from '@/api/types/report';
 import { renderReportTemplate } from '@/api/services/reportService';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
 
-export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
+export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplateResponse; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
   const t = useT();
   const [renderedHtml, setRenderedHtml] = useState('');
   const [renderError, setRenderError] = useState(false);
@@ -30,16 +31,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
   function applyPrompt(value: string) {
     const text = value.trim();
     if (!text) return;
-    const titleMatch = text.match(/(?:title|section 1)[^\"]*[\"]([^\"]+)[\"]/i);
-    const chartMatch = text.match(/chart[^\d]*(\d+)/i);
-    const tableMatch = text.match(/table[^\d]*(\d+)/i);
-    let result = 'I added that to the report shell.';
-    if (titleMatch?.[1]) {
-      setTitle(titleMatch[1]);
-      result = 'Section 1 title updated';
-    } else if (chartMatch?.[1] || tableMatch?.[1] || /kpi|metric|number|add|create|include/i.test(text)) {
-      result = 'The Jasper report preview will update with this request.';
-    }
+    const result = 'The Jasper report preview will update with this request.';
     setMessages((current) => [...current, { prompt: text, result }]);
     setPrompt('');
   }

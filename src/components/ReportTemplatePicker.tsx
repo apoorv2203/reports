@@ -4,7 +4,7 @@ import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
 import { AppCard } from '@/components/app/AppCard';
 import { AppBadge } from '@/components/app/AppBadge';
-import { reportTemplates, type ReportTemplate } from '@/data/reportTemplates';
+import type { ReportTemplateResponse } from '@/api/types/report';
 import { getReportTemplates } from '@/api/services/reportService';
 import { useT } from '@/providers/I18nProvider';
 
@@ -13,15 +13,15 @@ export function ReportTemplatePicker({
   onClose,
   onBrowseReports,
 }: {
-  onSelect: (template: ReportTemplate) => void;
+  onSelect: (template: ReportTemplateResponse) => void;
   onClose: () => void;
   onBrowseReports: () => void;
 }) {
   const t = useT();
-  const [templates, setTemplates] = useState<ReportTemplate[]>(reportTemplates);
+  const [templates, setTemplates] = useState<ReportTemplateResponse[]>([]);
   const [search, setSearch] = useState('');
   useEffect(() => {
-    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates(reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))));
+    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates([]));
   }, [search]);
 
   return (
@@ -70,7 +70,7 @@ export function ReportTemplatePicker({
   );
 }
 
-function TemplateCard({ template, onSelect }: { template: ReportTemplate; onSelect: (template: ReportTemplate) => void }) {
+function TemplateCard({ template, onSelect }: { template: ReportTemplateResponse; onSelect: (template: ReportTemplateResponse) => void }) {
   return (
     <AppButton type="button" size="template-card" onClick={() => onSelect(template)}><AppCard variant="report" density="template-card">
       <div className="relative aspect-[4/3] overflow-hidden border-b border-border bg-muted">
