@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { runReport } from "@/api/services/reportService";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppInput } from "@/components/app/AppInput";
@@ -26,9 +27,11 @@ import type {
 export function PublishReportDialog({
   onClose,
   onPublished,
+  onTested,
 }: {
   onClose: () => void;
   onPublished: (parameters: ReportParameter[]) => void;
+  onTested?: (parameters: ReportParameter[], values: Record<string, unknown>) => Promise<void>;
 }) {
   const t = useT();
   const [step, setStep] = useState<1 | 2>(1);
@@ -36,9 +39,10 @@ export function PublishReportDialog({
     [],
   );
   const [parameters, setParameters] = useState<ReportParameter[]>([]);
-  const [formats, setFormats] = useState<Record<string, ParameterInputType>>(
-    {},
-  );
+  const [formats, setFormats] = useState<Record<string, ParameterInputType>>({});
+  const [values, setValues] = useState<Record<string, string | string[]>>({});
+  const [runState, setRunState] = useState<'idle' | 'running' | 'success'>('idle');
+  const [runError, setRunError] = useState(false);
 
   function configure() {
     setParameters(
@@ -56,6 +60,7 @@ export function PublishReportDialog({
               : "text"),
         required: true,
         defaultValue: field.dataType === "DATE" ? [] : "",
+        options: field.dataType === "STRING" ? undefined : undefined,
       })),
     );
 
@@ -90,14 +95,14 @@ export function PublishReportDialog({
           className="mt-6 flex items-center justify-between text-[12px]"
           aria-label={t("reports.publishProgress")}
         >
-          <li className="flex items-center gap-2 font-semibold text-primary">
-            <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              1
+          <li className={`flex items-center gap-2 ${step === 1 ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+            <span className={`flex size-7 items-center justify-center rounded-full ${step === 1 ? "bg-primary text-primary-foreground" : "border border-primary text-primary"}`}>
+              {step === 1 ? "1" : <Check className="size-4" />}
             </span>
             {t("reports.defineParameters")}
           </li>
-          <li className="flex items-center gap-2 text-muted-foreground">
-            <span className="flex size-7 items-center justify-center rounded-full border border-border bg-card">
+          <li className={`flex items-center gap-2 ${step === 2 ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+            <span className={`flex size-7 items-center justify-center rounded-full ${step === 2 ? "bg-primary text-primary-foreground" : "border border-border bg-card"}`}>
               2
             </span>
             {t("reports.test")}
@@ -114,7 +119,7 @@ export function PublishReportDialog({
         <div className="px-5 py-6 overflow-y-auto flex-1 min-h-0">
           <div>
           <h3 className="font-display text-[18px] font-bold text-foreground">
-            {step === 1 ? t("reports.defineParameters") : "Configure inputs"}
+            {step === 1 ? t("reports.defineParameters") : t("reports.runReport")}
           </h3>
           {step === 1 ? (
             <div>
@@ -285,74 +290,22 @@ export function PublishReportDialog({
               </AppCard>
             </div>
           ) : (
-            <div className="flex flex-col gap-3">
-              {parameters.map((parameter, index) => (
-                <div
-                  key={parameter.id}
-                  className="grid gap-3 rounded-[14px] border border-surface-200 p-4 md:grid-cols-[1fr_170px_auto]"
-                >
-                  <label className="text-[11px] font-bold text-ink-500">
-                    Display label
-                    <input
-                      value={parameter.label}
-                      onChange={(event) =>
-                        setParameters((current) =>
-                          current.map((item, itemIndex) =>
-                            itemIndex === index
-                              ? { ...item, label: event.target.value }
-                              : item,
-                          ),
-                        )
-                      }
-                      className="input mt-1.5 text-[12px]"
-                    />
-                  </label>
-                  <label className="text-[11px] font-bold text-ink-500">
-                    Input type
-                    <select
-                      value={parameter.type}
-                      onChange={(event) =>
-                        setParameters((current) =>
-                          current.map((item, itemIndex) =>
-                            itemIndex === index
-                              ? {
-                                  ...item,
-                                  type: event.target
-                                    .value as ParameterInputType,
-                                }
-                              : item,
-                          ),
-                        )
-                      }
-                      className="input mt-1.5 text-[12px]"
-                    >
-                      <option value="date">Date</option>
-                      <option value="date-range">Date range</option>
-                      <option value="single-select">Single select</option>
-                      <option value="multi-select">Multi select</option>
-                      <option value="number">Number</option>
-                      <option value="text">Text</option>
-                    </select>
-                  </label>
-                  <label className="flex items-center gap-2 self-end pb-2 text-[11px] font-bold text-ink-700">
-                    <input
-                      type="checkbox"
-                      checked={parameter.required}
-                      onChange={(event) =>
-                        setParameters((current) =>
-                          current.map((item, itemIndex) =>
-                            itemIndex === index
-                              ? { ...item, required: event.target.checked }
-                              : item,
-                          ),
-                        )
-                      }
-                      className="accent-emerald-500"
-                    />
-                    Required
-                  </label>
-                </div>
-              ))}
+            <div className="flex flex-col gap-4">
+              <div>
+                <h3 className="font-display text-[18px] font-bold text-foreground">{t("reports.runReport")}</h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{t("reports.runReportHelp")}</p>
+              </div>
+              {parameters.map((parameter) => {
+                const value = values[parameter.id] ?? parameter.defaultValue ?? (parameter.type === "date-range" || parameter.type === "multi-select" ? [] : "");
+                const setValue = (next: string | string[]) => setValues((current) => ({ ...current, [parameter.id]: next }));
+                return <label key={parameter.id} className="flex flex-col gap-2 text-[12px] font-semibold text-foreground">
+                  <span>{parameter.label} <span className="text-destructive" aria-hidden="true">*</span></span>
+                  {parameter.type === "date-range" ? <div className="grid grid-cols-2 gap-2"><AppInput type="date" value={Array.isArray(value) ? value[0] ?? "" : ""} onChange={(event) => setValue([event.target.value, Array.isArray(value) ? value[1] ?? "" : ""])} aria-label={`${parameter.label} start`} /><AppInput type="date" value={Array.isArray(value) ? value[1] ?? "" : ""} onChange={(event) => setValue([Array.isArray(value) ? value[0] ?? "" : "", event.target.value])} aria-label={`${parameter.label} end`} /></div> : parameter.type === "number" ? <AppInput type="number" value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} /> : parameter.type === "multi-select" ? <select multiple value={Array.isArray(value) ? value : []} onChange={(event) => setValue(Array.from(event.target.selectedOptions, (option) => option.value))} className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-sm" aria-label={parameter.label}>{(parameter.options ?? []).map((option) => <option key={option} value={option}>{option}</option>)}</select> : parameter.type === "single-select" ? <select value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm" aria-label={parameter.label}><option value="">{t("reports.selectValue")}</option>{(parameter.options ?? []).map((option) => <option key={option} value={option}>{option}</option>)}</select> : <AppInput value={typeof value === "string" ? value : ""} onChange={(event) => setValue(event.target.value)} />}
+                </label>;
+              })}
+              <AppButton disabled={runState === "running" || !parameters.every((parameter) => { const value = values[parameter.id] ?? parameter.defaultValue; return Array.isArray(value) ? value.length > 0 && value.every(Boolean) : Boolean(value); })} onClick={async () => { setRunState("running"); setRunError(false); try { await onTested?.(parameters, values); setRunState("success"); } catch { setRunError(true); setRunState("idle"); } }} variant="primary" size="action-md" className="self-start">{runState === "running" ? t("reports.running") : t("reports.runReport")}<ArrowRight /></AppButton>
+              {runError && <p role="alert" className="text-sm text-destructive">{t("reports.runError")}</p>}
+              {runState === "success" && <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success-bg px-4 py-3 text-sm text-success"><span className="flex items-center gap-2"><Check className="size-4" />{t("reports.reportExecuted")}</span><AppButton variant="ghost" size="action-sm" onClick={() => setRunState("idle")}>{t("reports.runAgain")}<ArrowRight /></AppButton></div>}
             </div>
           )}
         </div>
