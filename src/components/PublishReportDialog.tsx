@@ -266,7 +266,7 @@ export function PublishReportDialog({
               <div>
                 <p className="text-[13px] leading-relaxed text-ink-500">{t('reports.defineParametersHelp')}</p>
                 {/* existing parameters UI (unchanged) */}
-                <AppCard variant="report" className="mt-5 p-4">
+                <div className="mt-5">
                   <div className="flex items-start justify-end">
                     <ParameterFieldsPopover
                       reportId="draft"
@@ -352,7 +352,7 @@ export function PublishReportDialog({
                       })}
                     </div>
                   )}
-                </AppCard>
+                </div>
               </div>
             )}
             {step === 3 && (
@@ -364,19 +364,22 @@ export function PublishReportDialog({
                   const value = values[parameter.id] ?? parameter.defaultValue ?? (parameter.type === 'date-range' || parameter.type === 'multi-select' ? [] : '');
                   const setValue = (next: string | string[]) => setValues((current) => ({ ...current, [parameter.id]: next }));
                   return (
-                    <label key={parameter.id} className="flex flex-col gap-2 text-[12px] font-semibold text-foreground">
-                      <span>
+                    <label
+                      key={parameter.id}
+                      className="flex flex-col gap-1 text-[12px] font-semibold text-foreground bg-white rounded-md border border-surface-200 p-3"
+                    >
+                      <span className="text-[13px] font-medium">
                         {parameter.label} <span className="text-destructive" aria-hidden="true">*</span>
                       </span>
                       {parameter.type === 'date-range' ? (
                         <div className="grid grid-cols-2 gap-2">
-                          <AppInput type="date" value={Array.isArray(value) ? value[0] ?? '' : ''} onChange={(event) => setValue([event.target.value, Array.isArray(value) ? value[1] ?? '' : ''])} aria-label={`${parameter.label} start`} />
-                          <AppInput type="date" value={Array.isArray(value) ? value[1] ?? '' : ''} onChange={(event) => setValue([Array.isArray(value) ? value[0] ?? '' : '', event.target.value])} aria-label={`${parameter.label} end`} />
+                          <AppInput className="h-9 rounded-md" type="date" value={Array.isArray(value) ? value[0] ?? '' : ''} onChange={(event) => setValue([event.target.value, Array.isArray(value) ? value[1] ?? '' : ''])} aria-label={`${parameter.label} start`} />
+                          <AppInput className="h-9 rounded-md" type="date" value={Array.isArray(value) ? value[1] ?? '' : ''} onChange={(event) => setValue([Array.isArray(value) ? value[0] ?? '' : '', event.target.value])} aria-label={`${parameter.label} end`} />
                         </div>
                       ) : parameter.type === 'number' ? (
-                        <AppInput type="number" value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
+                        <AppInput className="h-9 rounded-md" type="number" value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
                       ) : parameter.type === 'multi-select' ? (
-                        <select multiple value={Array.isArray(value) ? value : []} onChange={(event) => setValue(Array.from(event.target.selectedOptions, (option) => option.value))} className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-sm" aria-label={parameter.label}>
+                        <select multiple value={Array.isArray(value) ? value : []} onChange={(event) => setValue(Array.from(event.target.selectedOptions, (option) => option.value))} className="min-h-10 rounded-md border border-input bg-white px-2 py-1 text-sm" aria-label={parameter.label}>
                           {(parameter.options ?? []).map((option) => (
                             <option key={option} value={option}>
                               {option}
@@ -384,7 +387,7 @@ export function PublishReportDialog({
                           ))}
                         </select>
                       ) : parameter.type === 'single-select' ? (
-                        <select value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm" aria-label={parameter.label}>
+                        <select value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} className="h-9 rounded-md border border-input bg-white px-2 text-sm" aria-label={parameter.label}>
                           <option value="">{t('reports.selectValue')}</option>
                           {(parameter.options ?? []).map((option) => (
                             <option key={option} value={option}>
@@ -393,7 +396,7 @@ export function PublishReportDialog({
                           ))}
                         </select>
                       ) : (
-                        <AppInput value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
+                        <AppInput className="h-9 rounded-md" value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
                       )}
                     </label>
                   );

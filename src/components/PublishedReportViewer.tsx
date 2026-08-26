@@ -30,10 +30,9 @@ export function PublishedReportViewer({ template, report, renderedHtml, renderEr
         </div>
         <AppButton variant="ghost" size="icon-sm" aria-label={t('workspace.moreOptions')}><MoreHorizontal /></AppButton>
       </header>
-      <section className="rounded-xl border border-border bg-card p-5 shadow-sm" aria-labelledby="report-parameters-title">
-        <div className="flex items-center justify-between gap-3"><h2 id="report-parameters-title" className="font-display text-sm font-bold uppercase tracking-[0.12em] text-foreground">{t('reports.reportParameters')}</h2><span className="text-xs text-muted-foreground">{t('reports.viewerCollapse')}</span></div>
-        <div className="mt-4"><ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} onRunReport={onRunReport} /></div>
-      </section>
+      <div className="mt-0">
+        <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} onRunReport={onRunReport} />
+      </div>
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm" aria-labelledby="report-title">
         <div className="flex items-center justify-between gap-3"><h2 id="report-title" className="font-display text-sm font-bold uppercase tracking-[0.12em] text-foreground">{t('reports.viewerReport')}</h2><DropdownMenu open={exportOpen} onOpenChange={setExportOpen}><DropdownMenuTrigger {...({ asChild: true } as any)}><AppButton type="button" variant="secondary" size="report-export"><ArrowDownToLine />{t('workspace.export')}<ChevronDown className="ms-auto" /></AppButton></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem onSelect={() => handleExport('image')}>{t('workspace.exportImage')}</DropdownMenuItem><DropdownMenuItem onSelect={() => handleExport('pdf')}>{t('workspace.exportPDF')}</DropdownMenuItem><DropdownMenuItem onSelect={() => handleExport('jrxml')}>{t('workspace.exportJRXML')}</DropdownMenuItem></DropdownMenuContent></DropdownMenu></div>
         <div className="mt-4 overflow-hidden rounded-lg border border-border">{renderError ? <p className="p-6 text-sm text-destructive">{t('workspace.renderError')}</p> : <div className="report-rendered-html overflow-auto" dangerouslySetInnerHTML={{ __html: renderedHtml }} />}</div>
