@@ -1,4 +1,4 @@
-import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
+import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
 import { reportTemplates } from '@/data/reportTemplates';
 
 const records: ReportRecord[] = [
@@ -25,6 +25,7 @@ const parameterFields: ReportParameterFieldsResponse['items'] = [
 ];
 
 export const reportMockProvider = {
+  renderReportTemplate: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplateRenderResponse> => ({ masterTemplateId: params.masterTemplateId ?? '', generatedAt: new Date().toISOString(), html: '<article class="report-render"><header><p>ReportIQ preview</p><h2>Branch performance summary</h2></header><section><h3>Key performance indicators</h3><div><strong>97.9 Cr</strong><span>Outstanding balance</span></div><div><strong>1,284</strong><span>Active loans</span></div></section><section><h3>Branch performance</h3><p>Rendered Jasper report preview</p></section></article>' }),
   getReportParameterFields: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportParameterFieldsResponse> => {
     const search = (params.search ?? '').toLowerCase();
     return { items: parameterFields.filter((field) => !search || `${field.displayName} ${field.group}`.toLowerCase().includes(search)) };

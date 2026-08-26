@@ -21,6 +21,7 @@ export const mockProviderRegistry: Record<string, MockProvider> = {
   reports: ({ params }) => reportMockProvider.getReports({ params }),
   reportCreate: ({ body }) => reportMockProvider.createReport(body as { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }),
   reportTemplates: ({ params }) => reportMockProvider.getReportTemplates({ params }),
+  reportTemplateRender: ({ params }) => reportMockProvider.renderReportTemplate({ params }),
   reportParameterFields: ({ params }) => reportMockProvider.getReportParameterFields({ params }),
   widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations(),
   scheduledDeliveries: () => scheduledDeliveryMockProvider.getScheduledDeliveries(),

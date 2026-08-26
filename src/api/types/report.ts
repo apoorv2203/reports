@@ -12,14 +12,15 @@ export type ReportRecord = { id: string; title: string; description: string; own
 export type ReportsResponse = { items: ReportRecord[]; page: number; pageSize: number; total: number };
 export type ReportTemplateResponse = {
   id: ReportTemplate['id'];
+  masterTemplateId: string;
   name: string;
   category: string;
   description: string;
   preview: string;
   updated: string;
-  sections: ReportTemplate['sections'];
 };
 export type ReportTemplatesResponse = { items: ReportTemplateResponse[]; page: number; pageSize: number; total: number };
+export type ReportTemplateRenderResponse = { masterTemplateId: string; html: string; generatedAt: string };
 export type ReportParameterField = { id: string; displayName: string; dataType: 'DATE' | 'STRING' | 'NUMBER'; group: string };
 export type ReportParameterFieldsResponse = { items: ReportParameterField[] };
 export type CreateReportPayload = { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> };

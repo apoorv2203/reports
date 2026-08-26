@@ -1,78 +1,51 @@
 export type TemplateKind = 'branch' | 'portfolio' | 'operations' | 'blank';
 
-export type TemplateSection = {
-  id: string;
-  title: string;
-  kind: 'title' | 'kpi' | 'chart' | 'table' | 'empty';
-  body?: string;
-};
-
 export type ReportTemplate = {
   id: TemplateKind;
+  masterTemplateId: string;
   name: string;
   category: string;
   description: string;
   preview: string;
   updated: string;
-  sections: TemplateSection[];
 };
 
 export const reportTemplates: ReportTemplate[] = [
   {
     id: 'branch',
+    masterTemplateId: 'JR_BRANCH_SUMMARY',
     name: 'Branch summary',
     category: 'Most used',
     description: 'A clean branch performance review with KPIs, trends, and room for a detailed table.',
     preview: '/templates/branch-summary.png',
     updated: 'Used 28 times this month',
-    sections: [
-      { id: '1', title: 'Q2 branch review', kind: 'title' },
-      { id: '2', title: 'Key performance indicators', kind: 'kpi' },
-      { id: '3', title: 'Branch performance', kind: 'chart' },
-      { id: '4', title: 'Detailed breakdown', kind: 'empty' },
-    ],
   },
   {
     id: 'portfolio',
+    masterTemplateId: 'JR_PORTFOLIO_OVERVIEW',
     name: 'Portfolio overview',
     category: 'Most used',
     description: 'Summarise portfolio health, outstanding balances, and year-over-year movement.',
     preview: '/templates/portfolio-overview.png',
     updated: 'Used 19 times this month',
-    sections: [
-      { id: '1', title: 'Portfolio overview', kind: 'title' },
-      { id: '2', title: 'Portfolio health', kind: 'kpi' },
-      { id: '3', title: 'Balance movement', kind: 'chart' },
-      { id: '4', title: 'Accounts by risk', kind: 'table' },
-    ],
   },
   {
     id: 'operations',
+    masterTemplateId: 'JR_OPERATIONS_PULSE',
     name: 'Operations pulse',
     category: 'Team favourite',
     description: 'Track operational volumes, service levels, and the work that needs attention.',
     preview: '/templates/operations-pulse.png',
     updated: 'Used 12 times this month',
-    sections: [
-      { id: '1', title: 'Operations pulse', kind: 'title' },
-      { id: '2', title: 'Today at a glance', kind: 'kpi' },
-      { id: '3', title: 'Volume by channel', kind: 'chart' },
-      { id: '4', title: 'Exceptions to review', kind: 'empty' },
-    ],
   },
   {
     id: 'blank',
+    masterTemplateId: 'JR_BLANK_SHELL',
     name: 'Start from blank',
     category: 'Custom',
     description: 'A blank four-section shell. Tell ReportIQ what to add in each section.',
     preview: '/templates/blank-shell.png',
     updated: 'Build something from scratch',
-    sections: [
-      { id: '1', title: 'Untitled section', kind: 'title' },
-      { id: '2', title: 'Empty section', kind: 'empty' },
-      { id: '3', title: 'Empty section', kind: 'empty' },
-      { id: '4', title: 'Empty section', kind: 'empty' },
-    ],
   },
 ];
 

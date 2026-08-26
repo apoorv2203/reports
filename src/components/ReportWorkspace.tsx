@@ -1,26 +1,31 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useT } from '@/providers/I18nProvider';
 import { AppButton } from '@/components/app/AppButton';
 import { AppCard } from '@/components/app/AppCard';
-import { AppInput } from '@/components/app/AppInput';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDownToLine, ArrowUpRight, ChartBar as BarChart3, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2 } from 'lucide-react';
-import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
+import { ArrowDownToLine, ArrowUpRight, Check, ChevronDown, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send } from 'lucide-react';
+import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate } from '@/data/reportTemplates';
+import { renderReportTemplate } from '@/api/services/reportService';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
 import { ResizableThreePane } from './ResizableThreePane';
 
 export function ReportWorkspace({ template, report, onBack, onBrowseReports, readOnly = false }: { template: ReportTemplate; report?: LibraryReport; onBack: () => void; onBrowseReports: () => void; readOnly?: boolean }) {
   const t = useT();
-  const [sections, setSections] = useState<TemplateSection[]>(template.sections);
-  const [title, setTitle] = useState(report?.title ?? template.sections[0]?.title ?? 'Untitled report');
+  const [renderedHtml, setRenderedHtml] = useState('');
+  const [renderError, setRenderError] = useState(false);
+  const [title, setTitle] = useState(report?.title ?? template.name);
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<{ prompt: string; result: string }[]>([]);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [publishedParameters, setPublishedParameters] = useState<ReportParameter[] | null>(null);
 
-  const emptySections = useMemo(() => sections.filter((s) => s.kind === 'empty'), [sections]);
+  useEffect(() => {
+    let active = true;
+    renderReportTemplate(template.masterTemplateId).then((response) => { if (active) setRenderedHtml(response.html); }).catch(() => { if (active) setRenderError(true); });
+    return () => { active = false; };
+  }, [template.masterTemplateId]);
 
   function applyPrompt(value: string) {
     const text = value.trim();
@@ -29,29 +34,12 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     const chartMatch = text.match(/chart[^\d]*(\d+)/i);
     const tableMatch = text.match(/table[^\d]*(\d+)/i);
     let result = 'I added that to the report shell.';
-    let nextSections = [...sections];
     if (titleMatch?.[1]) {
       setTitle(titleMatch[1]);
-      nextSections = nextSections.map((section, index) => index === 0 ? { ...section, title: titleMatch[1]! } : section);
       result = 'Section 1 title updated';
-    } else if (chartMatch?.[1]) {
-      const target = Math.max(1, Number(chartMatch[1]) - 1);
-      nextSections = nextSections.map((section, index) => index === target ? { ...section, kind: 'chart', body: 'Approval rate by product' } : section);
-      result = `Chart added to section ${chartMatch[1]}`;
-    } else if (tableMatch?.[1]) {
-      const target = Math.max(1, Number(tableMatch[1]) - 1);
-      nextSections = nextSections.map((section, index) => index === target ? { ...section, kind: 'table', body: 'Product performance detail' } : section);
-      result = `Table added to section ${tableMatch[1]}`;
-    } else if (/kpi|metric|number/i.test(text)) {
-      const target = nextSections.findIndex((section, index) => index > 0 && section.kind === 'empty');
-      if (target >= 0) nextSections[target] = { ...nextSections[target], kind: 'kpi', body: 'Outstanding balance · Loans · Year-over-year' };
-      result = target >= 0 ? `Metric block added to section ${target + 1}` : 'KPI block added';
-    } else if (/add|create|include/i.test(text) && emptySections.length > 0) {
-      const target = nextSections.findIndex((section) => section.kind === 'empty');
-      nextSections[target] = { ...nextSections[target], kind: 'table', body: 'New report detail' };
-      result = `New content added to section ${target + 1}`;
+    } else if (chartMatch?.[1] || tableMatch?.[1] || /kpi|metric|number|add|create|include/i.test(text)) {
+      result = 'The Jasper report preview will update with this request.';
     }
-    setSections(nextSections);
     setMessages((current) => [...current, { prompt: text, result }]);
     setPrompt('');
   }
@@ -87,7 +75,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             <div className="mx-auto max-w-2xl">
               <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{report ? t('workspace.reportView') : t('workspace.reportPreview')}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-foreground">{title}</h1></div><AppButton variant="ghost" size="icon-sm" aria-label={t('workspace.moreOptions')}><MoreHorizontal /></AppButton></div>
               {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
-              <div className="flex flex-col gap-4">{sections.map((section) => <ReportSectionCard key={`${section.id}-${section.kind}`} section={section} readOnly={readOnly} onEdit={(value) => setSections((current) => current.map((item) => item.id === section.id ? { ...item, title: value } : item))} />)}</div>
+              {renderError ? <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive">{t('workspace.renderError')}</div> : <div className="report-rendered-html" dangerouslySetInnerHTML={{ __html: renderedHtml }} />}
             </div>
           </main>
         }
@@ -108,7 +96,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             </div>
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-muted-foreground'}>{t('workspace.layout')}</div>
-            <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}><div className="font-display text-[14px] font-bold text-foreground">{template.name}</div><div className="mt-1 text-[12px] text-muted-foreground">{sections.length} sections · {template.category}</div><AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
+            <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}><div className="font-display text-[14px] font-bold text-foreground">{template.name}</div><div className="mt-1 text-[12px] text-muted-foreground">{template.category}</div><AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
           </aside>
         }
       />
@@ -116,22 +104,3 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
     </div>
   );
 }
-
-function ReportSectionCard({ section, onEdit, readOnly = false }: { section: TemplateSection; onEdit: (value: string) => void; readOnly?: boolean }) {
-  const t = useT();
-  const [editing, setEditing] = useState(false);
-  const Icon = section.kind === 'chart' ? BarChart3 : section.kind === 'table' ? Table2 : section.kind === 'kpi' ? Sparkles : FileText;
-  return <section className={`relative rounded-xl border p-5 ${section.kind === 'empty' ? 'border-dashed border-border-light bg-muted' : 'border-border bg-card shadow-card-alt'}`}>
-    <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground"><Icon className="h-4 w-4 text-primary" /> {section.kind === 'empty' ? t('workspace.emptySection') : section.kind === 'title' ? t('workspace.titleSection') : section.kind === 'kpi' ? t('workspace.kpiSection') : section.kind === 'chart' ? t('workspace.chartSection') : t('workspace.tableSection')}</div>{!readOnly && <AppButton size="section-icon" aria-label="Edit section" onClick={() => setEditing(!editing)}><Pencil /></AppButton>}</div>
-    {editing ? <AppInput autoFocus defaultValue={section.title} onBlur={(e) => { onEdit(e.target.value); setEditing(false); }} onKeyDown={(e) => { if (e.key === 'Enter') { onEdit(e.currentTarget.value); setEditing(false); } }} className="mt-3" /> : <h3 className="mt-3 font-display text-[18px] font-bold leading-tight tracking-[-0.03em] text-foreground">{section.title}</h3>}
-    {section.kind === 'title' && <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This summary gives your team a clear view of what changed and where attention is needed.</p>}
-    {section.kind === 'kpi' && <div className="mt-4 grid grid-cols-3 gap-3"><Metric label="Outstanding" value="97.9 Cr" /><Metric label="Loans" value="1,284" /><Metric label="YoY" value="+7.2%" danger /></div>}
-    {section.kind === 'chart' && <MiniChart />}
-    {section.kind === 'table' && <MiniTable />}
-    {section.kind === 'empty' && <div className="mt-5 flex min-h-[72px] items-center justify-center text-center text-[13px] text-muted-foreground">{t('workspace.emptySectionHelp')}</div>}
-  </section>;
-}
-
-function Metric({ label, value, danger = false }: { label: string; value: string; danger?: boolean }) { return <div className="rounded-lg bg-background px-3 py-2.5"><div className="text-[11px] text-muted-foreground">{label}</div><div className={`mt-1 font-display text-[18px] font-bold ${danger ? 'text-red-600' : 'text-foreground'}`}>{value}</div></div>; }
-function MiniChart() { return <div className="mt-4 flex h-32 items-end justify-around gap-4 rounded-lg bg-background px-6 pb-3 pt-4">{[78, 54, 66, 34, 48, 88].map((height, index) => <div key={index} className="flex h-full flex-1 items-end"><div className={`w-full rounded-t-md ${index < 2 ? 'bg-destructive/60' : 'bg-primary'}`} style={{ height: `${height}%` }} /></div>)}</div>; }
-function MiniTable() { return <div className="mt-4 overflow-hidden rounded-[10px] border border-border"><div className="grid grid-cols-3 bg-foreground px-3 py-2 text-[11px] font-bold text-background"><span>Segment</span><span>Accounts</span><span className="text-right">Balance</span></div>{['Retail', 'Corporate', 'SME'].map((row, index) => <div key={row} className="grid grid-cols-3 border-t border-border px-3 py-2 text-[12px] text-foreground"><span>{row}</span><span>{[782, 341, 161][index]}</span><span className="text-right font-semibold">{['43.2 Cr', '31.8 Cr', '22.9 Cr'][index]}</span></div>)}</div>; }

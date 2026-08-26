@@ -414,6 +414,7 @@
   "workspace.contentAdded": "New content added to section {n}",
   "workspace.reportView": "Report view",
   "workspace.reportPreview": "Report preview",
+  "workspace.renderError": "Unable to render this report preview.",
   "workspace.actions": "Actions",
   "workspace.publishReport": "Publish report",
   "workspace.publishDesc": "Publish this report to make it available in your reports library.",
