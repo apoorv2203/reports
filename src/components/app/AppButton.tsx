@@ -67,9 +67,10 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   suggestion: { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[12px] font-medium rounded-lg bg-white border border-border shadow-none transition-colors duration-150 hover:bg-[var(--color-success-bg)] hover:border-[var(--color-success-medium)] hover:text-navy-900' },
 };
 
-export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
+export const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>(function AppButton({ variant = 'primary', size, active = false, className, ...props }, ref) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
   const resolvedVariant = resolvedSize.variant === 'icon' ? 'ghost' : resolvedSize.variant ?? mapped.variant;
-  return <Button {...props} variant={resolvedVariant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-b-2 border-primary text-primary' : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
-}
+  return <Button ref={ref} {...props} variant={resolvedVariant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-b-2 border-primary text-primary' : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
+});
+AppButton.displayName = 'AppButton';

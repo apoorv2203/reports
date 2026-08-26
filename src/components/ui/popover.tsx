@@ -7,8 +7,17 @@ function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+function PopoverTrigger({ children, ...props }: PopoverPrimitive.Trigger.Props & { children?: React.ReactNode | { render?: React.ReactElement } }) {
+  // Support libraries that pass a `render` prop as well as standard children
+  // If a `render` prop is provided it will be passed as the trigger's child.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const anyProps = props as any;
+  const renderElement: React.ReactNode = anyProps.render ?? children;
+  return (
+    <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props}>
+      {renderElement}
+    </PopoverPrimitive.Trigger>
+  );
 }
 
 function PopoverContent({
