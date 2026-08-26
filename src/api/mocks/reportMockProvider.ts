@@ -1,4 +1,4 @@
-import type { PinnedReportsResponse, ReportRecord, ReportsResponse } from '@/api/types/report';
+import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
 import { reportTemplates } from '@/data/reportTemplates';
 
 const records: ReportRecord[] = [
@@ -12,10 +12,28 @@ const records: ReportRecord[] = [
   { id: 'ops', title: 'Operational KPI dashboard', description: 'Key operational KPIs and performance tracker.', owner: 'You', initials: 'RA', status: 'DRAFT', privacy: 'PRIVATE', updatedAt: '2026-08-18T07:00:00Z', templateId: 'ops' },
 ];
 
+const parameterFields: ReportParameterFieldsResponse['items'] = [
+  { id: 'disbursed_at', displayName: 'Disbursement period', dataType: 'DATE', group: 'Loans' },
+  { id: 'risk_level', displayName: 'Risk level', dataType: 'STRING', group: 'Loans' },
+  { id: 'product', displayName: 'Loan product', dataType: 'STRING', group: 'Loans' },
+  { id: 'minimum_balance', displayName: 'Minimum outstanding balance', dataType: 'NUMBER', group: 'Loans' },
+  { id: 'region', displayName: 'Region', dataType: 'STRING', group: 'Branches' },
+  { id: 'branch_name', displayName: 'Branch', dataType: 'STRING', group: 'Branches' },
+  { id: 'audit_date', displayName: 'Audit date', dataType: 'DATE', group: 'Audit records' },
+  { id: 'status', displayName: 'Audit status', dataType: 'STRING', group: 'Audit records' },
+  { id: 'owner', displayName: 'Owner contains', dataType: 'STRING', group: 'Audit records' },
+];
+
 export const reportMockProvider = {
-  getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}) => {
+  getReportParameterFields: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportParameterFieldsResponse> => {
     const search = (params.search ?? '').toLowerCase();
-    const items = reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search));
+    return { items: parameterFields.filter((field) => !search || `${field.displayName} ${field.group}`.toLowerCase().includes(search)) };
+  },
+  getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
+    const search = (params.search ?? '').toLowerCase();
+    const items = reportTemplates
+      .filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))
+      .map((template) => ({ ...template, description: template.description }));
     return { items, page: Number(params.page ?? 0), pageSize: Number(params.pageSize ?? items.length), total: items.length };
   },
   createReport: async (payload: { title: string; description: string; masterTemplateId: string; templateId: string; definition: Record<string, unknown> }) => ({ id: `rpt-${Date.now()}`, title: payload.title, status: 'DRAFT' as const, createdAt: new Date().toISOString() }),

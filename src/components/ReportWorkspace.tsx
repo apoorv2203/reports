@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useT } from '@/providers/I18nProvider';
 import { AppButton } from '@/components/app/AppButton';
-import { AppBadge } from '@/components/app/AppBadge';
 import { AppCard } from '@/components/app/AppCard';
 import { AppInput } from '@/components/app/AppInput';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDownToLine, ArrowLeft, ArrowUpRight, ChartBar as BarChart3, BookOpen, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpRight, ChartBar as BarChart3, Check, ChevronDown, FileText, MessageSquare, MoveHorizontal as MoreHorizontal, Pencil, Send, Sparkles, Table2 } from 'lucide-react';
 import { defaultReportParameters, type LibraryReport, type ReportParameter, type ReportTemplate, type TemplateSection } from '@/data/reportTemplates';
 import { PublishReportDialog } from './PublishReportDialog';
 import { ReportParameterRunner } from './ReportParameterRunner';
@@ -58,45 +57,28 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-card">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-5 text-foreground shadow-sm">
-        <div className="flex min-w-0 items-center gap-3">
-          <AppButton variant="primary" size="icon-sm" onClick={onBack} aria-label={t('common.back')}><ArrowLeft /></AppButton>
-          <span className="h-5 w-px bg-border" />
-          <span className="font-display text-[16px] font-bold text-foreground">ReportIQ</span>
-          <span className="text-muted-foreground">/</span>
-          <span className="hidden text-[13px] text-muted-foreground sm:inline">{t('workspace.myReports')}</span>
-          <span className="hidden text-muted-foreground sm:inline">/</span>
-          <span className="truncate text-[13px] font-semibold text-foreground">{title}</span>
-          <AppBadge variant={publishedParameters ? 'success' : 'warning'} size="status">{publishedParameters ? 'Published' : report?.published ? 'Catalogue' : 'Draft'}</AppBadge>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <AppButton variant="primary" size="report-header" type="button" onClick={onBrowseReports} className="hidden sm:inline-flex"><BookOpen /> {t('workspace.reports')}</AppButton>
-          <AppButton variant="ghost" size="icon-sm" onClick={onBack} aria-label={t('common.close')}><X /></AppButton>
-        </div>
-      </header>
-
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-card">
       <ResizableThreePane
         leftLabel={t('workspace.editingReport')}
         rightLabel={t('workspace.actions')}
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-border bg-muted p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
-            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-foreground"><MessageSquare className="h-4 w-4 text-primary" /> {t('workspace.editing')}</div>}
-            {!readOnly && <div className="mt-4 flex-1 overflow-y-auto">
-              {messages.length === 0 && <AppCard variant="report" density="report-composer">{t('workspace.askUpdate')}</AppCard>}
+            {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}
+            {!readOnly && <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto">
+              {messages.length === 0 && <div className="rounded-[24px] border border-dashed border-border bg-transparent px-8 py-8 text-[15px] leading-relaxed text-muted-foreground">{t('workspace.askUpdate')}</div>}
               <div className="flex flex-col gap-3">
                 {messages.map((message, index) => <div key={`${message.prompt}-${index}`}><div className="rounded-[14px] bg-foreground px-3.5 py-3 text-[13px] font-medium leading-relaxed text-background">{message.prompt}</div><div className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-primary"><Check className="h-3.5 w-3.5" />{message.result}</div></div>)}
               </div>
               <div className="mt-6 border-t border-border pt-4">
                 <div className="text-[12px] font-bold text-muted-foreground">{t('workspace.tryNext')}</div>
                 <div className="mt-2 flex flex-col gap-2">
-                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item">{suggestion}</AppButton>)}
+                  {['Add a metric block in section 2', 'Add a chart in section 3', 'Update the title in section 1 to "Q2 branch review"'].map((suggestion) => <AppButton key={suggestion} onClick={() => applyPrompt(suggestion)} variant="secondary" size="menu-item" className="rounded-lg border border-border bg-card px-3 py-2.5 text-left text-[12px] font-medium leading-relaxed text-foreground shadow-none hover:border-primary hover:bg-accent">{suggestion}</AppButton>)}
                 </div>
               </div>
             </div>}
-            <AppCard variant="report" density="report-layout" className="mt-3">
-              <Textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
-              <div className="flex items-center justify-between px-1"><span className="text-[10px] text-muted-foreground">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
+            <AppCard variant="report" density="report-layout" className="mt-4 shrink-0 rounded-[24px] border border-border bg-card p-4 shadow-none">
+              <Textarea className="w-full resize-none bg-transparent px-2 py-1 text-[13px] text-ink-900 outline-none placeholder:text-ink-300" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); applyPrompt(prompt); } }} placeholder={t('workspace.askUpdate')} rows={3} />
+              <div className="mt-4 flex items-center justify-between px-1"><span className="text-[12px] text-muted-foreground">{t('workspace.enterToSend')}</span><AppButton variant="primary" size="icon-sm" className="size-12 rounded-full" onClick={() => applyPrompt(prompt)} aria-label={t('workspace.sendPrompt')}><Send /></AppButton></div>
             </AppCard>
           </aside>
         }

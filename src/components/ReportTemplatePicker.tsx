@@ -21,7 +21,7 @@ export function ReportTemplatePicker({
   const [templates, setTemplates] = useState<ReportTemplate[]>(reportTemplates);
   const [search, setSearch] = useState('');
   useEffect(() => {
-    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates([]));
+    getReportTemplates({ search, page: 0, pageSize: 20 }).then((response) => setTemplates(response.items)).catch(() => setTemplates(reportTemplates.filter((template) => !search || `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(search))));
   }, [search]);
 
   return (
@@ -52,9 +52,9 @@ export function ReportTemplatePicker({
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
-            <Search className="h-4 w-4" />
-            <AppInput size="report-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('reports.searchTemplates')} />
+          <div className="flex w-80 items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-muted-foreground shadow-sm">
+            <Search className="h-4 w-4 shrink-0" />
+            <AppInput size="inline" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('reports.searchTemplates')} />
           </div>
           <span className="text-[12px] font-medium text-muted-foreground">{templates.length} templates</span>
         </div>

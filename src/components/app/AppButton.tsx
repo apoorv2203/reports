@@ -1,32 +1,35 @@
 import * as React from 'react';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
-  variant?: 'primary' | 'secondary' | 'success-outline' | 'ghost' | 'danger' | 'icon' | 'compact';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'success' | 'success-outline' | 'icon' | 'compact';
   active?: boolean;
   size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon' | 'report-back' | 'report-export' | 'report-designer' | 'report-publish' | 'report-header';
 };
 
-type PrimitiveButtonVariant = 'default' | 'outline' | 'ghost' | 'destructive';
-type AppSemanticVariant = PrimitiveButtonVariant | 'icon' | 'danger';
+type PrimitiveButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link';
+type AppSemanticVariant = PrimitiveButtonVariant | 'icon';
 type PrimitiveButtonSize = 'default' | 'sm' | 'icon' | 'icon-sm';
 type AppButtonStyle = { variant?: AppSemanticVariant; size: PrimitiveButtonSize; className?: string };
 
 const variants: Record<NonNullable<AppButtonProps['variant']>, { variant: PrimitiveButtonVariant; size: PrimitiveButtonSize; className?: string }> = {
-  primary: { variant: 'default', size: 'default', className: 'bg-foreground text-background hover:bg-foreground/90' },
-  secondary: { variant: 'default', size: 'default', className: 'bg-foreground text-background hover:bg-foreground/90' },
-  'success-outline': { variant: 'outline', size: 'default', className: 'border-border bg-success-bg text-success hover:bg-success-light' },
-  ghost: { variant: 'default', size: 'default', className: 'bg-foreground text-background hover:bg-foreground/90' },
+  primary: { variant: 'default', size: 'default' },
+  secondary: { variant: 'secondary', size: 'default' },
+  outline: { variant: 'outline', size: 'default' },
+  ghost: { variant: 'ghost', size: 'default' },
   danger: { variant: 'destructive', size: 'default' },
-  icon: { variant: 'default', size: 'icon', className: 'bg-foreground text-background hover:bg-foreground/90' },
-  compact: { variant: 'default', size: 'sm', className: 'bg-primary text-primary-foreground hover:bg-primary/80' },
+  link: { variant: 'link', size: 'default' },
+  success: { variant: 'default', size: 'default', className: 'bg-success text-success-foreground hover:bg-success/90' },
+  'success-outline': { variant: 'outline', size: 'default', className: 'border-border bg-success-bg text-success hover:bg-success-light' },
+  icon: { variant: 'ghost', size: 'icon' },
+  compact: { variant: 'default', size: 'sm' },
 };
 
 const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   default: { size: 'default' },
   sm: { size: 'sm' },
   icon: { size: 'icon' },
-  'icon-sm': { size: 'icon', className: 'size-8 rounded-lg' },
+  'icon-sm': { size: 'icon', className: 'size-8 rounded-lg text-foreground' },
   'link-sm': { size: 'default', className: 'h-auto px-0 text-[11px] font-bold text-primary' },
   'link-xs': { size: 'default', className: 'h-auto px-0 text-[10px] font-bold text-primary' },
   'action-sm': { size: 'default', className: 'px-3 py-2 text-[11px] font-bold text-primary' },
@@ -42,17 +45,17 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   toggle: { size: 'icon', className: 'size-8 rounded-md' },
   'card-action': { size: 'default', className: 'flex-1 py-2 text-[10px] font-bold' },
   'widget-home': { size: 'default', className: 'flex-1 py-2 text-[10px] font-bold' },
-  'widget-icon': { variant: 'icon', size: 'default', className: 'size-8 border border-surface-200 text-navy-900' },
-  'modal-icon': { variant: 'icon', size: 'default', className: 'size-9 text-ink-500' },
-  'menu-danger': { variant: 'danger', size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold' },
+  'widget-icon': { variant: 'icon', size: 'default', className: 'size-8 border border-surface-200' },
+  'modal-icon': { variant: 'icon', size: 'default', className: 'size-9 text-muted-foreground' },
+  'menu-danger': { variant: 'destructive', size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold' },
   'report-full': { size: 'default', className: 'mt-4 w-full' },
   'template-card': { variant: 'ghost', size: 'default', className: 'group flex h-auto min-w-0 w-full flex-col items-stretch overflow-hidden p-0 text-left' },
   'section-icon': { variant: 'icon', size: 'icon-sm', className: 'text-ink-300 hover:text-ink-900' },
   'report-back': { variant: 'ghost', size: 'icon', className: 'mr-1 size-7 text-muted-foreground hover:bg-muted' },
   'report-export': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold text-foreground' },
-  'report-designer': { size: 'default', className: 'mt-3 w-full bg-foreground text-background hover:bg-foreground/90' },
-  'report-publish': { size: 'default', className: 'w-full bg-foreground text-background hover:bg-foreground/90' },
-  'report-header': { size: 'default', className: 'bg-foreground text-background hover:bg-foreground/90' },
+  'report-designer': { size: 'default', className: 'mt-3 w-full bg-primary text-primary-foreground hover:bg-primary/90' },
+  'report-publish': { size: 'default', className: 'w-full bg-primary text-primary-foreground hover:bg-primary/90' },
+  'report-header': { size: 'default', className: 'bg-primary text-primary-foreground hover:bg-primary/90' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
   pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
   'run-icon': { size: 'icon', className: 'size-8 text-foreground hover:text-primary' },
@@ -62,6 +65,6 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
 export function AppButton({ variant = 'primary', size, active = false, className, ...props }: AppButtonProps) {
   const mapped = variants[variant];
   const resolvedSize = sizes[size ?? (variant === 'icon' ? 'icon' : 'default')];
-  const resolvedVariant = resolvedSize.variant === 'icon' ? 'ghost' : resolvedSize.variant === 'danger' ? 'destructive' : resolvedSize.variant ?? mapped.variant;
+  const resolvedVariant = resolvedSize.variant === 'icon' ? 'ghost' : resolvedSize.variant ?? mapped.variant;
   return <Button {...props} variant={resolvedVariant} size={resolvedSize.size} className={cn(mapped.className, resolvedSize.className, size === 'tab' && (active ? 'border-b-2 border-primary text-primary' : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground'), size === 'pill' && (active ? 'border-navy-900 bg-navy-900 text-white' : 'border-border-light bg-background text-muted-foreground hover:border-foreground hover:text-foreground'), size === 'toggle' && active && 'border-mint-300 bg-mint-50 text-mint-700', size === 'pagination' && active && 'border-mint-400 bg-mint-50 text-mint-700', className)} />;
 }
