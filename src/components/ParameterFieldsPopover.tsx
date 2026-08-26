@@ -36,7 +36,7 @@ export function ParameterFieldsPopover({ reportId, selectedIds, onAdd, children 
 
   return <Popover open={open} onOpenChange={handleOpenChange}>
     <PopoverTrigger render={children as never} />
-    <PopoverContent align="end" sideOffset={8} className="w-[min(28rem,calc(100vw-2rem))] gap-0 overflow-hidden rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-lg">
+    <PopoverContent align="end" sideOffset={8} className="z-[80] w-[min(28rem,calc(100vw-2rem))] gap-0 overflow-hidden rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-lg">
       <div className="flex flex-col gap-4 p-4">
         <h3 className="text-lg font-bold">{t('reports.addFields')}</h3>
         <div className="flex items-center gap-2 rounded-lg border border-input bg-background px-3"><Search className="size-5 text-muted-foreground" /><AppInput aria-label={t('reports.searchFields')} value={query} onChange={(event) => { setQuery(event.target.value); void loadFields(event.target.value); }} placeholder={t('reports.searchFields')} size="inline" /></div>
