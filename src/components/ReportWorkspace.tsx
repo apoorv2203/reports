@@ -54,6 +54,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
       <ResizableThreePane
         leftLabel={t('workspace.editingReport')}
         rightLabel={t('workspace.actions')}
+        expandRight={showPublishDialog}
         left={
           <aside className={`flex h-full min-h-0 flex-col border-r border-border bg-muted p-4 ${readOnly ? 'items-center justify-center' : ''}`}>
             {!readOnly && <div className="flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.12em] text-ink-700"><MessageSquare className="h-4 w-4 text-mint-600" /> {t('workspace.editing')}</div>}

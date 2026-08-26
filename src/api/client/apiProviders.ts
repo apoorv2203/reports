@@ -23,6 +23,7 @@ export const mockProviderRegistry: Record<string, MockProvider> = {
   reportTemplates: ({ params }) => reportMockProvider.getReportTemplates({ params }),
   reportTemplateRender: ({ params }) => reportMockProvider.renderReportTemplate({ params }),
   reportParameterFields: ({ params }) => reportMockProvider.getReportParameterFields({ params }),
+  reportParameters: ({ params }) => reportMockProvider.getReportParameters({ params }),
   widgetRecommendations: () => widgetMockProvider.getWidgetRecommendations(),
   scheduledDeliveries: () => scheduledDeliveryMockProvider.getScheduledDeliveries(),
   scheduledDeliveryDownload: ({ params }) => scheduledDeliveryMockProvider.downloadScheduledDelivery(params.deliveryId),

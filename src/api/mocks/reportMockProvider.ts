@@ -1,4 +1,5 @@
-import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse } from '@/api/types/report';
+import type { PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse, ReportParametersResponse } from '@/api/types/report';
+import { defaultReportParameters } from '@/data/reportTemplates';
 import type { ReportTemplateResponse } from '@/api/types/report';
 
 const templates: ReportTemplateResponse[] = [
@@ -79,6 +80,10 @@ export const reportMockProvider = {
   getReportParameterFields: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportParameterFieldsResponse> => {
     const search = (params.search ?? '').toLowerCase();
     return { items: parameterFields.filter((field) => !search || `${field.displayName} ${field.group}`.toLowerCase().includes(search)) };
+  },
+  getReportParameters: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportParametersResponse> => {
+    // Return parameters for a report. Use defaultReportParameters as mock data.
+    return { items: defaultReportParameters };
   },
   getReportTemplates: async ({ params = {} }: { params?: Record<string, string> } = {}): Promise<ReportTemplatesResponse> => {
     const search = (params.search ?? '').toLowerCase();

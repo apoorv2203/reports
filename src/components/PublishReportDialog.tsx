@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppInput } from "@/components/app/AppInput";
+import { AppCard } from "@/components/app/AppCard";
+import { AppEmptyState } from "@/components/app/AppEmptyState";
 import { ParameterFieldsPopover } from "@/components/ParameterFieldsPopover";
 import {
   ArrowLeft,
@@ -12,6 +14,7 @@ import {
   Hash,
   SlidersHorizontal,
   Trash2,
+  Plus,
   X,
 } from "lucide-react";
 import type { ReportParameterField } from "@/api/types/report";
@@ -107,8 +110,9 @@ export function PublishReportDialog({
           </li>
         </ol>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6">
-        <div>
+      <div className="min-h-0 flex-1 flex flex-col">
+        <div className="px-5 py-6 overflow-y-auto flex-1 min-h-0">
+          <div>
           <h3 className="font-display text-[18px] font-bold text-foreground">
             {step === 1 ? t("reports.defineParameters") : "Configure inputs"}
           </h3>
@@ -117,11 +121,8 @@ export function PublishReportDialog({
               <p className="text-[13px] leading-relaxed text-ink-500">
                 {t("reports.defineParametersHelp")}
               </p>
-              <section className="mt-5 min-h-[420px] rounded-[14px] border border-surface-200 p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[16px] font-bold text-ink-900">
-                    {t("reports.reportParameters")} ({selectedFields.length})
-                  </h3>
+              <AppCard variant="report" className="mt-5 p-4">
+                <div className="flex items-start justify-end">
                   <ParameterFieldsPopover
                     reportId="draft"
                     selectedIds={selectedFields.map((field) => field.id)}
@@ -129,8 +130,7 @@ export function PublishReportDialog({
                       setSelectedFields((current) => [
                         ...current,
                         ...fields.filter(
-                          (field) =>
-                            !current.some((item) => item.id === field.id),
+                          (field) => !current.some((item) => item.id === field.id),
                         ),
                       ])
                     }
@@ -138,47 +138,27 @@ export function PublishReportDialog({
                     <AppButton
                       type="button"
                       variant="success-outline"
-                      size="action-md"
+                      size="action-sm"
+                      className="flex items-center justify-center gap-2"
                     >
-                      {selectedFields.length
-                        ? t("reports.addMore")
-                        : t("reports.addParameters")}
+                      <Plus className="size-4" />
+                      {t("reports.addParameters")}
                     </AppButton>
                   </ParameterFieldsPopover>
                 </div>
                 {selectedFields.length === 0 ? (
-                  <div className="flex min-h-[330px] flex-col items-center justify-center text-center">
-                    <div className="mb-5 flex size-24 items-center justify-center rounded-xl border-2 border-surface-300 text-[44px] text-surface-400">
-                      ☷
-                    </div>
-                    <h4 className="text-[16px] font-bold text-ink-900">
-                      {t("reports.noParameters")}
-                    </h4>
-                    <p className="mt-2 max-w-sm text-[13px] leading-relaxed text-ink-500">
-                      {t("reports.addFieldsHelp")}
-                    </p>
-                    <ParameterFieldsPopover
-                      reportId="draft"
-                      selectedIds={selectedFields.map((field) => field.id)}
-                      onAdd={(fields) =>
-                        setSelectedFields((current) => [
-                          ...current,
-                          ...fields.filter(
-                            (field) =>
-                              !current.some((item) => item.id === field.id),
-                          ),
-                        ])
-                      }
-                    >
-                      <AppButton
-                        type="button"
-                        variant="success"
-                        size="action-md"
-                        className="mt-6"
-                      >
-                        {t("reports.addParameters")}
-                      </AppButton>
-                    </ParameterFieldsPopover>
+                  <div className="flex flex-col items-center">
+                    <AppEmptyState className="w-full max-w-xl p-4">
+                      <div className="flex items-center justify-center rounded-xl bg-success-bg text-success p-2 mb-2">
+                        <SlidersHorizontal className="size-7" aria-hidden="true" />
+                      </div>
+                      <h4 className="text-[16px] font-bold text-ink-900">
+                        {t("reports.noParameters")}
+                      </h4>
+                      <p className="mt-2 max-w-sm text-[13px] leading-relaxed text-ink-500">
+                        {t("reports.addFieldsHelp")}
+                      </p>
+                    </AppEmptyState>
                   </div>
                 ) : (
                   <div className="mt-5 flex flex-col gap-3">
@@ -225,68 +205,70 @@ export function PublishReportDialog({
                       return (
                         <div
                           key={field.id}
-                          className="relative grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-x-4 gap-y-4 rounded-[14px] border border-surface-200 px-4 py-4"
+                          className="relative rounded-md border border-surface-200 px-3 py-3 bg-card/50 hover:bg-card transition"
                         >
-                          <GripVertical
-                            className="size-5 shrink-0 text-muted-foreground"
-                            aria-hidden="true"
-                          />
-                          <div
-                            className={`flex size-14 shrink-0 items-center justify-center rounded-lg ${isDate ? "bg-success-bg text-success" : isNumber ? "bg-warning-bg text-warning" : "bg-info-bg text-info"}`}
-                          >
-                            <Icon className="size-7" aria-hidden="true" />
-                          </div>
-                          <div className="col-span-2 min-w-0 self-center">
-                            <p className="break-words text-[15px] font-bold text-foreground">
-                              {field.displayName}
-                            </p>
-                            <p className="mt-2 text-[13px] text-muted-foreground">
-                              {field.dataType}
-                            </p>
-                          </div>
-                          <fieldset className="col-span-3 min-w-0 self-start">
-                            <legend className="mb-2 text-[12px] font-semibold text-muted-foreground">
-                              {t("reports.inputFormat")}
-                            </legend>
-                            <div className="flex min-w-0 flex-col gap-2">
-                              {options.map((option) => (
-                                <label
-                                  key={option.value}
-                                  className="flex cursor-pointer items-center gap-2 text-[13px] text-foreground"
-                                >
-                                  <input
-                                    type="radio"
-                                    name={`format-${field.id}`}
-                                    checked={currentFormat === option.value}
-                                    onChange={() =>
-                                      setFormats((current) => ({
-                                        ...current,
-                                        [field.id]: option.value,
-                                      }))
-                                    }
-                                    className="size-4 accent-primary"
-                                  />
-                                  {option.label}
-                                </label>
-                              ))}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2">
+                              <div className={`flex size-10 shrink-0 items-center justify-center rounded-md ${isDate ? 'bg-success-bg text-success' : isNumber ? 'bg-warning-bg text-warning' : 'bg-info-bg text-info'}`}>
+                                <Icon className="size-5" aria-hidden="true" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-[14px] font-semibold text-foreground leading-tight">
+                                  {field.displayName}
+                                </p>
+                                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                                  {field.dataType}
+                                </p>
+                              </div>
                             </div>
-                          </fieldset>
-                          <AppButton
-                            type="button"
-                            variant="ghost"
-                            size="icon-sm"
-                            className="absolute end-3 top-3"
-                            aria-label={t("reports.removeParameter", {
-                              name: field.displayName,
-                            })}
-                            onClick={() =>
-                              setSelectedFields((current) =>
-                                current.filter((item) => item.id !== field.id),
-                              )
-                            }
-                          >
-                            <Trash2 className="size-5" />
-                          </AppButton>
+                            <div className="flex items-start">
+                              <AppButton
+                                type="button"
+                                variant="ghost"
+                                size="icon-sm"
+                                aria-label={t("reports.removeParameter", {
+                                  name: field.displayName,
+                                })}
+                                onClick={() =>
+                                  setSelectedFields((current) =>
+                                    current.filter((item) => item.id !== field.id),
+                                  )
+                                }
+                              >
+                                <Trash2 className="size-5" />
+                              </AppButton>
+                            </div>
+                          </div>
+
+                          <div className="mt-3">
+                            <fieldset>
+                              <legend className="mb-2 text-[12px] font-semibold text-muted-foreground">
+                                {t("reports.inputFormat")}
+                              </legend>
+                              <div className="flex flex-col md:flex-row md:items-center md:gap-6 gap-2">
+                                {options.map((option) => (
+                                  <label
+                                    key={option.value}
+                                    className="flex cursor-pointer items-center gap-2 text-[13px] text-foreground"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`format-${field.id}`}
+                                      checked={currentFormat === option.value}
+                                      onChange={() =>
+                                        setFormats((current) => ({
+                                          ...current,
+                                          [field.id]: option.value,
+                                        }))
+                                      }
+                                      className="size-4 accent-primary"
+                                    />
+                                    {option.label}
+                                  </label>
+                                ))}
+                              </div>
+                            </fieldset>
+                          </div>
                         </div>
                       );
                     })}
@@ -300,7 +282,7 @@ export function PublishReportDialog({
                     </div>
                   </div>
                 )}
-              </section>
+              </AppCard>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -374,6 +356,7 @@ export function PublishReportDialog({
             </div>
           )}
         </div>
+        </div>
         <footer className="mt-auto flex items-center justify-between border-t border-border bg-card px-5 py-4">
           <AppButton
             className={step === 1 ? "invisible" : ""}
@@ -389,8 +372,8 @@ export function PublishReportDialog({
               disabled={selectedFields.length === 0}
               onClick={configure}
               variant="primary"
-              size="action-md"
-              className="w-full justify-center"
+              size="report-publish"
+              className="justify-center"
             >
               {t("reports.saveAndTest")}
               <ArrowRight />

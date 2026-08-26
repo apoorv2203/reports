@@ -20,7 +20,7 @@ const variants: Record<NonNullable<AppButtonProps['variant']>, { variant: Primit
   danger: { variant: 'destructive', size: 'default' },
   link: { variant: 'link', size: 'default' },
   success: { variant: 'default', size: 'default', className: 'bg-success text-success-foreground hover:bg-success/90' },
-  'success-outline': { variant: 'outline', size: 'default', className: 'border-border bg-success-bg text-success hover:bg-success-light' },
+  'success-outline': { variant: 'outline', size: 'default', className: 'border-[var(--color-success-medium)] bg-transparent !text-success hover:bg-success-bg/10' },
   icon: { variant: 'ghost', size: 'icon' },
   compact: { variant: 'default', size: 'sm' },
   // Centralized Run report semantic variant (neutral — styling applied per usage)
@@ -57,7 +57,7 @@ const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {
   'report-export': { size: 'default', className: 'flex h-auto w-full items-center justify-start gap-2 px-3 py-3 text-left text-[11px] font-semibold rounded-lg bg-white border border-[var(--color-success-medium)] text-[var(--color-success-medium)] hover:bg-[var(--color-success-bg)] hover:border-[var(--color-success-medium)] hover:text-[var(--color-success-medium)] transition-colors duration-150' },
   'report-designer': { size: 'default', className: 'mt-3 w-full bg-primary text-primary-foreground hover:bg-primary/90' },
   // Use the semantic dark button token for report publishing (centralized)
-  'report-publish': { size: 'default', className: 'w-full bg-[var(--color-button-dark)] text-white hover:brightness-95' },
+  'report-publish': { size: 'default', className: 'w-52 h-9 px-2 py-1 bg-[var(--color-button-dark)] text-white hover:brightness-95 disabled:opacity-80 flex items-center justify-center' },
   'report-header': { size: 'default', className: 'bg-primary text-primary-foreground hover:bg-primary/90' },
   'menu-item': { size: 'default', className: 'h-auto w-full justify-start gap-2 px-3 py-2 text-left text-[11px] font-semibold text-foreground' },
   pagination: { size: 'icon', className: 'size-9 rounded-lg border border-border font-semibold' },
