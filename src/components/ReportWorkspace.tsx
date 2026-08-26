@@ -105,7 +105,8 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           </main>
         }
         right={
-          <aside className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted p-4">
+          <aside className="relative flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted p-4">
+            {showPublishDialog ? <PublishReportDialog onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} /> : <>
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-foreground">{t('workspace.actions')}</div>
             {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="report-publish"><ArrowUpRight /> {t('workspace.publishReport')}</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-muted-foreground">{t('workspace.publishHelper')}</p></>}
@@ -128,10 +129,10 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-muted-foreground'}>{t('workspace.layout')}</div>
             <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}><div className="font-display text-[14px] font-bold text-foreground">{template.name}</div><div className="mt-1 text-[12px] text-muted-foreground">{template.category}</div><AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
+            </>}
           </aside>
         }
       />
-      {showPublishDialog && <PublishReportDialog onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} />}
     </div>
   );
 }
