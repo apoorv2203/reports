@@ -493,25 +493,22 @@ export function PublishReportDialog({
               </div>
             )}
             {step === 4 && (
-              <div className="flex flex-col gap-5">
-                <div className="rounded-lg border border-success/30 bg-success-bg p-4 text-success">
-                  <div className="flex items-start gap-3"><Check className="mt-0.5 size-5 shrink-0" /><div><p className="font-semibold">{t('reports.reportValidated')}</p><p className="mt-1 text-sm leading-relaxed">{t('reports.reportValidatedHelp')}</p></div></div>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <div className="grid grid-cols-1 gap-2">
-                    <label className="text-sm font-semibold text-foreground">{t('reports.publishTitle')}</label>
-                    <AppInput value={publishTitle} onChange={(e) => setPublishTitle(e.target.value)} placeholder={t('reports.publishTitlePlaceholder')} />
-                    <label className="text-sm font-semibold text-foreground">{t('reports.publishDescription')}</label>
-                    <AppInput value={publishDescription} onChange={(e) => setPublishDescription(e.target.value)} placeholder={t('reports.publishDescriptionPlaceholder')} />
-                  </div>
-                  <div className="flex gap-3">
-                    <AppButton variant="outline" size="action-md" onClick={() => setStep(3)}>{t('reports.runAgain')}<ArrowLeft /></AppButton>
-                    <AppButton variant="primary" size="action-md" onClick={handlePublish} disabled={publishing || published}>
-                      {publishing ? t('common.loading') : published ? <><Check />{t('reports.published')}</> : <><Check />{t('reports.publishReport')}</>}
-                    </AppButton>
-                    {publishError && <div className="text-destructive text-sm">{publishError}</div>}
+              <div className="flex flex-col gap-6">
+                <div>
+                  <h2 className="font-display text-[22px] font-bold text-foreground">{t('reports.publishReport')}</h2>
+                  <div className="mt-6 flex items-start gap-4 rounded-lg border border-success/30 bg-success-bg p-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-success text-success" aria-hidden="true"><Check className="size-5" /></div>
+                    <div><p className="font-semibold text-success">{t('reports.reportReadyToPublish')}</p><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t('reports.reportReadyToPublishHelp')}</p></div>
                   </div>
                 </div>
+                <AppCard variant="report" className="p-4">
+                  <dl className="divide-y divide-border">
+                    <div className="grid grid-cols-[minmax(7rem,0.7fr)_minmax(0,1.5fr)] gap-4 py-3 first:pt-0 last:pb-0"><dt className="font-semibold text-muted-foreground">{t('reports.reportName')}</dt><dd className="min-w-0 text-foreground">{publishTitle || reportId || t('reports.notAvailable')}</dd></div>
+                    <div className="grid grid-cols-[minmax(7rem,0.7fr)_minmax(0,1.5fr)] gap-4 py-3"><dt className="font-semibold text-muted-foreground">{t('reports.description')}</dt><dd className="min-w-0 text-foreground">{publishDescription || t('reports.notAvailable')}</dd></div>
+                    <div className="grid grid-cols-[minmax(7rem,0.7fr)_minmax(0,1.5fr)] gap-4 py-3"><dt className="font-semibold text-muted-foreground">{t('reports.reportParameters')}</dt><dd className="min-w-0 text-foreground">{t('reports.parametersConfigured', { count: parameters.length })}</dd></div>
+                    <div className="grid grid-cols-[minmax(7rem,0.7fr)_minmax(0,1.5fr)] gap-4 py-3 last:pb-0"><dt className="font-semibold text-muted-foreground">{t('reports.lastTest')}</dt><dd className="min-w-0 text-foreground"><span className="text-success">{t('reports.successful')}</span><span className="mx-2" aria-hidden="true">·</span>{t('reports.lastTestDate')}</dd></div>
+                  </dl>
+                </AppCard>
               </div>
             )}
           </div>
