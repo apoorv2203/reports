@@ -232,11 +232,15 @@ export function WidgetsPage({
             {t("widgets.noMatch")}
           </AppCard>
         )}
-        <div className="flex items-center justify-center gap-4 py-7 text-[11px] text-ink-500">
-          {t("widgets.showingOf", { count: String(widgets.length) })}{" "}
-          {widgets.length < total && <AppButton variant="secondary" type="button" onClick={loadMore} disabled={loadingMore}>
-            {loadingMore ? t("widgets.loading") : t("common.loadMore")} <ChevronDown data-icon="inline-end" />
-          </AppButton>}
+        <div className="flex items-center justify-between gap-4 py-7 text-[11px] text-ink-500">
+          <div className="text-[11px] text-ink-500">{t('widgets.showingOf', { count: String(widgets.length), total: String(total) })}</div>
+          <div>
+            {widgets.length < total && (
+              <AppButton variant="secondary" type="button" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? t("widgets.loading") : t("common.loadMore")} <ChevronDown data-icon="inline-end" />
+              </AppButton>
+            )}
+          </div>
         </div>
       </div>
       {shareWidget && (
