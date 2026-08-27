@@ -8,7 +8,7 @@ import {
   ArrowLeft,
   CalendarDays,
   EyeOff,
-  FilePenLine,
+  Edit3,
   Heart,
   Play,
   Search,
@@ -124,7 +124,16 @@ function ReportLibraryCard({ report, onOpen, onFavourite, onPublish }: { report:
       <div className="mt-5 flex items-center gap-2">
         {report.ownedByYou ? (
           <>
-            <AppButton variant="secondary" size="widget-home" onClick={onOpen}><FilePenLine /> {t('reports.edit')}</AppButton>
+            <AppButton
+              variant={/* mirror widget card behavior */ false ? 'success-outline' : 'secondary'}
+              type="button"
+              disabled={false}
+              onClick={onOpen}
+              size="widget-home"
+              className="border border-border"
+            >
+              <Edit3 data-icon="inline-start" /> {t('common.edit')}
+            </AppButton>
             <AppButton variant="danger" size="widget-home" onClick={onPublish}><EyeOff /> {report.published ? t('reports.unpublish') : t('reports.publish')}</AppButton>
           </>
         ) : (

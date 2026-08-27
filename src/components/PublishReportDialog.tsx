@@ -257,22 +257,12 @@ export function PublishReportDialog({
       <div className="min-h-0 flex-1 flex flex-col min-w-0">
         <div className="px-5 py-6 overflow-y-auto flex-1 min-h-0 min-w-0">
           <div>
-            <h3 className="font-display text-[18px] font-bold text-foreground">
-              {step === 1 ? t('reports.reportDetails') : step === 2 ? t('reports.defineParameters') : step === 3 ? t('reports.runReport') : t('reports.publish')}
-            </h3>
-              {published && (
-                <div className="mt-4 rounded-lg border border-[var(--color-success-medium)] bg-[var(--color-success-bg)] px-3 py-2 text-xs">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                      <Check className="h-3 w-3 text-[var(--color-success-medium)]" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-[var(--color-success-medium)] text-[13px] leading-tight">{t('reports.reportPublished')}</p>
-                      <p className="mt-1 text-xs text-foreground/70">{t('reports.reportPublishedHelp')}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+            {step === 4 ? null : (
+              <h3 className="font-display text-[18px] font-bold text-foreground">
+                {step === 1 ? t('reports.reportDetails') : step === 2 ? t('reports.defineParameters') : t('reports.runReport')}
+              </h3>
+            )}
+              
             {step === 1 && (
               <div>
                 <p className="text-[13px] leading-relaxed text-ink-500">{t('reports.reportDetailsHelp')}</p>
@@ -280,7 +270,7 @@ export function PublishReportDialog({
                   <div className="flex flex-col gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-foreground">{t('reports.reportName')} <span className="text-destructive">*</span></label>
-                      <AppInput value={publishTitle} onChange={(e) => { setPublishTitle(e.target.value); setPublishTitleError(null); }} aria-label={t('reports.reportName')} />
+                      <AppInput value={publishTitle} onChange={(e) => { setPublishTitle(e.target.value); setPublishTitleError(null); }} aria-label={t('reports.reportName')} className="!bg-white !rounded-sm" />
                       {publishTitleError && <p className="text-destructive text-sm mt-1">{publishTitleError}</p>}
                     </div>
                     <div>
@@ -484,7 +474,7 @@ export function PublishReportDialog({
                         <Check className="h-3 w-3 text-[var(--color-success-medium)]" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[var(--color-success-medium)] text-[13px] leading-tight">{t('reports.reportExecuted')}</p>
+                        <p className="font-semibold text-[var(--color-success-medium)] text-[13px] leading-tight">{published ? t('reports.reportPublished') : t('reports.reportExecuted')}</p>
                         <p className="mt-1 text-xs text-foreground/70">{t('reports.resultsInPreview')}</p>
                       </div>
                     </div>
@@ -495,11 +485,32 @@ export function PublishReportDialog({
             {step === 4 && (
               <div className="flex flex-col gap-6">
                 <div>
-                  <h2 className="font-display text-[22px] font-bold text-foreground">{t('reports.publishReport')}</h2>
-                  <div className="mt-6 flex items-start gap-4 rounded-lg border border-success/30 bg-success-bg p-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-success text-success" aria-hidden="true"><Check className="size-5" /></div>
-                    <div><p className="font-semibold text-success">{t('reports.reportReadyToPublish')}</p><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t('reports.reportReadyToPublishHelp')}</p></div>
-                  </div>
+                  <h2 className="font-display text-[18px] font-bold text-foreground">{t('reports.publishReport')}</h2>
+                  {published ? (
+                    <div className="mt-4 rounded-lg border border-[var(--color-success-medium)] bg-[var(--color-success-bg)] px-3 py-2 text-xs">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                          <Check className="h-3 w-3 text-[var(--color-success-medium)]" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-[var(--color-success-medium)] text-[13px] leading-tight">{t('reports.reportPublished')}</p>
+                          <p className="mt-1 text-xs text-foreground/70">{t('reports.reportPublishedHelp')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 rounded-lg border border-[var(--color-success-medium)] bg-[var(--color-success-bg)] px-3 py-2 text-xs">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                          <Check className="h-3 w-3 text-[var(--color-success-medium)]" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-[var(--color-success-medium)] text-[13px] leading-tight">{t('reports.reportReadyToPublish')}</p>
+                          <p className="mt-1 text-xs text-foreground/70">{t('reports.reportReadyToPublishHelp')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <AppCard variant="report" className="p-4">
                   <dl className="divide-y divide-border">
@@ -566,7 +577,7 @@ export function PublishReportDialog({
                     <Check className="h-4 w-4 text-success" />
                     {t('reports.applied')}
                   </>
-                ) : t('reports.apply')}
+                ) : t('reports.validate')}
               </AppButton>
               {applyError && <div className="text-destructive text-sm">{applyError}</div>}
               <AppButton

@@ -18,6 +18,7 @@ import {
   Plus,
   Search,
   Play,
+  Edit3,
   Share2,
   Trash2,
   Pencil,
@@ -388,12 +389,14 @@ function ReportCard({
         </div>
         <div className="grid grid-cols-[1fr_1fr_auto] gap-3">
           <AppButton
+            variant={added ? "success-outline" : "secondary"}
             type="button"
+            disabled={false}
             onClick={onEdit}
-            variant="secondary"
             size="widget-home"
+            className="border border-border"
           >
-            <Pencil /> {t("common.edit")}
+            <Edit3 data-icon="inline-start" /> {t("common.edit")}
           </AppButton>
           <AppButton
             type="button"
@@ -401,6 +404,7 @@ function ReportCard({
             variant={added ? "success-outline" : "secondary"}
             size="widget-home"
             active={added}
+            className="border border-border"
           >
             <Bookmark className="h-5 w-5" />{" "}
             {added ? t("home.addedToHome") : t("home.addToHome")}
