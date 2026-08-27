@@ -2,6 +2,8 @@ import { request } from '@/api/client/apiClient';
 import type { CreateReportPayload, CreateReportResponse, PinnedReportsResponse, ReportParameterFieldsResponse, ReportRecord, ReportTemplateRenderResponse, ReportsResponse, ReportTemplatesResponse, ReportParametersResponse } from '@/api/types/report';
 import type { ReportParameter } from '@/data/reportTemplates';
 
+export const DRAFT_ID = 'draft';
+
 export type GetReportsOptions = { search?: string; scope?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 export const getReports = async (options: GetReportsOptions = {}): Promise<ReportsResponse> => {
   const response = await request<unknown>('reports', Object.fromEntries(Object.entries(options).filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])));

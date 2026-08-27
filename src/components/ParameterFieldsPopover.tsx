@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, Database, FileText, Plus, Search, X } from 'lucide-react';
 import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
@@ -33,6 +33,9 @@ export function ParameterFieldsPopover({ reportId, selectedIds, onAdd, children 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   function toggleGroup(name: string) { setExpandedGroups((cur) => ({ ...cur, [name]: !cur[name] })); }
 
+  const [isRtl, setIsRtl] = useState(false);
+  useEffect(() => { if (typeof document !== 'undefined') setIsRtl(document.dir === 'rtl'); }, []);
+
   return <div className="w-full">
     <div onClick={toggleOpen}>{children}</div>
     {open && <div className="mt-3 rounded-lg border border-border bg-white text-foreground shadow-sm max-h-[calc(100vh-260px)] flex flex-col min-h-0 max-w-full overflow-x-hidden">
@@ -50,7 +53,7 @@ export function ParameterFieldsPopover({ reportId, selectedIds, onAdd, children 
             return (
               <section key={group} className="py-2">
                 <button type="button" onClick={() => toggleGroup(group)} aria-expanded={expanded} className="flex w-full items-center gap-2 pb-1 text-sm font-bold hover:opacity-90">
-                  <ChevronDown className={`size-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                  <ChevronDown className="size-4" aria-hidden="true" style={{ transform: `${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}${isRtl ? ' scaleX(-1)' : ''}` }} />
                   <Database className="size-4 text-muted-foreground" />
                   <span className="text-sm font-bold text-foreground">{group}</span>
                 </button>

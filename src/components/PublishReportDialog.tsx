@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { publishReport, runReport, parameterizeReport } from "@/api/services/reportService";
+import { publishReport, runReport, parameterizeReport, DRAFT_ID } from "@/api/services/reportService";
 import { useT } from "@/providers/I18nProvider";
 import { AppButton } from "@/components/app/AppButton";
 import { AppInput } from "@/components/app/AppInput";
@@ -7,6 +7,8 @@ import { AppTextarea } from "@/components/app/AppForm";
 import { AppCard } from "@/components/app/AppCard";
 import { AppEmptyState } from "@/components/app/AppEmptyState";
 import { ParameterFieldsPopover } from "@/components/ParameterFieldsPopover";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -96,7 +98,7 @@ export function PublishReportDialog({
     setPublishing(true);
     setPublishError(null);
     try {
-      const targetId = reportId ?? 'draft';
+      const targetId = reportId ?? DRAFT_ID;
       await publishReport(targetId, { title: publishTitle, description: publishDescription });
       // show success UI and keep dialog open (do not navigate away)
       setPublished(true);
@@ -126,7 +128,7 @@ export function PublishReportDialog({
   }, [reportId]);
 
   async function handleApply() {
-    const targetId = reportId ?? 'draft';
+    const targetId = reportId ?? DRAFT_ID;
     setApplying(true); setApplyError(null);
     try {
       const payload = {
@@ -269,7 +271,7 @@ export function PublishReportDialog({
                 <div className="mt-5">
                   <div className="flex items-start justify-end">
                     <ParameterFieldsPopover
-                      reportId="draft"
+                      reportId={DRAFT_ID}
                       selectedIds={selectedFields.map((field) => field.id)}
                       onAdd={(fields) =>
                         setSelectedFields((current) => [
@@ -379,22 +381,34 @@ export function PublishReportDialog({
                       ) : parameter.type === 'number' ? (
                         <AppInput className="h-9 rounded-md" type="number" value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
                       ) : parameter.type === 'multi-select' ? (
-                        <select multiple value={Array.isArray(value) ? value : []} onChange={(event) => setValue(Array.from(event.target.selectedOptions, (option) => option.value))} className="min-h-10 rounded-md border border-input bg-white px-2 py-1 text-sm" aria-label={parameter.label}>
+                        <div className="flex flex-col gap-2" aria-label={parameter.label}>
                           {(parameter.options ?? []).map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
+                            <label key={option} className="flex items-center gap-2 text-sm">
+                              <input type="checkbox" checked={Array.isArray(value) ? value.includes(option) : false} onChange={() => {
+                                const next = Array.isArray(value) ? [...value] : [];
+                                if (next.includes(option)) {
+                                  setValue(next.filter((v) => v !== option));
+                                } else {
+                                  next.push(option);
+                                  setValue(next);
+                                }
+                              }} />
+                              <span>{option}</span>
+                            </label>
                           ))}
-                        </select>
+                        </div>
                       ) : parameter.type === 'single-select' ? (
-                        <select value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} className="h-9 rounded-md border border-input bg-white px-2 text-sm" aria-label={parameter.label}>
-                          <option value="">{t('reports.selectValue')}</option>
-                          {(parameter.options ?? []).map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <Select value={typeof value === 'string' ? value : ''} onValueChange={(next) => setValue(String(next))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={t('reports.selectValue')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">{t('reports.selectValue')}</SelectItem>
+                            {(parameter.options ?? []).map((option) => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <AppInput className="h-9 rounded-md" value={typeof value === 'string' ? value : ''} onChange={(event) => setValue(event.target.value)} />
                       )}
@@ -412,7 +426,7 @@ export function PublishReportDialog({
                       await onTested(parameters, values);
                       resp = { mocked: 'onTested handler used' };
                     } else {
-                      const targetId = reportId ?? 'draft';
+                      const targetId = reportId ?? DRAFT_ID;
                       resp = await runReport(targetId, payload);
                     }
                     setLastRunResponse(resp);
@@ -424,7 +438,7 @@ export function PublishReportDialog({
                     setRunError(true);
                     setRunState('idle');
                   }
-                }} variant="primary" size="action-md" className="self-start !bg-black !text-white hover:!bg-black/90 disabled:opacity-75">
+                }} variant="dark" size="action-md" className="self-start disabled:opacity-75">
                   {runState === 'running' ? t('reports.running') : t('reports.runReport')}
                   <ArrowRight />
                 </AppButton>
@@ -490,7 +504,7 @@ export function PublishReportDialog({
               <AppButton
                 variant="primary"
                 size="action-md"
-                className="!bg-black !text-white hover:!bg-black/90"
+                className=""
                 onClick={() => {
                   if (!publishTitle || !publishTitle.trim()) {
                     setPublishTitleError(t('reports.validation.reportNameRequired'));
@@ -513,10 +527,10 @@ export function PublishReportDialog({
                 size="action-md"
                 className="px-4 flex items-center gap-2"
               >
-                {applying ? 'Applying...' : applied ? (
+                {applying ? t('reports.applying') : applied ? (
                   <>
                     <Check className="h-4 w-4 text-success" />
-                    Applied
+                    {t('reports.applied')}
                   </>
                 ) : t('reports.apply')}
               </AppButton>
@@ -536,10 +550,10 @@ export function PublishReportDialog({
             <>
               <AppButton
                 onClick={handlePublish}
-                variant="primary"
+                variant="dark"
                 size="action-md"
                 disabled={!(step === 4 || (step === 3 && runState === 'success')) || publishing || published}
-                className="!bg-black !text-white hover:!bg-black/90 disabled:opacity-75"
+                className="disabled:opacity-75"
               >
                 {publishing ? t('common.loading') : published ? <><Check />{t('reports.published')}</> : <><Check />{t('reports.publishReport')}</>}
               </AppButton>

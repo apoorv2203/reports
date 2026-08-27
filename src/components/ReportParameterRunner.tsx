@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useT } from '@/providers/I18nProvider';
-import { Check, Filter, Play, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, Filter, Play, RefreshCw, ChevronDown, ChevronUp, X as IconX } from 'lucide-react';
 import { whiteFillRegions } from '@/data/reportTemplates';
 import { AppButton } from '@/components/app/AppButton';
 import { AppInput } from '@/components/app/AppInput';
@@ -18,6 +18,8 @@ export function ReportParameterRunner({ parameters, reportTitle, onRunReport }: 
   const [appliedValues, setAppliedValues] = useState<ParameterValues | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [collapsed, setCollapsed] = useState(false);
+  const [isRtl, setIsRtl] = useState(false);
+  useEffect(() => { if (typeof document !== 'undefined') setIsRtl(document.dir === 'rtl'); }, []);
 
   async function runReport() {
     const nextErrors: Record<string, string> = {};
@@ -47,7 +49,8 @@ export function ReportParameterRunner({ parameters, reportTitle, onRunReport }: 
         <div className="flex items-center gap-2">
           {appliedValues && <AppBadge variant="success" size="status"><Check className="h-3.5 w-3.5" /> {t('reports.resultsGenerated')}</AppBadge>}
           <button aria-expanded={!collapsed} aria-controls="report-parameters-content" onClick={() => setCollapsed((s) => !s)} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
-            {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />} <span className="sr-only">{collapsed ? t('reports.expand') : t('reports.collapse')}</span>
+            <ChevronDown className="h-4 w-4" aria-hidden="true" style={{ transform: `${collapsed ? 'rotate(0deg)' : 'rotate(180deg)'}${isRtl ? ' scaleX(-1)' : ''}` }} />
+            <span className="sr-only">{collapsed ? t('reports.expand') : t('reports.collapse')}</span>
           </button>
         </div>
       </div>
@@ -57,7 +60,7 @@ export function ReportParameterRunner({ parameters, reportTitle, onRunReport }: 
           {parameters.map((parameter) => <ParameterField key={parameter.id} parameter={parameter} value={values[parameter.id]} error={errors[parameter.id]} onChange={(value) => setValues((current) => ({ ...current, [parameter.id]: value }))} />)}
         </div>
         <div className="mt-4">
-          <AppButton onClick={runReport} variant="primary" size="action-md" className="mt-0 !bg-black !text-white">
+          <AppButton onClick={runReport} variant="dark" size="action-md" className="mt-0">
             {appliedValues ? <RefreshCw className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {appliedValues ? t('reports.runAgain') : t('reports.runReport')}
           </AppButton>
@@ -88,12 +91,14 @@ function ParameterField({ parameter, value, error, onChange }: { parameter: Repo
         <div className="text-[11px] font-bold text-foreground">{parameter.label}{parameter.required && <span className="text-destructive"> *</span>}</div>
         <Popover>
           <PopoverTrigger>
+            <PopoverTrigger>
             <button className="flex items-center gap-2 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-foreground text-left">
               <div className="flex flex-wrap gap-1">
                 {selected.length === 0 ? <span className="text-muted-foreground">{t('reports.selectValue')}</span> : selected.map((s) => <span key={s} className="rounded-full bg-card px-2 py-0.5 text-xs">{s}</span>)}
               </div>
-              <span className="ms-auto text-xs text-muted-foreground">▾</span>
+              <span className="ms-auto text-xs text-muted-foreground"><ChevronDown className="h-4 w-4" aria-hidden="true" /></span>
             </button>
+            </PopoverTrigger>
           </PopoverTrigger>
           <PopoverContent className="w-64 bg-white rounded-lg shadow-md p-3 border border-border">
             <div className="flex flex-col gap-3">
@@ -101,7 +106,7 @@ function ParameterField({ parameter, value, error, onChange }: { parameter: Repo
                 {selected.map((s) => (
                   <span key={s} className="inline-flex items-center gap-2 rounded-full bg-surface-100 px-2 py-0.5 text-xs">
                     <span>{s}</span>
-                    <button aria-label={`Remove ${s}`} type="button" onClick={() => onChange(selected.filter((item) => item !== s))} className="text-muted-foreground hover:text-foreground text-[11px]">×</button>
+                    <button aria-label={t('reports.remove')} type="button" onClick={() => onChange(selected.filter((item) => item !== s))} className="text-muted-foreground hover:text-foreground text-[11px]"><IconX className="h-3 w-3" aria-hidden="true" /></button>
                   </span>
                 ))}
               </div>
@@ -123,7 +128,7 @@ function ParameterField({ parameter, value, error, onChange }: { parameter: Repo
       </div>
     );
   }
-  if (parameter.type === 'single-select') return <label className="flex flex-col gap-2">{label}<Select value={String(value)} onValueChange={(next) => next !== null && onChange(next)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="All">All</SelectItem>{parameter.options?.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select>{error && <span className="text-[11px] text-destructive">{error}</span>}</label>;
+  if (parameter.type === 'single-select') return <label className="flex flex-col gap-2">{label}<Select value={String(value)} onValueChange={(next) => next !== null && onChange(next)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="">{t('reports.selectValue')}</SelectItem>{parameter.options?.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select>{error && <span className="text-[11px] text-destructive">{error}</span>}</label>;
   return <label className="flex flex-col gap-2">{label}<AppInput type={parameter.type === 'number' ? 'number' : parameter.type === 'date' ? 'date' : 'text'} value={String(value)} onChange={(event) => onChange(event.target.value)} />{error && <span className="text-[11px] text-destructive">{error}</span>}</label>;
 }
 

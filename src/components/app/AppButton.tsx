@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 type AppButtonProps = Omit<React.ComponentProps<typeof Button>, 'variant' | 'size'> & {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'success' | 'success-outline' | 'icon' | 'compact' | 'reportRun';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'success' | 'success-outline' | 'icon' | 'compact' | 'reportRun' | 'dark';
   active?: boolean;
   size?: 'default' | 'sm' | 'icon' | 'icon-sm' | 'link-sm' | 'link-xs' |   'action-sm' | 'action-md' | 'icon-lg' | 'retry' | 'menu' | 'widget' | 'list-row' | 'filter' | 'pill' | 'tab' | 'toggle' | 'card-action' | 'menu-item' | 'pagination' | 'run-icon' | 'report-action' | 'widget-home' | 'widget-icon' | 'modal-icon' | 'menu-danger' | 'report-full' | 'template-card' | 'section-icon' | 'report-back' | 'report-export' | 'report-designer' | 'report-publish' | 'report-header' | 'suggestion';
 };
@@ -25,6 +25,7 @@ const variants: Record<NonNullable<AppButtonProps['variant']>, { variant: Primit
   compact: { variant: 'default', size: 'sm' },
   // Centralized Run report semantic variant (neutral — styling applied per usage)
   reportRun: { variant: 'default', size: 'default' },
+  dark: { variant: 'default', size: 'default', className: 'bg-black text-white hover:brightness-95 disabled:opacity-80' },
 };
 
 const sizes: Record<NonNullable<AppButtonProps['size']>, AppButtonStyle> = {

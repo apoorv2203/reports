@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FileOutput, Save, X } from 'lucide-react';
+import { AppButton } from '@/components/app/AppButton';
 import { useT } from '@/providers/I18nProvider';
 
 export function ActionsPanel({ onConvertToReport, disabled = false }: { onConvertToReport: () => void; disabled?: boolean }) {
@@ -22,15 +23,16 @@ export function ActionsPanel({ onConvertToReport, disabled = false }: { onConver
           <p className="mt-1 text-[11px] leading-4 text-ink-500">{t('actions.subtitle')}</p>
         </div>
 
-        <button
+        <AppButton
           type="button"
           onClick={onConvertToReport}
           disabled={disabled}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-button-dark px-3 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black"
+          variant="dark"
+          className="inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 text-[13px] font-semibold"
         >
           <FileOutput className="h-4 w-4" />
           {t('actions.convertToReport')}
-        </button>
+        </AppButton>
 
         <button
           type="button"
@@ -71,7 +73,7 @@ export function ActionsPanel({ onConvertToReport, disabled = false }: { onConver
 
             <div className="mt-5 flex justify-end gap-2">
               <button type="button" onClick={() => setShowWidgetModal(false)} className="rounded-lg border border-surface-200 px-3.5 py-2 text-[12px] font-semibold text-ink-700 transition hover:bg-surface-50">{t('common.cancel')}</button>
-              <button type="button" onClick={saveWidget} disabled={!widgetName.trim()} className="rounded-lg bg-button-dark px-3.5 py-2 text-[12px] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40">{t('actions.saveWidget')}</button>
+              <AppButton type="button" onClick={saveWidget} disabled={!widgetName.trim()} variant="dark" className="rounded-lg px-3.5 py-2 text-[12px] font-semibold">{t('actions.saveWidget')}</AppButton>
             </div>
           </section>
         </div>

@@ -115,6 +115,19 @@ button:focus-visible {
   margin-inline-end: 4px;
 }
 
+/* Flip inline-end directional icons in RTL contexts */
+[dir="rtl"] svg[data-icon="inline-end"],
+[dir="rtl"] .icon-inline-end,
+[dir="rtl"] [data-icon="inline-end"] {
+  transform: scaleX(-1);
+}
+
+/* Flip SVG icons placed at inline-end via ms-auto in RTL */
+[dir="rtl"] .ms-auto svg,
+[dir="rtl"] .inline-end svg {
+  transform: scaleX(-1);
+}
+
 /* Logical spacing helpers (RTL-ready) */
 .start-auto { margin-inline-start: auto; }
 .end-auto { margin-inline-end: auto; }
