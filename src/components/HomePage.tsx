@@ -309,10 +309,11 @@ export function HomePage({
             </aside>
 
             <div className="min-w-0">
-              <AppSectionHeader
-                title={t("home.myWidgets")}
-                action={<AppButton variant="ghost" type="button" onClick={onOpenWidgets} className="h-auto px-0 text-[11px] font-bold text-mint-700">{t("home.addWidget")}</AppButton>}
-              />
+              <div className="bg-white rounded-xl p-6">
+              <div className="mb-3 flex items-center justify-start gap-3">
+                <h2 className="font-display text-[17px] font-bold tracking-[-0.03em] text-foreground">{t("home.highlights")}</h2>
+                <AppButton variant="ghost" type="button" onClick={onOpenWidgets} className="h-auto px-0 text-[11px] font-bold text-mint-700">{t("home.addWidget")}</AppButton>
+              </div>
               {isNewUser ? (
                 <EmptyDashboard onAddWidget={onOpenWidgets} />
               ) : (
@@ -391,6 +392,7 @@ export function HomePage({
                     ))}
                   </div>
                 )}
+              </div>
               </div>
             </div>
           </div>
