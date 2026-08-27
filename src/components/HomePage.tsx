@@ -4,9 +4,11 @@ import {
   ChartLine as LineChart,
   ChevronDown,
   Eye,
+  ArrowDownToLine,
   Clock3,
   CreditCard as Edit3,
   Ellipsis,
+  Printer,
   FileText,
   Info,
   RefreshCw,
@@ -39,6 +41,38 @@ import { AppBadge } from "@/components/app/AppBadge";
 import { AppInput } from "@/components/app/AppInput";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+
+function escapeHtml(str: string) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function printWidget(widget: any, data?: WidgetData) {
+  try {
+    const printWindow = window.open('', '_blank', 'noopener');
+    if (!printWindow) return;
+    const title = widget.title ?? 'Widget';
+    const description = widget.description ?? '';
+    let body = `<h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>`;
+    if (data && data.type === 'TABLE' && data.columns && data.rows) {
+      body += '<table><thead><tr>' + data.columns.map((c: string) => `<th>${escapeHtml(c)}</th>`).join('') + '</tr></thead><tbody>' + data.rows.map((row: any[]) => '<tr>' + row.map((cell) => `<td>${escapeHtml(String(cell))}</td>`).join('') + '</tr>').join('') + '</tbody></table>';
+    } else if (data && data.type === 'CHART') {
+      body += '<p>Chart preview not printable — please use export.</p>';
+    } else if (widget.preview === 'table') {
+      body += '<table><thead><tr><th>Product</th><th>Approval</th><th>Trend</th></tr></thead><tbody>' + ['Personal Loan','Home Loan','Vehicle Loan','Business Loan'].map((r, i) => `<tr><td>${escapeHtml(r)}</td><td>83.6%</td><td>Up</td></tr>`).join('') + '</tbody></table>';
+    } else {
+      body += '<p>No preview available</p>';
+    }
+
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:20px}h1{font-size:18px;margin:0 0 8px}p{margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}</style></head><body>${body}<script>window.onload=function(){window.print();};</script></body></html>`;
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+  } catch (e) {
+    // ignore
+  }
+}
 
 type HomePageProps = {
   onNewSession: (question?: string) => void;
@@ -91,6 +125,8 @@ export function HomePage({
       current.includes(id) ? current : [...current, id],
     );
   }
+
+  
 
   return (
     <>
@@ -164,11 +200,9 @@ export function HomePage({
                           key={delivery.name}
                           className="flex items-center gap-2.5 py-2.5"
                         >
-                          <AppBadge variant={delivery.format === "PDF" ? "danger" : "success"} className="flex size-7 shrink-0 items-center justify-center p-0 text-[8px]">
-                            {delivery.format === "PDF"
-                              ? t("common.pdf")
-                              : t("common.xlsx")}
-                          </AppBadge>
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
+                            <Info className="h-4 w-4" />
+                          </span>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-[11px] font-bold text-navy-900">
                               {delivery.name}
@@ -177,9 +211,27 @@ export function HomePage({
                               {delivery.time}
                             </span>
                           </span>
-                          <AppBadge variant="success" className="rounded-md px-2 py-1 text-[9px] font-bold">
-                            {t("common.delivered")}
-                          </AppBadge>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger {...({ asChild: true } as any)}>
+                              <AppButton variant="icon" className="size-7" aria-label={t('home.downloadDeliveryOptions', { name: delivery.name })}>
+                                <ArrowDownToLine />
+                              </AppButton>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" sideOffset={8} className="bg-white rounded-lg py-1 px-2 text-foreground shadow-lg ring-1 ring-foreground/10 w-40">
+                              <DropdownMenuItem onSelect={() => window.open(`/api/scheduled/${encodeURIComponent(delivery.name)}/download?format=pdf`, '_blank')}>
+                                <div className="flex items-center gap-2 text-xs min-w-0">
+                                  <AppBadge variant="danger" className="w-5 h-5 flex items-center justify-center p-0 text-[8px]">PDF</AppBadge>
+                                  <span className="truncate whitespace-nowrap">{t('home.downloadAsPDF')}</span>
+                                </div>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => window.open(`/api/scheduled/${encodeURIComponent(delivery.name)}/download?format=xlsx`, '_blank')}>
+                                <div className="flex items-center gap-2 text-xs min-w-0">
+                                  <AppBadge variant="success" className="w-5 h-5 flex items-center justify-center p-0 text-[8px]">XLSX</AppBadge>
+                                  <span className="truncate whitespace-nowrap">{t('home.downloadAsExcel')}</span>
+                                </div>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       ))}
                     </div>
@@ -201,7 +253,7 @@ export function HomePage({
               >
                 {isNewUser ? (
                   <EmptySideState
-                    icon={<FileText className="h-9 w-9" />}
+                    icon={<Info className="h-9 w-9" />}
                     title={t("home.noPinnedReports")}
                     text={t("home.pinEmpty")}
                     action={t("home.exploreReports")}
@@ -218,7 +270,7 @@ export function HomePage({
                         className="h-auto w-full justify-start gap-2.5 py-2.5 text-left"
                       >
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-mint-50 text-mint-700">
-                          <FileText className="h-4 w-4" />
+                          <Info className="h-4 w-4" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[11px] font-bold text-navy-900">
@@ -503,68 +555,29 @@ function WidgetCard({
             <AppButton
               variant="icon"
               type="button"
-              onClick={onMaximize}
-              aria-label={t("home.previewWidgetName", { name: widget.title })}
-              title={t("home.previewWidget")}
+              onClick={recommended ? onMaximize : undefined}
+              aria-label={recommended ? t('home.previewWidgetName', { name: widget.title }) : undefined}
+              title={recommended ? t('home.previewWidget') : undefined}
               className="size-6 text-navy-900"
             >
               {recommended ? (
                 <Eye className="h-4 w-4" aria-hidden="true" />
               ) : (
-                <span
-                  className="text-[14px] font-semibold leading-none"
-                  aria-hidden="true"
-                >
-                  [ ]
-                </span>
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
               )}
             </AppButton>
             {!recommended && (
-              <>
                 <AppButton
                   variant="icon"
                   type="button"
-                  onClick={() => setMenuOpen((open) => !open)}
-                  aria-label={t("home.moreOptions", { name: widget.title })}
-                  aria-expanded={menuOpen}
+                  onClick={() => printWidget(widget, data)}
+                  aria-label={t('home.printWidget', { name: widget.title })}
+                  title={t('home.printWidget')}
                   className="size-6 text-navy-900"
                 >
-                  <Ellipsis />
+                  <Printer />
                 </AppButton>
-                {menuOpen && (
-                  <div className="absolute right-0 top-7 z-30 w-44 rounded-lg border border-surface-200 bg-surface p-1.5 shadow-floaty">
-                    <AppButton
-                      variant="ghost"
-                      type="button"
-                      onClick={closeMenu}
-                      className="h-auto w-full justify-start gap-2 px-2.5 py-2 text-left text-[11px] font-semibold"
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" />{" "}
-                      {t("home.refreshData")}
-                    </AppButton>
-                    <AppButton
-                      variant="danger"
-                      type="button"
-                      onClick={() => {
-                        onRemove?.();
-                        closeMenu();
-                      }}
-                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />{" "}
-                      {t("home.removeFromHome")}
-                    </AppButton>
-                    <AppButton
-                      variant="ghost"
-                      type="button"
-                      onClick={closeMenu}
-                      className="h-auto w-full justify-start gap-2 border-t border-surface-100 px-2.5 py-2 text-left text-[11px] font-semibold"
-                    >
-                      <Info data-icon="inline-start" /> {t("home.viewDetails")}
-                    </AppButton>
-                  </div>
-                )}
-              </>
+              
             )}
           </>
         </div>

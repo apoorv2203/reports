@@ -264,6 +264,9 @@
   "home.close": "Close",
   "home.moreOptions": "More options for {name}",
   "home.previewWidgetName": "Preview {name}",
+  "home.downloadAsPDF": "Download as PDF",
+  "home.downloadAsExcel": "Download as Excel",
+  "home.downloadDeliveryOptions": "Download options for {name}",
 
   "nav.home": "Home",
   "nav.sessions": "Sessions",
