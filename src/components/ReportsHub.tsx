@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getReports } from "@/api/services/reportService";
 import type { ReportRecord } from "@/api/types/report";
 import {
-  ArrowLeft,
-  ArrowRight,
+  
   BarChart3,
   Bookmark,
   BookOpen,
@@ -142,13 +141,36 @@ export function ReportsHub({
   const [apiReports, setApiReports] = useState<ReportRecord[]>([]);
   const [homeReports, setHomeReports] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   useEffect(() => {
+    let mounted = true;
     const scope = tab === "mine" ? "MY_REPORTS" : tab === "shared" ? "SHARED_WITH_ME" : undefined;
-    getReports({ search: query || undefined, scope, page: 0, pageSize: 20, sortBy: "updatedAt", sortOrder: "desc" })
-      .then((response) => { setApiReports(response.items); setTotal(response.total); setError(false); })
-      .catch(() => { setApiReports([]); setTotal(0); setError(true); });
+    setLoading(true); setError(false); setPage(0);
+    getReports({ search: query || undefined, scope, page: 0, pageSize, sortBy: "updatedAt", sortOrder: "desc" })
+      .then((response) => { if (!mounted) return; setApiReports(response.items); setTotal(response.total); setPage(response.page); setPageSize(response.pageSize); setError(false); })
+      .catch(() => { if (!mounted) return; setApiReports([]); setTotal(0); setError(true); })
+      .finally(() => { if (!mounted) return; setLoading(false); });
+    return () => { mounted = false; };
   }, [tab, query]);
+
+  const loadMore = async () => {
+    if (loadingMore || apiReports.length >= total) return;
+    setLoadingMore(true);
+    try {
+      const scope = tab === "mine" ? "MY_REPORTS" : tab === "catalogue" ? "CATALOGUE" : "SHARED_WITH_ME";
+      const resp = await getReports({ search: query || undefined, scope, page: page + 1, pageSize, sortBy: "updatedAt", sortOrder: "desc" });
+      setApiReports((current) => [...current, ...resp.items.filter((item) => !current.some((c) => c.id === item.id))]);
+      setPage(resp.page); setTotal(resp.total);
+    } catch (e) {
+      setError(true);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
   const filtered = useMemo(() => apiReports.map((report, index) => ({
     ...report,
     updated: new Date(report.updatedAt).toLocaleDateString(),
@@ -163,23 +185,15 @@ export function ReportsHub({
   ];
   return (
     <div className="flex h-full flex-col bg-card text-foreground">
-      <header className="border-b border-border bg-card px-6 pb-0 pt-5 lg:px-8">
+      <header className="border-b border-border bg-white px-6 pb-0 pt-5 lg:px-8">
         <div className="flex items-start justify-between gap-6">
           <div>
             <div className="flex items-center gap-2">
-              <AppButton
-                variant="ghost"
-                size="report-back"
-                onClick={onBack}
-                aria-label={t("common.back")}
-              >
-                <ArrowLeft />
-              </AppButton>
               <h1 className="font-display text-[25px] font-bold tracking-[-0.04em]">
                 {t("reports.browse")}
               </h1>
             </div>
-            <p className="mt-1 pl-9 text-[13px] text-muted-foreground">
+            <p className="mt-1 text-[13px] text-muted-foreground">
               {t("reports.subtitle")}
             </p>
           </div>
@@ -194,12 +208,8 @@ export function ReportsHub({
             size="inline"
           />
             </label>
-<AppButton
-          variant="primary"
-          size="action-md"
-          onClick={() => onBuild()}
-        >
-              <Plus className="h-4 w-4" /> {t("reports.newReport")}
+            <AppButton type="button" onClick={() => onBuild()}>
+              <Plus data-icon="inline-start" /> {t("reports.newReport")}
             </AppButton>
           </div>
         </div>
@@ -215,7 +225,7 @@ export function ReportsHub({
           </Tab>
         </nav>
       </header>
-      <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8">
+      <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8 bg-white">
         <div className="flex flex-wrap items-center gap-3">
           <AppButton variant="secondary" size="filter">
               <Filter className="h-4 w-4" /> {t("common.filters")}
@@ -275,26 +285,13 @@ export function ReportsHub({
           ))}
         </div>
         <div className="flex items-center justify-between py-7 text-[12px] text-muted-foreground">
-          <span>{t("reports.showingRange")}</span>
-          <div className="flex items-center gap-2">
-            <AppButton variant="secondary" size="pagination">
-              <ArrowLeft />
-            </AppButton>
-            <AppButton variant="secondary" size="pagination" active>
-              1
-            </AppButton>
-            {["2", "3", "…", "6"].map((page) => (
-              <AppButton
-                key={page}
-                variant="secondary"
-                size="pagination"
-              >
-                {page}
+          <div>{t('reports.showingOf', { count: String(apiReports.length), total: String(total) })}</div>
+          <div>
+            {apiReports.length < total && (
+              <AppButton variant="secondary" type="button" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? t('reports.loading') : t('common.loadMore')} <ChevronDown data-icon="inline-end" />
               </AppButton>
-            ))}
-            <AppButton variant="secondary" size="pagination">
-              <ArrowRight />
-            </AppButton>
+            )}
           </div>
         </div>
       </main>

@@ -66,6 +66,7 @@ export function PublishReportDialog({
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
+  const [shouldParameterize, setShouldParameterize] = useState(false);
   useEffect(() => {
     setApplied(false);
     setApplyError(null);
@@ -92,6 +93,32 @@ export function PublishReportDialog({
     );
 
     setStep(3);
+  }
+
+  async function autoTestAndAdvance() {
+    // when user chooses not to parameterize, run a test and advance to publish on success
+    setStep(3);
+    setRunState('running'); setRunError(false); setLastRunError(null);
+    try {
+      const payload = { parameters: {} } as Record<string, unknown>;
+      setLastRunPayload(payload);
+      let resp: unknown = null;
+      if (onTested) {
+        await onTested(parameters, values);
+        resp = { mocked: 'onTested handler used' };
+      } else {
+        const targetId = reportId ?? DRAFT_ID;
+        resp = await runReport(targetId, payload as any);
+      }
+      setLastRunResponse(resp);
+      setRunState('success');
+      // advance to publish step automatically
+      setStep(4);
+    } catch (e) {
+      setLastRunError(e instanceof Error ? e.message : String(e));
+      setRunError(true);
+      setRunState('idle');
+    }
   }
 
   async function handlePublish() {
@@ -259,6 +286,12 @@ export function PublishReportDialog({
                     <div>
                       <label className="block text-sm font-semibold text-foreground">{t('reports.description')} <span className="text-muted-foreground">({t('reports.optional')})</span></label>
                       <AppTextarea value={publishDescription} onChange={(e) => setPublishDescription(e.target.value)} className="min-h-[120px]" aria-label={t('reports.description')} />
+                    </div>
+                    <div>
+                      <label className="inline-flex items-center gap-2">
+                          <input type="checkbox" checked={shouldParameterize} onChange={(e) => setShouldParameterize(e.target.checked)} className="size-4" />
+                          <span className="text-[12px] font-semibold leading-tight text-foreground">{t('reports.parameterizeBeforePublish') || 'Parameterize this report'}</span>
+                        </label>
                     </div>
                   </div>
                 </AppCard>
@@ -505,13 +538,17 @@ export function PublishReportDialog({
                 variant="primary"
                 size="action-md"
                 className=""
-                onClick={() => {
+                onClick={async () => {
                   if (!publishTitle || !publishTitle.trim()) {
                     setPublishTitleError(t('reports.validation.reportNameRequired'));
                     return;
                   }
-                  // persist values are already stored in publishTitle/publishDescription
-                  setStep(2);
+                  // if user wants to parameterize, go to step 2; otherwise run an automatic test and advance
+                  if (shouldParameterize) {
+                    setStep(2);
+                  } else {
+                    await autoTestAndAdvance();
+                  }
                 }}
               >
                 {t('reports.continue')}

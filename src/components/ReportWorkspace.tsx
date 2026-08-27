@@ -27,7 +27,12 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
 
   useEffect(() => {
     let active = true;
-    renderReportTemplate(template.masterTemplateId).then((response) => { if (active) setRenderedHtml(response.html); }).catch(() => { if (active) setRenderError(true); });
+    renderReportTemplate(template.masterTemplateId).then((response) => {
+      if (!active) return;
+      // strip any top-level header from the rendered template to avoid duplicate titles
+      const cleaned = response.html.replace(/<header>[\s\S]*?<\/header>/i, '');
+      setRenderedHtml(cleaned);
+    }).catch(() => { if (active) setRenderError(true); });
     return () => { active = false; };
   }, [template.masterTemplateId]);
 
@@ -100,7 +105,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           </aside>
         }
         center={
-          <main className="h-full min-h-0 overflow-y-auto bg-card px-8 py-7">
+          <main className="h-full min-h-0 overflow-y-auto bg-white px-8 py-7">
             <div className="mx-auto max-w-2xl">
               <div className="mb-5 flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{report ? t('workspace.reportView') : t('workspace.reportPreview')}</div><h1 className="mt-1 font-display text-[25px] font-bold tracking-[-0.04em] text-foreground">{title}</h1></div><AppButton variant="ghost" size="icon-sm" aria-label={t('workspace.moreOptions')}><MoreHorizontal /></AppButton></div>
               {readOnly && <ReportParameterRunner parameters={report?.parameters ?? defaultReportParameters} reportTitle={title} />}
@@ -112,7 +117,7 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
           <aside className="relative flex h-full min-h-0 flex-col gap-3 overflow-y-auto border-l border-border bg-muted p-4">
             {showPublishDialog ? <PublishReportDialog reportId={report?.id} onClose={() => setShowPublishDialog(false)} onPublished={(parameters) => { setPublishedParameters(parameters); setShowPublishDialog(false); }} onTested={async (_parameters, values) => { if (report?.id) await runReport(report.id, values); const response = await renderReportTemplate(template.masterTemplateId); setRenderedHtml(response.html); setRenderError(false); }} /> : <>
             <div className="font-display text-[12px] font-bold uppercase tracking-[0.12em] text-foreground">{t('workspace.actions')}</div>
-            {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="report-publish"><ArrowUpRight /> {t('workspace.publishReport')}</AppButton>
+            {!readOnly && <><AppButton onClick={() => setShowPublishDialog(true)} variant="primary" size="report-publish" className="w-full justify-center"><ArrowUpRight data-icon="inline-start" /> {t('workspace.publishReport')}</AppButton>
             <p className="-mt-1 text-[11px] leading-4 text-muted-foreground">{t('workspace.publishHelper')}</p></>}
             <div>
               <DropdownMenu open={exportOpen} onOpenChange={(open) => setExportOpen(open)}>
@@ -132,7 +137,11 @@ export function ReportWorkspace({ template, report, onBack, onBrowseReports, rea
             </div>
             <div className={`my-2 h-px bg-border ${readOnly ? 'hidden' : ''}`} />
             <div className={readOnly ? 'hidden' : 'text-[12px] font-bold uppercase tracking-wide text-muted-foreground'}>{t('workspace.layout')}</div>
-            <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}><div className="font-display text-[14px] font-bold text-foreground">{template.name}</div><div className="mt-1 text-[12px] text-muted-foreground">{template.category}</div><AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton></AppCard>
+            <AppCard variant="report" density="report-layout" className={readOnly ? 'hidden' : undefined}>
+              <div className="font-display text-[14px] font-bold text-foreground">{template.masterTemplateId === 'JR_BRANCH_SUMMARY' ? '# Branch Performance Summary' : template.name}</div>
+              <div className="mt-1 text-[12px] text-muted-foreground">{template.category}</div>
+              <AppButton variant="secondary" size="report-designer"><Pencil /> {t('workspace.editDesigner')}</AppButton>
+            </AppCard>
             </>}
           </aside>
         }
